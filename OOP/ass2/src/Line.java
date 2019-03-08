@@ -66,5 +66,4 @@ public class Line {
 				this.end.equals(other.start) && this.start.equals(other.end);
 	}
 
-
 }

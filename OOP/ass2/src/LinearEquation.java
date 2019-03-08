@@ -18,8 +18,8 @@ public class LinearEquation {
 	}
 	//y = mx + y1 - mx1 => y1 - mx1 is where the line crosses the y-axis.
 	public Point intersectingPointWith(LinearEquation other) {
-		double x;
-		double y;
+		double x = 0;
+		double y = 0;
 		if (this.isVertical && !other.isVertical) {
 			x = this.line.start().getX();
 			y = other.slope * x + other.interceptWithY;
@@ -27,23 +27,20 @@ public class LinearEquation {
 			x = other.line.start().getX();
 			y = this.slope * x + this.interceptWithY;
 		} else if (!this.isVertical && !other.isVertical) {
-			// y = m1x + b, y = m2x +c => m1x +b = m2x +c => x = (m1 - m2) / (c - b).
-
-			x = (this.slope - other.slope) / (this.interceptWithY - other.interceptWithY);
-			y = this.slope * x;
-		} else {
-			return null;
+			// y = m1x + b, y = m2x +c => m1x +b = m2x +c => x = (c - b) / (m1 - m2).
+			x = (other.interceptWithY - this.interceptWithY) / (this.slope - other.slope);
+			y = this.slope * x + this.interceptWithY;
 		}
 
-		If (this.line.start().getX() <)
-	 	if ((x < this.line.start().getX() && x < this.line.end().getX()) ||
-			(x > this.line.end().getX() && x > this.line.start().getX()) ||
-			(y > this.line.end().getY() && y > this.line.start().getY()) ||
-			(y < this.line.start().getY() && y < this.line.end().getY()) ||
-				(!this.isVertical && !other.isVertical)	) {
-			return null ;
+		Point intersectingPoint = new Point(x, y);
+		double distance1 = intersectingPoint.distance(this.line.start());
+		double distance2 = intersectingPoint.distance(this.line.end());
+		double distance3 = intersectingPoint.distance(other.line.start());
+		double distance4 = intersectingPoint.distance(other.line.end());
+		if (this.line.length() >= distance1 + distance2 && other.line.length() >= distance3 + distance4) {
+			return intersectingPoint;
 		}
-		return new Point(x, y);
+		return null;
 	}
 
 	public double getSlope() {
@@ -55,9 +52,6 @@ public class LinearEquation {
 		double deltaY = line.end().getY() - line.start().getY();
 		double deltaX = line.end().getX() - line.start().getX();
 
-		if (deltaX == 0) {
-
-		}
 		return deltaY / deltaX;
 	}
 

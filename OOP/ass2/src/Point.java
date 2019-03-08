@@ -11,7 +11,7 @@ public class Point {
 
 	// distance -- return the distance of this point to the other point
 	public double distance(Point other) {
-		return  Math.sqrt(Math.pow((this.x) - x, 2) + Math.pow((this.y) - y, 2));
+		return  Math.sqrt(Math.pow((this.x) - other.getX(), 2) + Math.pow((this.y) - other.getY(), 2));
 	}
 
 	// equals -- return true is the points are equal, false otherwise

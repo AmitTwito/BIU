@@ -18,25 +18,29 @@ public class AbstractArtDrawing {
 		DrawSurface d = gui.getDrawSurface();
 		for (int i = 0; i < 10; ++i) {
 
-			double x1 = 400 * rand.nextDouble(); // get integer in range 1-400
-			double y1 = 300 * rand.nextDouble(); // get integer in range 1-300
-			double x2 = 400 * rand.nextDouble(); // get integer in range 1-400
-			double y2 = 300 * rand.nextDouble(); // get integer in range 1-300
+			int x1 = rand.nextInt(400) + 1; // get integer in range 1-400
+			int y1 = rand.nextInt(300) + 1; // get integer in range 1-300
+			int x2 = rand.nextInt(400) + 1; // get integer in range 1-400
+			int y2 = rand.nextInt(300) + 1; // get integer in range 1-300
 			Line line = new Line(x1, y1, x2, y2);
 			linesArray[i] = line;
+			d.setColor(Color.BLACK);
+			d.drawLine((int)line.start().getX(), (int)line.start().getY(), (int)line.end().getX(),(int) line.end().getY());
 			d.setColor(Color.BLUE);
-			d.fillCircle(line.middle().getX() ,line.middle().getY() ,CIRCLE_RADIUS);
+			d.fillCircle((int)line.middle().getX() ,(int)line.middle().getY() ,CIRCLE_RADIUS);
 		}
 
-		for (int i = 0; i < 10; ++i) {
+		d.setColor(Color.RED);
+		for (int i = 0; i < 10; i++) {
 			LinearEquation linearEquation = new LinearEquation(linesArray[i]);
 			Point intersectionPoint;
-			for (int j = 0; i < 10; ++j) {
+			for (int j = 0; j < 10; j++) {
 				if (i != j) {
-					LinearEquation otherLinearEquation = new LinearEquation(linesArray[i]);
+					LinearEquation otherLinearEquation = new LinearEquation(linesArray[j]);
 					intersectionPoint = linearEquation.intersectingPointWith(otherLinearEquation);
 					if (intersectionPoint != null) {
-						d.fillCircle(intersectionPoint.getX() ,intersectionPoint.getY() ,CIRCLE_RADIUS);
+
+						d.fillCircle((int)intersectionPoint.getX() ,(int)intersectionPoint.getY() ,CIRCLE_RADIUS);
 					}
 				}
 			}
@@ -45,7 +49,7 @@ public class AbstractArtDrawing {
 	}
 
 	public static void main(String[] args) {
-		AbstractArtDrawing example = new AbstractArtDrawing();
-		example.drawRandomLines();
+		AbstractArtDrawing abstractArtDrawing = new AbstractArtDrawing();
+		abstractArtDrawing.drawRandomLines();
 	}
 }
