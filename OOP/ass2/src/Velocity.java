@@ -10,6 +10,14 @@ public class Velocity {
 		this.dy = dy;
 	}
 
+	public double getDx() {
+		return dx;
+	}
+
+	public double getDy() {
+		return dy;
+	}
+
 	// Take a point with position (x,y) and return a new point
 	// with position (x+dx, y+dy)
 	public Point applyToPoint(Point p) {
@@ -18,8 +26,8 @@ public class Velocity {
 	}
 
 	public static Velocity fromAngleAndSpeed(double angle, double speed) {
-		double dx = speed;
-		double dy = Math.sin(angle);
+		double dx = Math.cos(angle + 270) * speed;
+		double dy = Math.sin(angle + 270) * speed;
 		return new Velocity(dx, dy);
 	}
 }

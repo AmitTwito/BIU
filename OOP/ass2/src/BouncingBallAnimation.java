@@ -1,17 +1,19 @@
 import biuoop.*;
 
+import java.awt.*;
 
 
 public class BouncingBallAnimation {
 
-	public static final int WIDTH = 400;
-	public static final int HEIGHT = 400;
+	public static final int WIDTH = 200;
+	public static final int HEIGHT = 200;
+	public static final int RADIUS = 20;
 	public static void main(String[] args) {
 
 		GUI gui = new GUI("Bouncing Ball Animation", WIDTH, HEIGHT);
 		Sleeper sleeper = new Sleeper();
-		Ball ball = new Ball(0, 0, 30, java.awt.Color.BLACK);
-		Velocity v = Velocity.fromAngleAndSpeed(90, 4);
+		Ball ball = new Ball(100, 0, RADIUS, java.awt.Color.BLACK);
+		Velocity v = Velocity.fromAngleAndSpeed(45, 2);
 		//Velocity v = new Velocity(2,0);
 		ball.setVelocity(v);
 		while (true) {

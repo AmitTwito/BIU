@@ -31,17 +31,18 @@ public class AbstractArtDrawing {
 		}
 
 		d.setColor(Color.RED);
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 10; ++i) {
 			LinearEquation linearEquation = new LinearEquation(linesArray[i]);
 			Point intersectionPoint;
-			for (int j = 0; j < 10; j++) {
+			for (int j = 0; j < 10; ++j) {
 				if (i != j) {
-					LinearEquation otherLinearEquation = new LinearEquation(linesArray[j]);
-					intersectionPoint = linearEquation.intersectingPointWith(otherLinearEquation);
-					if (intersectionPoint != null) {
 
-						d.fillCircle((int)intersectionPoint.getX() ,(int)intersectionPoint.getY() ,CIRCLE_RADIUS);
-					}
+				}
+				LinearEquation otherLinearEquation = new LinearEquation(linesArray[j]);
+				intersectionPoint = linearEquation.intersectingPointWith(otherLinearEquation);
+				if (intersectionPoint != null) {
+
+					d.fillCircle((int)intersectionPoint.getX() ,(int)intersectionPoint.getY() ,CIRCLE_RADIUS);
 				}
 			}
 		}
