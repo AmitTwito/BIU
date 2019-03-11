@@ -6,22 +6,41 @@ public class MultipleFramesBouncingBallsAnimation {
 	public static final int WIDTH = 700;
 	public static final int HEIGHT = 700;
 	public static final int MAX_BALL_SIZE = 50;
-	public static final int MAX_SPEED = 200;
+	public static final int MAX_SPEED = 50;
 
 	public static void main(String[] args) {
 		GUI gui = new GUI("Multiple Frames Bouncing Balls Animation", WIDTH, HEIGHT);
+		Point firstLeftTopCorner = new Point(50 ,50);
+		Point firstRightBottomCorner = new Point(500, 500);
+		Point secondLeftTopCorner = new Point(450, 450);
+		Point secondRightBottomCorner = new Point(600, 600);
+		RectangleFrame greyRectangleFrame = new RectangleFrame(firstLeftTopCorner, firstRightBottomCorner, Color.GRAY);
+		RectangleFrame yellowRectangleFrame = new RectangleFrame(secondLeftTopCorner,
+																	secondRightBottomCorner, Color.YELLOW);
 		Random rand = new Random();
 		Sleeper sleeper = new Sleeper();
 		Ball[] ballsArray = new Ball[args.length];
-		int x;
-		int y;
+
+
 		for (int i = 0; i < args.length; i++){
-			if (i < args.length / 2 ) {
-				x = rand.nextInt(500) + 50;
-				y = rand.nextInt(500) + 50;
+			int x;
+			int y;
+			int highValue;
+			int lowValue;
+			if (i < args.length / 2) {
+				highValue = (int)firstRightBottomCorner.getX();
+				lowValue = (int)firstLeftTopCorner.getX();
+				x = rand.nextInt(highValue - lowValue + 1) + lowValue;
+				highValue = (int)firstRightBottomCorner.getY();
+				lowValue = (int)firstLeftTopCorner.getY();
+				y = rand.nextInt(highValue - lowValue + 1) + lowValue;
 			}  else {
-				x = rand.nextInt(600) + 450;
-				y = rand.nextInt(600) + 450;
+				highValue = (int)secondRightBottomCorner.getX();
+				lowValue = (int)secondLeftTopCorner.getX();
+				x = rand.nextInt(highValue - lowValue + 1) + lowValue;
+				highValue = (int)secondRightBottomCorner.getY();
+				lowValue = (int)secondLeftTopCorner.getY();
+				y = rand.nextInt(highValue - lowValue + 1) + lowValue;
 			}
 
 			int radius = Integer.parseInt(args[i]);
@@ -43,23 +62,26 @@ public class MultipleFramesBouncingBallsAnimation {
 
 			Velocity v = Velocity.fromAngleAndSpeed(angle, speed);
 			ballsArray[i].setVelocity(v);
-			ballsArray[i].setWidthAndHeightDistances(WIDTH, HEIGHT);
+
+			if (i < args.length / 2 ) {
+				ballsArray[i].setBoundaryFrame(greyRectangleFrame);
+			}  else {
+				ballsArray[i].setBoundaryFrame(yellowRectangleFrame);
+			}
 		}
 
 		while (true) {
 			DrawSurface d = gui.getDrawSurface();
-			d.setColor(Color.GRAY);
-			d.drawRectangle(50, 50, 450, 450);
-			d.setColor(Color.YELLOW);
-			d.drawRectangle(450, 450, 150, 150);
+			greyRectangleFrame.drawOn(d);
+			yellowRectangleFrame.drawOn(d);
 
 			for (Ball ball : ballsArray) {
 				ball.moveOneStep();
 				ball.drawOn(d);
 			}
+
 			gui.show(d);
 			sleeper.sleepFor(20);  // wait for 50 milliseconds.
-
 		}
 	}
 }

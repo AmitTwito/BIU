@@ -15,6 +15,7 @@ public class MultipleBouncingBallsAnimation {
 		Sleeper sleeper = new Sleeper();
 		Random rand = new Random();
 		Ball[] ballsArray = new Ball[args.length];
+		RectangleFrame boundaryFrame = new RectangleFrame(new Point(WIDTH, HEIGHT));
 
 		for (int i = 0; i < args.length; i++){
 			int x = rand.nextInt(WIDTH) + 1;
@@ -38,8 +39,7 @@ public class MultipleBouncingBallsAnimation {
 			}
 			Velocity v = Velocity.fromAngleAndSpeed(angle, speed);
 			ballsArray[i].setVelocity(v);
-
-			ballsArray[i].setWidthAndHeightDistances(WIDTH, HEIGHT);
+			ballsArray[i].setBoundaryFrame(boundaryFrame);
 		}
 
 		while (true) {

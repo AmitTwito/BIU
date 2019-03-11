@@ -13,7 +13,8 @@ public class BouncingBallAnimation {
 		GUI gui = new GUI("Bouncing Ball Animation", WIDTH, HEIGHT);
 		Sleeper sleeper = new Sleeper();
 		Ball ball = new Ball(0, 0, RADIUS, java.awt.Color.BLACK);
-		ball.setWidthAndHeightDistances(WIDTH, HEIGHT);
+		RectangleFrame boundaryFrame = new RectangleFrame(new Point(WIDTH, HEIGHT));
+		ball.setBoundaryFrame(boundaryFrame);
 		Velocity v = Velocity.fromAngleAndSpeed(45, 2);
 		//Velocity v = new Velocity(2,0);
 		ball.setVelocity(v);
