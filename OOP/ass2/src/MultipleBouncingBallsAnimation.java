@@ -5,9 +5,9 @@ import java.awt.Color;
 public class MultipleBouncingBallsAnimation {
 
 	public static final int WIDTH = 400;
-	public static final int HEIGHT = 400;
+	public static final int HEIGHT = 300;
 	public static final int MAX_BALL_SIZE = 50;
-	public static final int MAX_SPEED = 300;
+	public static final int MAX_SPEED = 50;
 
 	public static void main(String[] args) {
 
@@ -17,8 +17,8 @@ public class MultipleBouncingBallsAnimation {
 		Ball[] ballsArray = new Ball[args.length];
 
 		for (int i = 0; i < args.length; i++){
-			int x = rand.nextInt(400) + 1;
-			int y = rand.nextInt(300) + 1;
+			int x = rand.nextInt(WIDTH) + 1;
+			int y = rand.nextInt(HEIGHT) + 1;
 
 			int radius = Integer.parseInt(args[i]);
 
@@ -27,7 +27,6 @@ public class MultipleBouncingBallsAnimation {
 			int g = rand.nextInt(255);
 			int b = rand.nextInt(255);
 			Color c = new Color(r, g, b);
-
 			ballsArray[i] = new Ball(x, y, radius, c);
 
 			double angle = 90 * rand.nextDouble();
@@ -37,24 +36,21 @@ public class MultipleBouncingBallsAnimation {
 			} else {
 				speed = MAX_SPEED / radius;
 			}
-
 			Velocity v = Velocity.fromAngleAndSpeed(angle, speed);
 			ballsArray[i].setVelocity(v);
 
+			ballsArray[i].setWidthAndHeightDistances(WIDTH, HEIGHT);
 		}
 
-		for (Ball ball : ballsArray) {
-			while (true) {
+		while (true) {
+			DrawSurface d = gui.getDrawSurface();
+			for (Ball ball : ballsArray) {
 				ball.moveOneStep();
-				DrawSurface d = gui.getDrawSurface();
 				ball.drawOn(d);
-				gui.show(d);
-				sleeper.sleepFor(25);  // wait for 50 milliseconds.
 			}
+			gui.show(d);
+			sleeper.sleepFor(40);
 		}
-
-
-
 
 	}
 }

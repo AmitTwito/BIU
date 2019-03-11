@@ -17,7 +17,12 @@ public class LinearEquation {
 		this.interceptWithY = line.start().getY() - this.slope * line.start().getX();
 	}
 	//y = mx + y1 - mx1 => y1 - mx1 is where the line crosses the y-axis.
-	public Point intersectingPointWith(LinearEquation other) {
+	public Point intersectionPointWith(LinearEquation other) {
+		if (this.slope == other.slope || this.line.equals(other.line)
+				|| (this.isVertical && other.isVertical)) {
+			return null;
+		}
+
 		double x = 0;
 		double y = 0;
 		if (this.isVertical && !other.isVertical) {
@@ -32,13 +37,14 @@ public class LinearEquation {
 			y = this.slope * x + this.interceptWithY;
 		}
 
-		Point intersectingPoint = new Point(x, y);
-		double distance1 = intersectingPoint.distance(this.line.start());
-		double distance2 = intersectingPoint.distance(this.line.end());
-		double distance3 = intersectingPoint.distance(other.line.start());
-		double distance4 = intersectingPoint.distance(other.line.end());
-		if (this.line.length() >= distance1 + distance2 && other.line.length() >= distance3 + distance4) {
-			return intersectingPoint;
+		Point intersectionPoint = new Point(x, y);
+		double distance1 = intersectionPoint.distance(this.line.start());
+		double distance2 = intersectionPoint.distance(this.line.end());
+		double distance3 = intersectionPoint.distance(other.line.start());
+		double distance4 = intersectionPoint.distance(other.line.end());
+		if ((int)this.line.length() >= (int)(distance1 + distance2)
+				&& (int)other.line.length() >= (int)(distance3 + distance4)) {
+			return intersectionPoint;
 		}
 		return null;
 	}

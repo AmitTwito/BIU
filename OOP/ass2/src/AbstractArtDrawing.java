@@ -6,47 +6,42 @@ import java.awt.Color;
 
 public class AbstractArtDrawing {
 	public static final int CIRCLE_RADIUS = 3;
-
+	public static final int MAX_LINES_NUMBER = 10;
 	public void drawRandomLines() {
 		Random rand = new Random(); // create a random-number generator
 		// Create a window with the title "Random Circles Example"
 		// which is 400 pixels wide and 300 pixels high.
 
-		Line[] linesArray = new Line[10];
+		Line[] linesArray = new Line[MAX_LINES_NUMBER];
 
-		GUI gui = new GUI("Random Circles Example", 400, 300);
+		GUI gui = new GUI("Random Circles Example", 600, 600);
 		DrawSurface d = gui.getDrawSurface();
-		for (int i = 0; i < 10; ++i) {
-
-			int x1 = rand.nextInt(400) + 1; // get integer in range 1-400
-			int y1 = rand.nextInt(300) + 1; // get integer in range 1-300
-			int x2 = rand.nextInt(400) + 1; // get integer in range 1-400
-			int y2 = rand.nextInt(300) + 1; // get integer in range 1-300
-			Line line = new Line(x1, y1, x2, y2);
-			linesArray[i] = line;
-			d.setColor(Color.BLACK);
-			d.drawLine((int)line.start().getX(), (int)line.start().getY(), (int)line.end().getX(),(int) line.end().getY());
+		for (int i = 0; i < MAX_LINES_NUMBER; ++i) {
+			linesArray[i] = Line.generateRandomLine(d.getHeight(), d.getWidth());
+			drawLine(d, linesArray[i]);
 			d.setColor(Color.BLUE);
-			d.fillCircle((int)line.middle().getX() ,(int)line.middle().getY() ,CIRCLE_RADIUS);
+			d.fillCircle((int)linesArray[i].middle().getX() ,(int)linesArray[i].middle().getY() ,CIRCLE_RADIUS);
 		}
 
+		int count = 0;
 		d.setColor(Color.RED);
-		for (int i = 0; i < 10; ++i) {
-			LinearEquation linearEquation = new LinearEquation(linesArray[i]);
+		for (int i = 0; i < MAX_LINES_NUMBER; ++i) {
 			Point intersectionPoint;
-			for (int j = 0; j < 10; ++j) {
+			for (int j = 0; j < MAX_LINES_NUMBER; ++j) {
 				if (i != j) {
-
-				}
-				LinearEquation otherLinearEquation = new LinearEquation(linesArray[j]);
-				intersectionPoint = linearEquation.intersectingPointWith(otherLinearEquation);
-				if (intersectionPoint != null) {
-
-					d.fillCircle((int)intersectionPoint.getX() ,(int)intersectionPoint.getY() ,CIRCLE_RADIUS);
+					intersectionPoint = linesArray[i].intersectionWith(linesArray[j]);
+					if (intersectionPoint != null) {
+						d.fillCircle((int)intersectionPoint.getX() ,(int)intersectionPoint.getY() ,CIRCLE_RADIUS);
+					}
 				}
 			}
 		}
 		gui.show(d);
+	}
+
+	private static void drawLine(DrawSurface d, Line line) {
+		d.setColor(Color.BLACK);
+		d.drawLine((int)line.start().getX(), (int)line.start().getY(), (int)line.end().getX(),(int) line.end().getY());
 	}
 
 	public static void main(String[] args) {
