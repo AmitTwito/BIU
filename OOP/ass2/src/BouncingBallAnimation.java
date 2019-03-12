@@ -10,6 +10,11 @@ public class BouncingBallAnimation {
 	public static final int RADIUS = 20;
 	public static void main(String[] args) {
 
+		generataeBouncingBallAimation();
+
+	}
+
+	public static void generataeBouncingBallAimation() {
 		GUI gui = new GUI("Bouncing Ball Animation", WIDTH, HEIGHT);
 		Sleeper sleeper = new Sleeper();
 		Ball ball = new Ball(0, 0, RADIUS, java.awt.Color.BLACK);

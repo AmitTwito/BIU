@@ -11,17 +11,24 @@ public class MultipleBouncingBallsAnimation {
 
 	public static void main(String[] args) {
 
+		int[] ballSizes = stringsToIntegers(args);
+		generateMultipleBouncingBallsAnimation(ballSizes);
+
+	}
+
+	public static void generateMultipleBouncingBallsAnimation(int[] ballSizes) {
+
 		GUI gui = new GUI("Bouncing Ball Animation", WIDTH, HEIGHT);
 		Sleeper sleeper = new Sleeper();
 		Random rand = new Random();
-		Ball[] ballsArray = new Ball[args.length];
+		Ball[] ballsArray = new Ball[ballSizes.length];
 		RectangleFrame boundaryFrame = new RectangleFrame(new Point(WIDTH, HEIGHT));
 
-		for (int i = 0; i < args.length; i++){
+		for (int i = 0; i < ballSizes.length; i++){
 			int x = rand.nextInt(WIDTH) + 1;
 			int y = rand.nextInt(HEIGHT) + 1;
 
-			int radius = Integer.parseInt(args[i]);
+			int radius = ballSizes[i];
 
 			//Generate random numbers from 0 to 255 for a random color.
 			int r = rand.nextInt(255);
@@ -51,6 +58,18 @@ public class MultipleBouncingBallsAnimation {
 			gui.show(d);
 			sleeper.sleepFor(40);
 		}
+
+	}
+
+	private static int[] stringsToIntegers(String[] strings) {
+
+		int[] intArray = new int[strings.length];
+
+		for (int i = 0; i < strings.length; i++) {
+			intArray[i] = Integer.parseInt(strings[i]);
+		}
+
+		return  intArray;
 
 	}
 }
