@@ -2,8 +2,12 @@ import biuoop.GUI;
 import biuoop.DrawSurface;
 
 /**
+ * The Point class represents a Point object.
  *
- */
+ * @author Amit Twito
+ * @version 1.0
+ * @since 7.3.19
+ * */
 public class Ball {
 
 	//class members
@@ -104,8 +108,9 @@ public class Ball {
 		Point bottomSide = new Point(this.point.getX() ,rightBottomCorner.getY());
 		Point leftSide = new Point(leftTopCorner.getX(), this.point.getY());
 		Point rightSide = new Point(rightBottomCorner.getX(), this.point.getY());
-
-		if (this.point.distance(topSide) <= this.r || this.getY() + this.v.getDy() < leftTopCorner.getY()) {
+		if(this.getX() == 0 && this.getY() == 0) {
+			this.point = new Point(this.r, this.r );
+		} else if (this.point.distance(topSide) <= this.r || this.getY() + this.v.getDy() < leftTopCorner.getY()) {
 			this.point = new Point(this.getX(), leftTopCorner.getY() + this.r);
 			this.v = new Velocity(this.v.getDx(), - this.v.getDy());
 		} else if (this.point.distance(bottomSide) <= this.r || this.getY() + this.v.getDy() > rightBottomCorner.getY()) {

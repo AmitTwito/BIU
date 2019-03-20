@@ -4,9 +4,19 @@ import biuoop.DrawSurface;
 import java.util.Random;
 import java.awt.Color;
 
+/**
+ * The AbstractArtDrawing class draws random Lines on a gui,
+ * and colors the middle of them and intersection points with other lines.
+ *
+ * @author Amit Twito
+ * @version 1.0
+ * @since 7.3.19
+ * */
 public class AbstractArtDrawing {
+
 	public static final int CIRCLE_RADIUS = 3;
 	public static final int MAX_LINES_NUMBER = 10;
+
 	public void drawRandomLines() {
 		Random rand = new Random(); // create a random-number generator
 		// Create a window with the title "Random Circles Example"
@@ -31,7 +41,7 @@ public class AbstractArtDrawing {
 				if (i != j) {
 					intersectionPoint = linesArray[i].intersectionWith(linesArray[j]);
 					if (intersectionPoint != null) {
-						d.fillCircle((int)intersectionPoint.getX() ,(int)intersectionPoint.getY() ,CIRCLE_RADIUS);
+							d.fillCircle((int)intersectionPoint.getX() ,(int)intersectionPoint.getY() ,CIRCLE_RADIUS);
 					}
 				}
 			}
@@ -43,6 +53,7 @@ public class AbstractArtDrawing {
 		d.setColor(Color.BLACK);
 		d.drawLine((int)line.start().getX(), (int)line.start().getY(), (int)line.end().getX(),(int) line.end().getY());
 	}
+
 
 	public static void main(String[] args) {
 		AbstractArtDrawing abstractArtDrawing = new AbstractArtDrawing();

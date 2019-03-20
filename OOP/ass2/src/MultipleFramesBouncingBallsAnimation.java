@@ -2,6 +2,13 @@ import biuoop.*;
 import java.util.Random;
 import java.awt.Color;
 
+/**
+ * The Point class represents a Point object.
+ *
+ * @author Amit Twito
+ * @version 1.0
+ * @since 7.3.19
+ * */
 public class MultipleFramesBouncingBallsAnimation {
 	public static final int WIDTH = 700;
 	public static final int HEIGHT = 700;

@@ -1,10 +1,15 @@
-
-
 import biuoop.DrawSurface;
 import biuoop.GUI;
 import java.awt.Color;
 import java.util.Random;
 
+/**
+ * The Point class represents a Point object.
+ *
+ * @author Amit Twito
+ * @version 1.0
+ * @since 7.3.19
+ * */
 public class SimpleGuiExample {
 	public SimpleGuiExample() {
 	}
