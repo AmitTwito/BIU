@@ -1,5 +1,5 @@
 /**
- * The Point class represents a Point object.
+ * The Point class represents a point object.
  *
  * @author Amit Twito
  * @version 1.0

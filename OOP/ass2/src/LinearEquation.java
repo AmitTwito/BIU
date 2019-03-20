@@ -1,5 +1,5 @@
 /**
- * The LinearEquation class represents a LinearEquation object.
+ * The LinearEquation class represents a linear equation object.
  * Linear equation is represented by a Line ,
  * a slope and an interception point with the Y axis.
  *
