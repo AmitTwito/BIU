@@ -48,7 +48,6 @@ public class Velocity {
 
 	//Class methods.
 
-
 	/**
 	 * Applies the velocity to a given point.
 	 *

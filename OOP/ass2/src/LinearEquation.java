@@ -94,19 +94,28 @@ public class LinearEquation {
 		double distance4 = intersectionPoint.distance(other.line.end());
 
 		/* Check if the intersection point is on BOTH lines (of the linear equations) and not
-		 * outside their zone.
-		  I casted to int to get the floor value of the distances, b*/
+		 * outside their zone - the distance from the "intersection" point to each of the start
+		 * and end points of the lines, combined together HAS to be lower or equal to the length of each line,
+		 * respectively.
+		 * Cast every length to int to get the floor value of the distances -  fix the accuracy of the distance
+		 * function for similar results on comparing.*/
 		if ((int)this.line.length() >= (int)(distance1 + distance2)
 				&& (int)other.line.length() >= (int)(distance3 + distance4)) {
 			return intersectionPoint;
 		}
 
-		//In any other case - the intersection point is not of BOTH lines and return null.
+		//In any other case - the intersection point is not on BOTH lines and return null.
 		return null;
 	}
 
 
-	//A private method for calculating this linear equation's slope.
+	//
+	/**
+	 * A private method for calculating this linear equation's slope.
+	 *
+	 * @param line Line which built from two points for the slope calculation.
+	 * @return The slope of the linear equation.
+	 * */
 	private double calculateSlope(Line line) {
 
 		double deltaY = line.end().getY() - line.start().getY();

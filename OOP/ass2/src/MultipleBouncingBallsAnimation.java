@@ -15,20 +15,34 @@ public class MultipleBouncingBallsAnimation {
 	public static final int HEIGHT = 300;
 	public static final int MAX_BALL_SIZE = 50;
 	public static final int MAX_SPEED = 50;
+	public static final String GUI_TITLE = "Bouncing Ball Animation";
 
+	/**
+	 * Generates a MultipleBouncingBallsAnimation with a given list of ball sizes.
+	 *
+	 * @param args Array of String ball sizes from the command line.
+	 * */
 	public static void main(String[] args) {
 
 		int[] ballSizes = stringsToIntegers(args);
-		generateMultipleBouncingBallsAnimation(ballSizes);
+		MultipleBouncingBallsAnimation multipleBouncingBallsAnimation = new MultipleBouncingBallsAnimation();
+		multipleBouncingBallsAnimation.generateAnimation(ballSizes);
 
 	}
 
-	public static void generateMultipleBouncingBallsAnimation(int[] ballSizes) {
+	/**
+	 * Generates a multiple bouncing balls animation, with a given list of ball sizes..
+	 *
+	 * @param ballSizes Array of int ball sizes.
+	 * */
+	public void generateAnimation(int[] ballSizes) {
 
-		GUI gui = new GUI("Bouncing Ball Animation", WIDTH, HEIGHT);
+		GUI gui = new GUI(GUI_TITLE, WIDTH, HEIGHT);
 		Sleeper sleeper = new Sleeper();
 		Random rand = new Random();
 		Ball[] ballsArray = new Ball[ballSizes.length];
+
+		//Set the boundary frame for the balls.
 		RectangleFrame boundaryFrame = new RectangleFrame(new Point(WIDTH, HEIGHT));
 
 		for (int i = 0; i < ballSizes.length; i++){
@@ -56,6 +70,7 @@ public class MultipleBouncingBallsAnimation {
 			ballsArray[i].setBoundaryFrame(boundaryFrame);
 		}
 
+		//Animate the balls.
 		while (true) {
 			DrawSurface d = gui.getDrawSurface();
 			for (Ball ball : ballsArray) {
@@ -69,14 +84,13 @@ public class MultipleBouncingBallsAnimation {
 	}
 
 	private static int[] stringsToIntegers(String[] strings) {
-
 		int[] intArray = new int[strings.length];
 
 		for (int i = 0; i < strings.length; i++) {
 			intArray[i] = Integer.parseInt(strings[i]);
 		}
 
-		return  intArray;
+		return intArray;
 
 	}
 }

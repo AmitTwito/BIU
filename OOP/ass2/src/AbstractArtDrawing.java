@@ -1,6 +1,7 @@
 import biuoop.GUI;
 import biuoop.DrawSurface;
 
+import javax.print.DocFlavor;
 import java.util.Random;
 import java.awt.Color;
 
@@ -16,7 +17,14 @@ public class AbstractArtDrawing {
 
 	public static final int CIRCLE_RADIUS = 3;
 	public static final int MAX_LINES_NUMBER = 10;
-
+	public static final String GUI_TITLE = "Random Circles Example";
+	public static final int WIDTH = 600;
+	public static final int HEIGHT = 600;
+	/**
+	 * Draw MAX_LINES_NUMBER of lines on a gui with their middle points,
+	 * and intersection points with each other.
+	 *
+	 * */
 	public void drawRandomLines() {
 		Random rand = new Random(); // create a random-number generator
 		// Create a window with the title "Random Circles Example"
@@ -24,8 +32,11 @@ public class AbstractArtDrawing {
 
 		Line[] linesArray = new Line[MAX_LINES_NUMBER];
 
-		GUI gui = new GUI("Random Circles Example", 600, 600);
+		GUI gui = new GUI(GUI_TITLE, WIDTH, HEIGHT);
 		DrawSurface d = gui.getDrawSurface();
+
+		/*First, generate MAX_LINES_NUMBER random lines within the gui boundaries, and draw them,
+		* then, draw and fill a circle with the line's middle point's coordinates.*/
 		for (int i = 0; i < MAX_LINES_NUMBER; ++i) {
 			linesArray[i] = Line.generateRandomLine(d.getHeight(), d.getWidth());
 			drawLine(d, linesArray[i]);
@@ -33,8 +44,12 @@ public class AbstractArtDrawing {
 			d.fillCircle((int)linesArray[i].middle().getX() ,(int)linesArray[i].middle().getY() ,CIRCLE_RADIUS);
 		}
 
-		int count = 0;
+		//Part of drawing the intersection points.
+
 		d.setColor(Color.RED);
+		/*Second, for each of the generated lines, find (if exists) the intersection point with every other line,
+		* and draw it.
+		* */
 		for (int i = 0; i < MAX_LINES_NUMBER; ++i) {
 			Point intersectionPoint;
 			for (int j = 0; j < MAX_LINES_NUMBER; ++j) {
@@ -49,12 +64,21 @@ public class AbstractArtDrawing {
 		gui.show(d);
 	}
 
+	/**
+	 * Draws a given Line on a given DrawSurface.
+	 *
+	 * */
 	private static void drawLine(DrawSurface d, Line line) {
 		d.setColor(Color.BLACK);
 		d.drawLine((int)line.start().getX(), (int)line.start().getY(), (int)line.end().getX(),(int) line.end().getY());
 	}
 
-
+	/**
+	 * Returns the intersection point if the lines intersect,
+	 * otherwise - null.
+	 *
+	 * @param args Array of String arguments from the command line.
+	 * */
 	public static void main(String[] args) {
 		AbstractArtDrawing abstractArtDrawing = new AbstractArtDrawing();
 		abstractArtDrawing.drawRandomLines();

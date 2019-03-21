@@ -95,6 +95,10 @@ public class Line {
 		LinearEquation linearEquation = new LinearEquation(this);
 		LinearEquation otherLinearEquation = new LinearEquation(other);
 		Point intersectionPoint = linearEquation.intersectionPointWith(otherLinearEquation);
+		//If the intersection point is null -
+		// it means that it is not on the line (between their start and end points)
+		// or both are equal / same slopes.
+		// or both are vertical.
 		if (intersectionPoint == null) {
 			return false;
 		} else {

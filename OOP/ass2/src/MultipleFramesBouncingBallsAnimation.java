@@ -28,7 +28,7 @@ public class MultipleFramesBouncingBallsAnimation {
 		Point secondRightBottomCorner = new Point(600, 600);
 		RectangleFrame greyRectangleFrame = new RectangleFrame(firstLeftTopCorner, firstRightBottomCorner, Color.GRAY);
 		RectangleFrame yellowRectangleFrame = new RectangleFrame(secondLeftTopCorner,
-				secondRightBottomCorner, Color.YELLOW);
+																  secondRightBottomCorner, Color.YELLOW);
 		Random rand = new Random();
 		Sleeper sleeper = new Sleeper();
 		Ball[] ballsArray = new Ball[ballSizes.length];
