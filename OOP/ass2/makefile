@@ -1,9 +1,20 @@
+# 208445866
+# twitoam
 
 compile: bin
-	javac -cp src -d bin src/HelloWorld.java 
+	javac -cp biuoop-1.4.jar:src -d bin src/*.java 
 
-run1:
-	java -cp bin HelloWorld
+run2:
+	java -cp biuoop-1.4.jar:bin AbstractArtDrawing
+
+run3.2:
+	java -cp biuoop-1.4.jar:bin BouncingBallAnimation 
+
+run3.3:
+	java -cp biuoop-1.4.jar:bin MultipleBouncingBallsAnimation 
+
+run3.4:
+	java -cp biuoop-1.4.jar:bin MultipleFramesBouncingBallsAnimation 
 
 bin:
 	mkdir bin
