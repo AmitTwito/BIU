@@ -16,6 +16,8 @@ public class MultipleBouncingBallsAnimation {
 	public static final int MAX_BALL_SIZE = 50;
 	public static final int MAX_SPEED = 50;
 	public static final String GUI_TITLE = "Bouncing Ball Animation";
+	public static final long SLEEP_MILLISECONDS = 40;
+
 
 	/**
 	 * Generates a MultipleBouncingBallsAnimation with a given list of ball sizes.
@@ -23,15 +25,13 @@ public class MultipleBouncingBallsAnimation {
 	 * @param args Array of String ball sizes from the command line.
 	 * */
 	public static void main(String[] args) {
-
 		int[] ballSizes = stringsToIntegers(args);
 		MultipleBouncingBallsAnimation multipleBouncingBallsAnimation = new MultipleBouncingBallsAnimation();
 		multipleBouncingBallsAnimation.generateAnimation(ballSizes);
-
 	}
 
 	/**
-	 * Generates a multiple bouncing balls animation, with a given list of ball sizes..
+	 * Generates a multiple bouncing balls animation, with a given list of ball sizes.
 	 *
 	 * @param ballSizes Array of int ball sizes.
 	 * */
@@ -45,6 +45,8 @@ public class MultipleBouncingBallsAnimation {
 		//Set the boundary frame for the balls.
 		RectangleFrame boundaryFrame = new RectangleFrame(new Point(WIDTH, HEIGHT));
 
+		/*Create a ball from each of the ball sizes, give it a random center point within the boundary frame,
+		 *and randomize it a color.*/
 		for (int i = 0; i < ballSizes.length; i++){
 			int x = rand.nextInt(WIDTH) + 1;
 			int y = rand.nextInt(HEIGHT) + 1;
@@ -56,33 +58,46 @@ public class MultipleBouncingBallsAnimation {
 			int g = rand.nextInt(255);
 			int b = rand.nextInt(255);
 			Color c = new Color(r, g, b);
+
+			//Keep the ball in an array.
 			ballsArray[i] = new Ball(x, y, radius, c);
 
+			//Give the ball a random angle.
 			double angle = 90 * rand.nextDouble();
+
+			//Give balls with MAX_BALL_SIZE a permanent speed.Others - the smaller the faster.
 			double speed;
 			if (radius >= MAX_BALL_SIZE) {
 				speed = MAX_SPEED / MAX_BALL_SIZE;
 			} else {
 				speed = MAX_SPEED / radius;
 			}
+
 			Velocity v = Velocity.fromAngleAndSpeed(angle, speed);
 			ballsArray[i].setVelocity(v);
+
 			ballsArray[i].setBoundaryFrame(boundaryFrame);
 		}
 
 		//Animate the balls.
 		while (true) {
 			DrawSurface d = gui.getDrawSurface();
+			/* Move every ball one step and draw it on the surface on each frame -
+			 * all of the balls are drawn in one frame.*/
 			for (Ball ball : ballsArray) {
 				ball.moveOneStep();
 				ball.drawOn(d);
 			}
 			gui.show(d);
-			sleeper.sleepFor(40);
+			sleeper.sleepFor(SLEEP_MILLISECONDS);
 		}
 
 	}
-
+	/**
+	 * Convert an array of Strings to int numbers.
+	 *
+	 * @param strings Array of Strings to convert to int numbers..
+	 * */
 	private static int[] stringsToIntegers(String[] strings) {
 		int[] intArray = new int[strings.length];
 

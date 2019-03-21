@@ -14,18 +14,36 @@ public class MultipleFramesBouncingBallsAnimation {
 	public static final int HEIGHT = 700;
 	public static final int MAX_BALL_SIZE = 50;
 	public static final int MAX_SPEED = 50;
+	public static final String GUI_TITLE = "Multiple Frames Bouncing Balls Animation";
+	public static final long SLEEP_MILLISECONDS = 20;
 
+	/**
+	 * Generates a MultipleFramesBouncingBallsAnimation with a given list of ball sizes.
+	 *
+	 * @param args Array of String ball sizes from the command line.
+	 * */
 	public static void main(String[] args) {
 		int[] ballSizes = stringsToIntegers(args);
-		generateMultipleFramesBouncingBallsAnimation(ballSizes);
+		MultipleFramesBouncingBallsAnimation multipleFramesBouncingBallsAnimation =
+				new MultipleFramesBouncingBallsAnimation();
+		multipleFramesBouncingBallsAnimation.generateAnimation(ballSizes);
 	}
 
-	public static void generateMultipleFramesBouncingBallsAnimation(int[] ballSizes) {
-		GUI gui = new GUI("Multiple Frames Bouncing Balls Animation", WIDTH, HEIGHT);
+	/**
+	 * Generates a multiple frames with bouncing balls animation, with a given list of ball sizes.
+	 *
+	 * @param ballSizes Array of int ball sizes.
+	 * */
+	public void generateAnimation(int[] ballSizes) {
+		GUI gui = new GUI(GUI_TITLE, WIDTH, HEIGHT);
+
+		//Set the corners of the frames.
 		Point firstLeftTopCorner = new Point(50 ,50);
 		Point firstRightBottomCorner = new Point(500, 500);
 		Point secondLeftTopCorner = new Point(450, 450);
 		Point secondRightBottomCorner = new Point(600, 600);
+
+		//Set the frames.
 		RectangleFrame greyRectangleFrame = new RectangleFrame(firstLeftTopCorner, firstRightBottomCorner, Color.GRAY);
 		RectangleFrame yellowRectangleFrame = new RectangleFrame(secondLeftTopCorner,
 																  secondRightBottomCorner, Color.YELLOW);
@@ -34,11 +52,19 @@ public class MultipleFramesBouncingBallsAnimation {
 		Ball[] ballsArray = new Ball[ballSizes.length];
 
 
+		/*Create a ball from each of the ball sizes, give it a random center point within the boundary frame,
+		 *and randomize it a color.*/
 		for (int i = 0; i < ballSizes.length; i++){
+			/*The first half of the balls needs to be within the greyRectangleFrame,
+			 *the other half within the yellowRectangleFrame.*/
 			int x;
 			int y;
 			int highValue;
 			int lowValue;
+			/*The first half of the balls needs to be within the greyRectangleFrame,
+			 *the other half within the yellowRectangleFrame.
+			 *So, generate random coordinates within the matched boundary frames area.
+			 */
 			if (i < ballSizes.length / 2) {
 				highValue = (int)firstRightBottomCorner.getX();
 				lowValue = (int)firstLeftTopCorner.getX();
@@ -56,15 +82,20 @@ public class MultipleFramesBouncingBallsAnimation {
 			}
 
 			int radius = ballSizes[i];
+
 			//Generate random numbers from 0 to 255 for a random color.
 			int r = rand.nextInt(255);
 			int g = rand.nextInt(255);
 			int b = rand.nextInt(255);
 			Color c = new Color(r, g, b);
 
+			//Keep the ball in an array.
 			ballsArray[i] = new Ball(x, y, radius, c);
 
+			//Give the ball a random angle.
 			double angle = 90 * rand.nextDouble();
+
+			//Give balls with MAX_BALL_SIZE a permanent speed.Others - the smaller the faster.
 			double speed;
 			if (radius >= MAX_BALL_SIZE) {
 				speed = MAX_SPEED / MAX_BALL_SIZE;
@@ -75,6 +106,8 @@ public class MultipleFramesBouncingBallsAnimation {
 			Velocity v = Velocity.fromAngleAndSpeed(angle, speed);
 			ballsArray[i].setVelocity(v);
 
+			/*The first half of the balls needs to be within the greyRectangleFrame,
+			 *the other half within the yellowRectangleFrame.*/
 			if (i < ballSizes.length / 2 ) {
 				ballsArray[i].setBoundaryFrame(greyRectangleFrame);
 			}  else {
@@ -83,6 +116,9 @@ public class MultipleFramesBouncingBallsAnimation {
 		}
 
 		while (true) {
+			/*Every loop is a frame - in every frame draw both frames,
+			 *then move one step every ball and draw them,
+			 *then sleep for SLEEP_MILLISECONDS. */
 			DrawSurface d = gui.getDrawSurface();
 			greyRectangleFrame.drawOn(d);
 			yellowRectangleFrame.drawOn(d);
@@ -93,11 +129,15 @@ public class MultipleFramesBouncingBallsAnimation {
 			}
 
 			gui.show(d);
-			sleeper.sleepFor(20);  // wait for 50 milliseconds.
+			sleeper.sleepFor(SLEEP_MILLISECONDS);  // wait for 50 milliseconds.
 		}
-
 	}
 
+	/**
+	 * Convert an array of Strings to int numbers.
+	 *
+	 * @param strings Array of Strings to convert to int numbers..
+	 * */
 	private static int[] stringsToIntegers(String[] strings) {
 
 		int[] intArray = new int[strings.length];
