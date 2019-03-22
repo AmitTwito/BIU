@@ -94,14 +94,22 @@ public class LinearEquation {
         double distance3 = intersectionPoint.distance(other.line.start());
         double distance4 = intersectionPoint.distance(other.line.end());
 
+        /* Because a double value is shown with 14 digits after the decimal point, close calculations of distance
+         * have difference of 2 digits at the end of number after the decimal point - digit number 13 and 14,
+         * so we need to multiply by (10^14) to remove the decimal point, get the ceiling value of that number and
+         * then remove the 14th digit by dividing by (10^13) -
+         * and by that its a fix for the  accuracy of  the distance
+         * function for similar results on comparing them.*/
+        double distance5 = Math.ceil((10 ^ 14) * (distance1 + distance2)) / (double) (10^13);
+        double distance6 = Math.ceil((10 ^ 14) * (distance3 + distance4)) / (double) (10^13);
+        double thisLineLength = Math.ceil((10 ^ 14) * this.line.length()) / (double) (10^13);
+        double otherLineLength = Math.ceil((10 ^ 14) * other.line.length()) / (double) (10^13);
+
         /* Check if the intersection point is on BOTH lines (of the linear equations) and not
          * outside their zone - the distance from the "intersection" point to each of the start
          * and end points of the lines, combined together HAS to be lower or equal to the length of each line,
-         * respectively.
-         * Cast every length to int to get the floor value of the distances -  fix the accuracy of the distance
-         * function for similar results on comparing.*/
-        if ((int) this.line.length() >= (int) (distance1 + distance2)
-                && (int) other.line.length() >= (int) (distance3 + distance4)) {
+         * respectively.*/
+        if (thisLineLength >= distance5 && otherLineLength >= distance6) {
             return intersectionPoint;
         }
 

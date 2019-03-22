@@ -42,8 +42,6 @@ public class AbstractArtDrawing {
             d.fillCircle(x, y, CIRCLE_RADIUS);
         }
 
-
-
         //Part of drawing the intersection points.
 
         d.setColor(Color.RED);
@@ -55,9 +53,9 @@ public class AbstractArtDrawing {
             for (int j = 0; j < MAX_LINES_NUMBER; ++j) {
                 if (i != j) {
                     intersectionPoint = linesArray[i].intersectionWith(linesArray[j]);
-                    int x = (int) intersectionPoint.getX();
-                    int y = (int) intersectionPoint.getY();
                     if (intersectionPoint != null) {
+                        int x = (int) intersectionPoint.getX();
+                        int y = (int) intersectionPoint.getY();
                         d.fillCircle(x, y, CIRCLE_RADIUS);
                     }
                 }
@@ -69,7 +67,7 @@ public class AbstractArtDrawing {
     /**
      * Draws a given Line on a given DrawSurface.
      *
-     * @param d DrawSruface to draw the line on.
+     * @param d DrawSurface to draw the line on.
      * @param line The line to draw.
      */
     private static void drawLine(DrawSurface d, Line line) {
