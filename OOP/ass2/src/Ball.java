@@ -15,7 +15,7 @@ public class Ball {
     private Point point;
     private int r;
     private java.awt.Color color;
-    private Velocity veloicty;
+    private Velocity velocity;
     private RectangleFrame boundaryFrame;
 
 
@@ -94,7 +94,7 @@ public class Ball {
      * @return Velocity of the ball.
      */
     public Velocity getVelocity() {
-        return this.veloicty;
+        return this.velocity;
     }
 
 
@@ -106,7 +106,7 @@ public class Ball {
      * @param v The velocity to be set to the ball.
      */
     public void setVelocity(Velocity v) {
-        this.veloicty = v;
+        this.velocity = v;
     }
 
     /**
@@ -116,7 +116,7 @@ public class Ball {
      * @param dy Change in y axis.
      */
     public void setVelocity(double dx, double dy) {
-        this.veloicty = new Velocity(dx, dy);
+        this.velocity = new Velocity(dx, dy);
     }
 
     /**
@@ -160,10 +160,6 @@ public class Ball {
         Point leftSide = new Point(leftTopCorner.getX(), this.point.getY());
         Point rightSide = new Point(rightBottomCorner.getX(), this.point.getY());
 
-
-        if (this.getX() == 0 && this.getY() == 0) {
-            this.point = new Point(this.r, this.r);
-
         /* For each of the frame's sides:
             if the distance between the ball's position (center point)
             and the side of frame (the closest one to the ball) is lower then the ball's radius,
@@ -171,42 +167,38 @@ public class Ball {
             the ball could (or part of the ball) get out of the frame - beyond the closest side:
             adjust it's state so it's current center be on distance equal
             to the radius, from the closest side. Then flip it's direction.*/
-        } else if (this.point.distance(topSide) <= this.r
-                || this.getY() + this.veloicty.getDy() < leftTopCorner.getY()) {
-            //Top side of the frame
 
+        if (this.point.distance(topSide) <= this.r     //Top side of the frame
+                || this.getY() + this.velocity.getDy() < leftTopCorner.getY()) {
             this.point = new Point(this.getX(), leftTopCorner.getY() + this.r);
             /*If the ball comes from right or left to the top side-
              *give it a negative change in the y axis-
              *flip it's direction.*/
-            this.veloicty = new Velocity(this.veloicty.getDx(), -this.veloicty.getDy());
-        } else if (this.point.distance(bottomSide) <= this.r
-                || this.getY() + this.veloicty.getDy() > rightBottomCorner.getY()) {
-            //Bottom side of the frame
-
+            this.velocity = new Velocity(this.velocity.getDx(), -this.velocity.getDy());
+        }
+        if (this.point.distance(bottomSide) <= this.r  //Bottom side of the frame
+                || this.getY() + this.velocity.getDy() > rightBottomCorner.getY()) {
             this.point = new Point(this.getX(), rightBottomCorner.getY() - this.r);
-            /*If the ball comes from right or left to the top side-
+            /*If the ball comes from right or left to the bottom side-
              *give it a negative change in the y axis-
              *flip it's direction.*/
-            this.veloicty = new Velocity(this.veloicty.getDx(), -this.veloicty.getDy());
-        } else if (this.point.distance(leftSide) <= this.r
-                || this.getX() + this.veloicty.getDx() < leftTopCorner.getX()) {
-            //Left side of the frame
-
-            this.point = new Point(leftTopCorner.getY() + this.r, this.getY());
+            this.velocity = new Velocity(this.velocity.getDx(), -this.velocity.getDy());
+        }
+        if (this.point.distance(leftSide) <= this.r   //Left side of the frame
+                || this.getX() + this.velocity.getDx() < leftTopCorner.getX()) {
+            this.point = new Point(leftTopCorner.getX() + this.r, this.getY());
             /*If the ball comes from up or down to the left side-
              *give it a negative change in the x axis-
              *flip it's direction.*/
-            this.veloicty = new Velocity(-this.veloicty.getDx(), this.veloicty.getDy());
-        } else if (this.point.distance(rightSide) <= this.r
-                || this.getX() + this.veloicty.getDx() > rightBottomCorner.getX()) {
-            //Right side of the frame
-
+            this.velocity = new Velocity(-this.velocity.getDx(), this.velocity.getDy());
+        }
+        if (this.point.distance(rightSide) <= this.r  //Right side of the frame
+                || this.getX() + this.velocity.getDx() > rightBottomCorner.getX()) {
             this.point = new Point(rightBottomCorner.getX() - this.r, this.getY());
-            /*If the ball comes from up or down to the left side-
+            /*If the ball comes from up or down to the right side-
              *give it a negative change in the x axis-
              *flip it's direction.*/
-            this.veloicty = new Velocity(-this.veloicty.getDx(), this.veloicty.getDy());
+            this.velocity = new Velocity(-this.velocity.getDx(), this.velocity.getDy());
         }
 
         /*After changes has been done (or not - the ball),

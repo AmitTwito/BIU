@@ -50,8 +50,7 @@ public class RectangleFrame {
      * @param color             Color of the frame.
      */
     public RectangleFrame(Point leftTopCorner, Point rightBottomCorner, Color color) {
-        this.leftTopCorner = new Point(leftTopCorner.getX(), leftTopCorner.getY());
-        this.rightBottomCorner = new Point(rightBottomCorner.getX(), rightBottomCorner.getY());
+        this(leftTopCorner, rightBottomCorner);
         this.color = color;
     }
 

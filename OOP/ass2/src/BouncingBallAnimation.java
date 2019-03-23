@@ -4,7 +4,7 @@ import biuoop.Sleeper;
 import java.awt.Color;
 
 /**
- * The Point class represents a Point object.
+ * The BouncingBallAnimation class generates bouncing ball animation on a gui.
  *
  * @author Amit Twito
  * @version 1.0
@@ -16,7 +16,7 @@ public class BouncingBallAnimation {
     public static final int HEIGHT = 200;
     public static final int RADIUS = 20;
     public static final String GUI_TITLE = "Bouncing Ball Animation";
-    public static final double ANGLE = 90;
+    public static final double ANGLE = 45;
     public static final double SPEED = 2;
     public static final long SLEEP_MILLISECONDS = 50;
 

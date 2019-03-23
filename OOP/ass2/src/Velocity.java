@@ -68,9 +68,15 @@ public class Velocity {
      * @return Velocity made from angle and speed.
      */
     public static Velocity fromAngleAndSpeed(double angle, double speed) {
-        //
-        double dx = Math.cos(angle + 270) * speed;
-        double dy = Math.sin(angle + 270) * speed;
+        /* To get the dx and dy - we need to dismantle the velocity vector.
+         * Normally, the dx is the horizontal component of the vector : cos(angle), and the dy
+         * is the vertical component of the vector: sin(angle).
+         * In our case, we turn the axises by 90 degrees clockwise and now the dx
+         * is the sin component and the dy is the cos component.
+         * Then multiply the components by the given speed.*/
+        double dx = speed * Math.sin(Math.toRadians(angle));
+        double dy = speed * Math.cos(Math.toRadians(angle));
+
         return new Velocity(dx, dy);
     }
 }

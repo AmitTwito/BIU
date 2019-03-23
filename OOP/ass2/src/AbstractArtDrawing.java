@@ -80,8 +80,7 @@ public class AbstractArtDrawing {
     }
 
     /**
-     * Returns the intersection point if the lines intersect,
-     * otherwise - null.
+     * Generates an AbstractArtDrawing picture.
      *
      * @param args Array of String arguments from the command line.
      */

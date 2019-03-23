@@ -5,7 +5,8 @@ import java.util.Random;
 import java.awt.Color;
 
 /**
- * The Point class represents a Point object.
+ * The MultipleFramesBouncingBallsAnimation class generates a multiple frames
+ * with multiple bouncing balls (inside them) animation.
  *
  * @author Amit Twito
  * @version 1.0

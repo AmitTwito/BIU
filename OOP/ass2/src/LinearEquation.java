@@ -34,7 +34,7 @@ public class LinearEquation {
         if (line.start().getX() == line.end().getX()) {
             this.isVertical = true;
         } else {
-            this.slope = calculateSlope(line);
+            this.slope = calculateSlope();
         }
 
         //y = mx + y1 - mx1 => y1 - mx1 is where the line crosses the y-axis.
@@ -94,22 +94,23 @@ public class LinearEquation {
         double distance3 = intersectionPoint.distance(other.line.start());
         double distance4 = intersectionPoint.distance(other.line.end());
 
-        /* Because a double value is shown with 14 digits after the decimal point, close calculations of distance
-         * have difference of 2 digits at the end of number after the decimal point - digit number 13 and 14,
-         * so we need to multiply by (10^14) to remove the decimal point, get the ceiling value of that number and
-         * then remove the 14th digit by dividing by (10^13) -
-         * and by that its a fix for the  accuracy of  the distance
-         * function for similar results on comparing them.*/
-        double distance5 = Math.ceil((10 ^ 14) * (distance1 + distance2)) / (double) (10^13);
-        double distance6 = Math.ceil((10 ^ 14) * (distance3 + distance4)) / (double) (10^13);
-        double thisLineLength = Math.ceil((10 ^ 14) * this.line.length()) / (double) (10^13);
-        double otherLineLength = Math.ceil((10 ^ 14) * other.line.length()) / (double) (10^13);
-
         /* Check if the intersection point is on BOTH lines (of the linear equations) and not
          * outside their zone - the distance from the "intersection" point to each of the start
          * and end points of the lines, combined together HAS to be lower or equal to the length of each line,
-         * respectively.*/
-        if (thisLineLength >= distance5 && otherLineLength >= distance6) {
+         * respectively.
+         * To achieve that, we need to fix the accuracy of the 2 double numbers when compared.
+         * When 2 double numbers are close enough to be equal but they both have a difference(absolute value)
+         * after 11 digits right to the decimal point so we need to check that number1 - number2 (result in absolute
+         * value) has to be lower than that difference (higher or equal to 0).
+         * So, define the difference as deviation to be 0.0000000001 so by that we can avoid not seeing the those
+         * intersection points on the gui (2 line as close enough to each other
+         * by the edge of one of them) and assume it is negligible.
+         * */
+        double precisionDeviation = 0.0000000001;
+        if (Math.abs(this.line.length() - (distance1 + distance2)) <= precisionDeviation
+                && Math.abs(this.line.length() - (distance1 + distance2)) >= 0
+                && Math.abs(other.line.length() - (distance3 + distance4)) <= precisionDeviation
+                && Math.abs(other.line.length() - (distance3 + distance4)) >= 0) {
             return intersectionPoint;
         }
 
@@ -123,13 +124,12 @@ public class LinearEquation {
     /**
      * A private method for calculating this linear equation's slope.
      *
-     * @param l Line which built from two points for the slope calculation.
      * @return The slope of the linear equation.
      */
-    private double calculateSlope(Line l) {
+    private double calculateSlope() {
 
-        double deltaY = l.end().getY() - line.start().getY();
-        double deltaX = l.end().getX() - line.start().getX();
+        double deltaY = this.line.end().getY() - this.line.start().getY();
+        double deltaX = this.line.end().getX() - this.line.start().getX();
 
         return deltaY / deltaX;
     }
