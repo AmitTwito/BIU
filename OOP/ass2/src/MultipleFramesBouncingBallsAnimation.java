@@ -134,7 +134,7 @@ public class MultipleFramesBouncingBallsAnimation {
             }
 
             gui.show(d);
-            sleeper.sleepFor(SLEEP_MILLISECONDS);  // wait for 50 milliseconds.
+            sleeper.sleepFor(SLEEP_MILLISECONDS);
         }
     }
 

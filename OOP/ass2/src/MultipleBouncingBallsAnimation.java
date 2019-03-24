@@ -17,6 +17,7 @@ public class MultipleBouncingBallsAnimation {
     public static final int HEIGHT = 300;
     public static final int MAX_BALL_SIZE = 50;
     public static final int MAX_SPEED = 50;
+    public static final double MAX_ANGLE = 90;
     public static final String GUI_TITLE = "Bouncing Ball Animation";
     public static final long SLEEP_MILLISECONDS = 40;
 
@@ -65,7 +66,7 @@ public class MultipleBouncingBallsAnimation {
             ballsArray[i] = new Ball(x, y, radius, c);
 
             //Give the ball a random angle.
-            double angle = 90 * rand.nextDouble();
+            double angle = MAX_ANGLE * rand.nextDouble();
 
             //Give balls with MAX_BALL_SIZE a permanent speed.Others - the smaller the faster.
             double speed;
