@@ -15,7 +15,7 @@ import java.awt.Color;
 public class AbstractArtDrawing {
     public static final int CIRCLE_RADIUS = 3;
     public static final int MAX_LINES_NUMBER = 10;
-    public static final String GUI_TITLE = "Abstract Art Drawing";
+    public static final String GUI_TITLE = "Random Circles Example";
     public static final int WIDTH = 600;
     public static final int HEIGHT = 600;
 

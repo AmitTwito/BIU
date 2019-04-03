@@ -9,7 +9,7 @@ import biuoop.DrawSurface;
  * @version 1.0
  * @since 7.3.19
  */
-public class Ball {
+public class Ball implements Sprite {
 
     //Members.
     private Point point;
@@ -131,9 +131,15 @@ public class Ball {
         this.boundaryFrame = new RectangleFrame(frame.getLeftTopCorner(), frame.getRightBottomCorner());
     }
 
+    /**
+     * Sets the ball's game environment - the environment that the ball will be used for the game.
+     *
+     * @param gameEnvironment Boundary frame of the ball.
+     */
     public void setGameEnvironment(GameEnvironment gameEnvironment) {
         this.gameEnvironment = gameEnvironment;
     }
+
     //Class methods
 
     /**
@@ -141,6 +147,7 @@ public class Ball {
      *
      * @param surface DrawSurface of the ball to be drawn on.
      */
+    @Override
     public void drawOn(DrawSurface surface) {
         surface.setColor(this.color);
         surface.fillCircle((int) this.point.getX(), (int) this.point.getY(), this.r);
@@ -150,11 +157,31 @@ public class Ball {
      * Changes the ball's state by his current position.
      */
     public void moveOneStep() {
-        /*In this method, handle the cases when the ball reaches the sides of the frame/window,
-         * while avoiding getting out of the frame and make it look like it hits the sides in the animation.*/
 
-        /*In general, the x and y axises is defined in a way that the point (0,0)
-         *is the left top corner of the gui.*/
+        Point start = this.point;
+        Point end = this.velocity.applyToPoint(start);
+        Line trajectory = new Line(start, end);
+
+        CollisionInfo collisionInfo = this.gameEnvironment.getClosestCollision(trajectory);
+        if (collisionInfo != null) {
+            Point collisionPoint = collisionInfo.collisionPoint();
+            Collidable collidableObject = collisionInfo.collisionObject();
+            if (this.point.distance(collisionPoint) <= this.r) {
+                this.velocity = collidableObject.hit(collisionPoint, this.velocity);
+            }
+        }
+        this.point = this.velocity.applyToPoint(this.point);
+    }
+
+    /**
+     * Changes the ball's state by his current position.
+     *//*
+    public void moveOneStep() {
+        *//*In this method, handle the cases when the ball reaches the sides of the frame/window,
+         * while avoiding getting out of the frame and make it look like it hits the sides in the animation.*//*
+
+        *//*In general, the x and y axises is defined in a way that the point (0,0)
+         *is the left top corner of the gui.*//*
 
         //Define the corners of the boundary frame.
         Point leftTopCorner = this.boundaryFrame.getLeftTopCorner();
@@ -166,49 +193,53 @@ public class Ball {
         Point leftSide = new Point(leftTopCorner.getX(), this.point.getY());
         Point rightSide = new Point(rightBottomCorner.getX(), this.point.getY());
 
-        /* For each of the frame's sides:
+        *//* For each of the frame's sides:
             if the distance between the ball's position (center point)
             and the side of frame (the closest one to the ball) is lower then the ball's radius,
             OR after adding the velocity (in x or y axis, respectively)
             the ball could (or part of the ball) get out of the frame - beyond the closest side:
             adjust it's state so it's current center be on distance equal
-            to the radius, from the closest side. Then flip it's direction.*/
+            to the radius, from the closest side. Then flip it's direction.*//*
 
         if (this.point.distance(topSide) <= this.r     //Top side of the frame
                 || this.getY() + this.velocity.getDy() < leftTopCorner.getY()) {
             this.point = new Point(this.getX(), leftTopCorner.getY() + this.r);
-            /*If the ball comes from right or left to the top side-
+            *//*If the ball comes from right or left to the top side-
              *give it a negative change in the y axis-
-             *flip it's direction.*/
+             *flip it's direction.*//*
             this.velocity = new Velocity(this.velocity.getDx(), -this.velocity.getDy());
         }
         if (this.point.distance(bottomSide) <= this.r  //Bottom side of the frame
                 || this.getY() + this.velocity.getDy() > rightBottomCorner.getY()) {
             this.point = new Point(this.getX(), rightBottomCorner.getY() - this.r);
-            /*If the ball comes from right or left to the bottom side-
+            *//*If the ball comes from right or left to the bottom side-
              *give it a negative change in the y axis-
-             *flip it's direction.*/
+             *flip it's direction.*//*
             this.velocity = new Velocity(this.velocity.getDx(), -this.velocity.getDy());
         }
         if (this.point.distance(leftSide) <= this.r   //Left side of the frame
                 || this.getX() + this.velocity.getDx() < leftTopCorner.getX()) {
             this.point = new Point(leftTopCorner.getX() + this.r, this.getY());
-            /*If the ball comes from up or down to the left side-
+            *//*If the ball comes from up or down to the left side-
              *give it a negative change in the x axis-
-             *flip it's direction.*/
+             *flip it's direction.*//*
             this.velocity = new Velocity(-this.velocity.getDx(), this.velocity.getDy());
         }
         if (this.point.distance(rightSide) <= this.r  //Right side of the frame
                 || this.getX() + this.velocity.getDx() > rightBottomCorner.getX()) {
             this.point = new Point(rightBottomCorner.getX() - this.r, this.getY());
-            /*If the ball comes from up or down to the right side-
+            *//*If the ball comes from up or down to the right side-
              *give it a negative change in the x axis-
-             *flip it's direction.*/
+             *flip it's direction.*//*
             this.velocity = new Velocity(-this.velocity.getDx(), this.velocity.getDy());
         }
 
-        /*After changes has been done (or not - the ball),
-         *apply the velocity to the current ball's center point.*/
+        *//*After changes has been done (or not - the ball),
+         *apply the velocity to the current ball's center point.*//*
         this.point = this.getVelocity().applyToPoint(this.point);
+    }*/
+
+    public void timePassed() {
+        moveOneStep();
     }
 }

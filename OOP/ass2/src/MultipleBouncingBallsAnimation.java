@@ -13,12 +13,12 @@ import java.awt.Color;
  * */
 public class MultipleBouncingBallsAnimation {
 
-    public static final int WIDTH = 400;
-    public static final int HEIGHT = 300;
+    public static final int WIDTH = 500;
+    public static final int HEIGHT = 500;
     public static final int MAX_BALL_SIZE = 50;
     public static final int MAX_SPEED = 50;
     public static final double MAX_ANGLE = 90;
-    public static final String GUI_TITLE = "Bouncing Ball Animation";
+    public static final String GUI_TITLE = "Multiple Bouncing Balls Animation";
     public static final long SLEEP_MILLISECONDS = 40;
 
 

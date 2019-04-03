@@ -167,7 +167,7 @@ public class Line {
     public Point closestIntersectionToStartOfLine(Rectangle rect) {
 
         List<Point> intersectionPoints = rect.intersectionPoints(this);
-        if (intersectionPoints.size() == 0) {
+        if (intersectionPoints == null) {
             return null;
         }
 

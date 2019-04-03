@@ -21,7 +21,7 @@ public class Rectangle {
 
     // Return a (possibly empty) List of intersection points
     // with the specified line.
-    public List intersectionPoints(Line line) {
+    public List<Point> intersectionPoints(Line line) {
         List<Point> intersectionPointsList = new ArrayList<>();
         Line[] rectSidesArray = getRectangleSides();
         boolean intersectionExists = false;
@@ -31,15 +31,14 @@ public class Rectangle {
                 intersectionPointsList.add(side.intersectionWith(line));
             }
             if (intersectionPointsList.size() == 2) {
-            	break;
-			}
+                break;
+            }
         }
         if (!intersectionExists) {
             return null;
         }
 
         return intersectionPointsList;
-
     }
 
     // Return the width and height of the rectangle
@@ -54,6 +53,10 @@ public class Rectangle {
     public Point getUpperLeft() {
         return new Point(this.upperLeft.getX(), this.upperLeft.getY());
     }
+    public Point getLowerRight() {
+        return new Point(this.width, this.height);
+    }
+
 
     public Line[] getRectangleSides() {
         Line[] rectSidesArray = new Line[RECTANGLE_SIDE_NUMBER];
@@ -62,12 +65,14 @@ public class Rectangle {
         Point lowerLeft = new Point(this.upperLeft.getX(), this.upperLeft.getY() + height);
         Point lowerRight = new Point(lowerLeft.getX() + this.width, upperRight.getY());
 
-        rectSidesArray[0] = new Line(this.upperLeft, upperRight);
-        rectSidesArray[1] = new Line(this.upperLeft, lowerLeft);
-        rectSidesArray[2] = new Line(lowerLeft, lowerRight);
-        rectSidesArray[3] = new Line(upperRight, lowerRight);
+        rectSidesArray[0] = new Line(this.upperLeft, upperRight);//Top side
+        rectSidesArray[1] = new Line(this.upperLeft, lowerLeft);//Left side
+        rectSidesArray[2] = new Line(lowerLeft, lowerRight);//Bottom side
+        rectSidesArray[3] = new Line(upperRight, lowerRight);//Right side
 
         return rectSidesArray;
     }
+
+
 
 }

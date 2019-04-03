@@ -119,8 +119,6 @@ public class LinearEquation {
     }
 
 
-    //
-
     /**
      * A private method for calculating this linear equation's slope.
      *
