@@ -7,7 +7,6 @@ public class SpriteCollection {
 
 	private List<Sprite> spritesList;
 	public SpriteCollection () {
-
 		this.spritesList = new ArrayList<>();
 	}
 	public void addSprite(Sprite s) {

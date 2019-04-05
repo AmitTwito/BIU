@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 
@@ -17,6 +16,12 @@ public class Rectangle {
         this.upperLeft = new Point(upperLeft.getX(), upperLeft.getY());
         this.width = width;
         this.height = height;
+    }
+
+    public Rectangle(Rectangle rectangle) {
+        this.upperLeft =  new Point(rectangle.upperLeft.getX(), rectangle.upperLeft.getY());
+        this.width = rectangle.width;
+        this.height = rectangle.height;
     }
 
     // Return a (possibly empty) List of intersection points
@@ -57,6 +62,10 @@ public class Rectangle {
         return new Point(this.width, this.height);
     }
 
+
+    public void setUpperLeft(Point newUpperLeft) {
+        this.upperLeft = new Point(newUpperLeft.getX(), newUpperLeft.getY());
+    }
 
     public Line[] getRectangleSides() {
         Line[] rectSidesArray = new Line[RECTANGLE_SIDE_NUMBER];

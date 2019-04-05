@@ -16,7 +16,7 @@ public class Ball implements Sprite {
     private int r;
     private java.awt.Color color;
     private Velocity velocity;
-    private RectangleFrame boundaryFrame;
+    private Rectangle boundaryFrame;
     private GameEnvironment gameEnvironment;
 
     //Constructors.
@@ -127,8 +127,8 @@ public class Ball implements Sprite {
      *
      * @param frame Boundary frame of the ball.
      */
-    public void setBoundaryFrame(RectangleFrame frame) {
-        this.boundaryFrame = new RectangleFrame(frame.getLeftTopCorner(), frame.getRightBottomCorner());
+    public void setBoundaryFrame(Rectangle frame) {
+        this.boundaryFrame = new Rectangle(frame.getUpperLeft(), frame.getWidth(), frame.getHeight());
     }
 
     /**
@@ -241,5 +241,9 @@ public class Ball implements Sprite {
 
     public void timePassed() {
         moveOneStep();
+    }
+
+    public void addToGame(Game g) {
+        g.addSprite(this);
     }
 }

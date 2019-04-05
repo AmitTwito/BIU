@@ -3,17 +3,18 @@ import java.awt.Color;
 
 public class Block implements Collidable, Sprite {
 
-    private Rectangle rectangle;
-    private Color color;
+    protected Rectangle rectangle;
+    protected Color color;
+    private int hitPoints;
 
     public Block(Rectangle rectangle, Color color) {
-        this.rectangle = new Rectangle(rectangle.getUpperLeft(), rectangle.getWidth(), rectangle.getHeight());
+        this.rectangle = new Rectangle(rectangle);
         this.color = color;
+        this.hitPoints = 2;
     }
 
     @Override
     public Rectangle getCollisionRectangle(){
-
         return this.rectangle;
     }
 
@@ -29,12 +30,14 @@ public class Block implements Collidable, Sprite {
                 || collisionPoint.getY() == bottom.start().getY())
                 && (collisionPoint.getX() >= top.start().getX()
                 && collisionPoint.getX() <= top.end().getX()) ) {
+        	reduceHitPoints();
             return new Velocity(currentVelocity.getDx(), -currentVelocity.getDy());
         }
         if ((collisionPoint.getX() == left.start().getX()
                 || collisionPoint.getX() == right.start().getX())
                 && (collisionPoint.getY() >= left.start().getY()
                 && collisionPoint.getY() <= left.end().getY()) ) {
+        	reduceHitPoints();
 			return new Velocity(-currentVelocity.getDx(), currentVelocity.getDy());
 		}
 		return currentVelocity;
@@ -43,17 +46,38 @@ public class Block implements Collidable, Sprite {
 	@Override
     public void drawOn(DrawSurface surface) {
         surface.setColor(this.color);
-
         int x1 = (int) this.rectangle.getUpperLeft().getX();
         int y1 = (int) this.rectangle.getUpperLeft().getY();
-        int x2 = x1 + (int) this.rectangle.getWidth();
-        int y2 = y1 + (int) this.rectangle.getHeight();
-        surface.fillRectangle(x1, y1, x2, y2);
+        int width = (int) this.rectangle.getWidth();
+        int height = (int) this.rectangle.getHeight();
+        surface.fillRectangle(x1, y1, width, height);
+
+		surface.setColor(Color.BLACK);
+		surface.drawRectangle(x1, y1, width, height);
+
+		surface.setColor(Color.WHITE);
+		String textToDraw = this.hitPoints == 0 ? "X" : "" + this.hitPoints;
+
+		int x = (int) (this.rectangle.getUpperLeft().getX() + this.rectangle.getWidth() / 2);
+		int y = (int) (this.rectangle.getUpperLeft().getY() + this.rectangle.getHeight() / 2);
+
+		surface.drawText(x, y, textToDraw, 20);
+
     }
 
     @Override
     public void timePassed() {
 
+	}
+
+	public void addToGame(Game g) {
+    	g.addCollidable(this);
+    	g.addSprite(this);
+	}
+
+	public void reduceHitPoints() {
+    	int newHitPoints = this.hitPoints - 1;
+    	this.hitPoints = newHitPoints <= 0 ? 0 : newHitPoints;
 	}
 
 }
