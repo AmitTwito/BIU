@@ -2,7 +2,6 @@
  * The Point class represents a point object.
  *
  * @author Amit Twito
- * @version 1.0
  * @since 7.3.19
  */
 public class Point {

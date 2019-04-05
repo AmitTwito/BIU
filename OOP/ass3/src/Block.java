@@ -1,5 +1,4 @@
 import biuoop.DrawSurface;
-
 import java.awt.Color;
 
 public class Block implements Collidable, Sprite {

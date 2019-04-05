@@ -3,8 +3,7 @@
  * Velocity specifies the change in position on the x and the y axises.
  *
  * @author Amit Twito
- * @version 1.0
- * @since 7.3.19
+ * @since 3.4.19
  */
 public class Velocity {
 
