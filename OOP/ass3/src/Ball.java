@@ -239,6 +239,7 @@ public class Ball implements Sprite {
         this.point = this.getVelocity().applyToPoint(this.point);
     }*/
 
+    @Override
     public void timePassed() {
         moveOneStep();
     }

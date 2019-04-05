@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -167,13 +166,13 @@ public class Line {
     public Point closestIntersectionToStartOfLine(Rectangle rect) {
 
         List<Point> intersectionPoints = rect.intersectionPoints(this);
-        if (intersectionPoints == null) {
+        if (intersectionPoints.isEmpty()) {
             return null;
         }
 
         double smallest = intersectionPoints.get(0).distance(this.start);
         Point closestIntersection = intersectionPoints.get(0);
-        for (int i = 1; i <intersectionPoints.size(); i++) {
+        for (int i = 1; i < intersectionPoints.size(); i++) {
             Point currentPoint = intersectionPoints.get(i);
             double currentDistance = currentPoint.distance(this.start);
 

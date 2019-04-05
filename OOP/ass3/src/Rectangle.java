@@ -19,7 +19,7 @@ public class Rectangle {
     }
 
     public Rectangle(Rectangle rectangle) {
-        this.upperLeft =  new Point(rectangle.upperLeft.getX(), rectangle.upperLeft.getY());
+        this.upperLeft = new Point(rectangle.upperLeft.getX(), rectangle.upperLeft.getY());
         this.width = rectangle.width;
         this.height = rectangle.height;
     }
@@ -29,18 +29,13 @@ public class Rectangle {
     public List<Point> intersectionPoints(Line line) {
         List<Point> intersectionPointsList = new ArrayList<>();
         Line[] rectSidesArray = getRectangleSides();
-        boolean intersectionExists = false;
         for (Line side : rectSidesArray) {
             if (side.isIntersecting(line)) {
-                intersectionExists = true;
                 intersectionPointsList.add(side.intersectionWith(line));
             }
-            if (intersectionPointsList.size() == 2) {
+            /*if (intersectionPointsList.size() == 2) {
                 break;
-            }
-        }
-        if (!intersectionExists) {
-            return null;
+            }*/
         }
 
         return intersectionPointsList;
@@ -50,6 +45,7 @@ public class Rectangle {
     public double getWidth() {
         return this.width;
     }
+
     public double getHeight() {
         return this.height;
     }
@@ -58,6 +54,7 @@ public class Rectangle {
     public Point getUpperLeft() {
         return new Point(this.upperLeft.getX(), this.upperLeft.getY());
     }
+
     public Point getLowerRight() {
         return new Point(this.width, this.height);
     }
@@ -71,8 +68,8 @@ public class Rectangle {
         Line[] rectSidesArray = new Line[RECTANGLE_SIDE_NUMBER];
 
         Point upperRight = new Point(this.upperLeft.getX() + this.width, this.upperLeft.getY());
-        Point lowerLeft = new Point(this.upperLeft.getX(), this.upperLeft.getY() + height);
-        Point lowerRight = new Point(lowerLeft.getX() + this.width, upperRight.getY());
+        Point lowerLeft = new Point(this.upperLeft.getX(), this.upperLeft.getY() + this.height);
+        Point lowerRight = new Point(lowerLeft.getX() + this.width, lowerLeft.getY());
 
         rectSidesArray[0] = new Line(this.upperLeft, upperRight);//Top side
         rectSidesArray[1] = new Line(this.upperLeft, lowerLeft);//Left side
@@ -81,7 +78,6 @@ public class Rectangle {
 
         return rectSidesArray;
     }
-
 
 
 }
