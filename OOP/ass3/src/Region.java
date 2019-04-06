@@ -1,6 +1,6 @@
 /**
- * The Region class represents a Region object.
- * A Region object is built by a left and right points,
+ * The Region class represents a region object.
+ * A Region object is built by a left and right values/points,
  * those are the edges of a zone (on the x-axis);
  *
  * @author Amit Twito
@@ -9,8 +9,8 @@
 public class Region {
 
 	//Members.
-    private double left;
-    private double right;
+    private double left; //Left edge of the Region.
+    private double right; //Right edge of the Region.
 
     //Constructors.
 

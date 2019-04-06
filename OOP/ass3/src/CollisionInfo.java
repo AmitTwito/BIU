@@ -1,7 +1,7 @@
 import java.lang.reflect.Member;
 
 /**
- * The CollisionInfo class represents a CollisionInfo object.
+ * The CollisionInfo class represents a collision info object.
  * A CollisionInfo class is represented by a collision point,
  * and a collidable object involved in the collision.
  *

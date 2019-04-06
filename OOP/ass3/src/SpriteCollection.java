@@ -1,10 +1,9 @@
 import biuoop.DrawSurface;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The SpriteCollection class represents a SpriteCollection object.
+ * The SpriteCollection class represents a sprite collection object.
  * A SpriteCollection object is built by a list of Sprites.
  *
  * @author Amit Twito
@@ -13,7 +12,7 @@ import java.util.List;
 public class SpriteCollection {
 
     //Members.
-    private List<Sprite> spritesList;
+    private List<Sprite> spritesList; //The Sprites list.
 
     //Constructors.
 

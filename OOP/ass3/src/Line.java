@@ -12,8 +12,8 @@ import java.util.Random;
 public class Line {
 
     //Members.
-    private Point start;
-    private Point end;
+    private Point start; //Start Point of the Line.
+    private Point end; //End Point of the Line.
 
     // Constructors
 
@@ -163,6 +163,15 @@ public class Line {
     // If this line does not intersect with the rectangle, return null.
     // Otherwise, return the closest intersection point to the
     // start of the line.
+
+    /**
+     * If this line does not intersect with the rectangle, returns null.
+     * Otherwise, returns the closest intersection point to the
+     * start of the line.
+     *
+     * @param rect .
+     * @return Generated line.
+     */
     public Point closestIntersectionToStartOfLine(Rectangle rect) {
 
         List<Point> intersectionPoints = rect.intersectionPoints(this);
@@ -176,7 +185,7 @@ public class Line {
             Point currentPoint = intersectionPoints.get(i);
             double currentDistance = currentPoint.distance(this.start);
 
-            if (currentDistance <= smallest) {
+            if (currentDistance < smallest) {
                 smallest = currentDistance;
                 closestIntersection = currentPoint;
             }

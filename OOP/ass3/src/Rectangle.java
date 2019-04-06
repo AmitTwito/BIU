@@ -14,9 +14,9 @@ public class Rectangle {
 
     //Members.
 
-    private Point upperLeft;
-    private double width;
-    private double height;
+    private Point upperLeft; // The upper left Point of the rectangle.
+    private double width; // The width of the rectangle.
+    private double height; // The height of the rectangle.
 
     //Constructors
 

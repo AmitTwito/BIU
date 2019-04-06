@@ -4,16 +4,16 @@
  * a slope and an interception point with the Y axis.
  *
  * @author Amit Twito
- * @version 1.0
- * @since 7.3.19
+ * @version 2.0
+ * @since 6.4.19 (original since 7.3.19)
  */
 public class LinearEquation {
 
     //Members.
-    private Line line;
-    private double slope;
-    private double interceptWithY;
-    private boolean isVertical;
+    private Line line; // The Line that the LinearEquation is represented by.
+    private Double slope; // The slope of the LinearEquation.
+    private Double interceptWithY; // The intercept with y of the LinearEquation.
+    private boolean isVertical; // Determines if the LinearEquation is vertical.
 
     //Constructors.
 
@@ -33,12 +33,20 @@ public class LinearEquation {
          * if not - its has a slope.*/
         if (line.start().getX() == line.end().getX()) {
             this.isVertical = true;
+
+            //if it is vertical, it's slope is not defined.
+            this.slope = null;
         } else {
             this.slope = calculateSlope();
         }
 
         //y = mx + y1 - mx1 => y1 - mx1 is where the line crosses the y-axis.
-        this.interceptWithY = line.start().getY() - this.slope * line.start().getX();
+        if (!this.isVertical) {
+            this.interceptWithY = line.start().getY() - this.slope * line.start().getX();
+        } else {
+            //if it is vertical, there is not intercept with Y axis.
+            this.interceptWithY = null;
+        }
     }
 
     //Getters.

@@ -8,8 +8,8 @@
 public class Velocity {
 
     //Members.
-    private double dx;
-    private double dy;
+    private double dx; // Change in x axis.
+    private double dy; // Change in y axis.
 
     //Constructors.
 
