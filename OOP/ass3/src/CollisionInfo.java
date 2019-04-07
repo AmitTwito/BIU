@@ -1,5 +1,3 @@
-import java.lang.reflect.Member;
-
 /**
  * The CollisionInfo class represents a collision info object.
  * A CollisionInfo class is represented by a collision point,
@@ -12,8 +10,8 @@ public class CollisionInfo {
 
     //Members.
 
-    private Point collisionPoint;
-    private Collidable collidableObject;
+    private Point collisionPoint; // The point where the collision occurred.
+    private Collidable collidableObject; // The collidable object.
 
     //Constructors.
 

@@ -1,9 +1,11 @@
 import biuoop.DrawSurface;
+
 import java.awt.Color;
 
 /**
  * The Block class represents a block object,
- * A block is a rectangle ,and has a color and can have a hit points..
+ * A block is a rectangle that can be drawn to the screen,
+ * can be collided with a ball ,has a color and can have hit points.
  *
  * @author Amit Twito
  * @since 24.3.19
@@ -12,7 +14,7 @@ public class Block extends Rectangle implements Collidable, Sprite {
 
     //Members.
 
-    protected Color color; // The color of the block.
+    private Color color; // The color of the block.
     private int hitPoints; // The base hit points of the block.
 
     //Constructors.
@@ -44,30 +46,42 @@ public class Block extends Rectangle implements Collidable, Sprite {
     //Getters.
 
     /**
-     * Returns the collision rectangle of the block.
+     * Returns the rectangle that a collision was occurred to.
      *
-     * @return
+     * @return Rectangle that a collision was occurred to.
      */
     @Override
     public Rectangle getCollisionRectangle() {
+        //Block is a rectangle.
         return this;
+    }
+
+    /**
+     * Returns the Color of the block.
+     *
+     * @return Color of the block.
+     */
+    public Color getColor() {
+        return this.color;
     }
 
     //Class Methods.
 
     /**
+     *
+     * Returns a new Velocity based on where on the block the collision occurred.
+     *
      * @param collisionPoint  The point where the collision occurred.
      * @param currentVelocity The current velocity of the ball, just before the collision.
      * @return New Velocity based on where on the block the collision occurred.
-     * @throws Exception
      */
     @Override
     public Velocity hit(Point collisionPoint, Velocity currentVelocity) {
         Line[] blockSides = getRectangleSides();
-        Line top = blockSides[0];//Top side
-        Line left = blockSides[1];//Left side
-        Line bottom = blockSides[2];//Bottom side
-        Line right = blockSides[3];//Right side
+        Line top = blockSides[0]; //Top side
+        Line left = blockSides[1]; //Left side
+        Line bottom = blockSides[2];  //Bottom side
+        Line right = blockSides[3]; //Right side
 
         //If the collision point is on the top or bottom sides of the block,
         //return and new velocity with a changed (multiplied by -1) vertical direction,
@@ -88,12 +102,12 @@ public class Block extends Rectangle implements Collidable, Sprite {
             return new Velocity(-currentVelocity.getDx(), currentVelocity.getDy());
         }
         //If the collision point equals to one of the block's edges ,
-		// change both vertical and horizontal directions.
+        // change both vertical and horizontal directions.
         if (collisionPoint.equals(top.start()) || collisionPoint.equals(top.end())
-				|| collisionPoint.equals(bottom.start()) || collisionPoint.equals(bottom.end())) {
-			reduceHitPoints();
-			return new Velocity(-currentVelocity.getDx(), -currentVelocity.getDy());
-		}
+                || collisionPoint.equals(bottom.start()) || collisionPoint.equals(bottom.end())) {
+            reduceHitPoints();
+            return new Velocity(-currentVelocity.getDx(), -currentVelocity.getDy());
+        }
 
         return currentVelocity;
     }

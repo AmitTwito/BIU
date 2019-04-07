@@ -78,4 +78,17 @@ public class Velocity {
         //Multiply dy by -1 because we assume that up direction is 0 degrees.
         return new Velocity(dx, dy);
     }
+
+    /**
+     * Calculates the speed vector of the velocity with he changes in x and y axies.
+     *
+     * @return the speed (vector) in units of the velocity
+     */
+    public double toSpeed() {
+        //Calculate the current speed : The speed vector is the longest side of a triangular,
+        //we can get that by the square root of the sum of the squares of the other two sides,
+        //which here are the velocity's changes in the x axis and y axis.
+        double speed = Math.sqrt(Math.pow(this.dx, 2) + Math.pow(this.dy, 2));
+        return speed;
+    }
 }

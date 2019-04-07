@@ -1,6 +1,6 @@
 import biuoop.DrawSurface;
 import biuoop.KeyboardSensor;
-
+import javax.swing.JOptionPane;
 import java.awt.Color;
 
 
@@ -42,37 +42,56 @@ public class Paddle extends Block implements Sprite, Collidable {
     //Getters.
 
     /**
+     * Returns the Rectangle that a collision was occurred to.
+     *
      * @return Rectangle that a collision was occurred to.
      */
     @Override
     public Rectangle getCollisionRectangle() {
+        //A paddle is a block which is a rectangle.
         return this;
     }
 
     //Setters.
 
     /**
-     * @param left  Left value of the moving Region.
-     * @param right Right value of the moving Region.
+     * @param first  Left value of the moving Region.
+     * @param second Right value of the moving Region.
+     * @throws RuntimeException when setting the moving region.
      */
-    public void setMovingRegion(double left, double right) {
-        this.movingRegion = new Region(left, right);
+    public void setMovingRegion(double first, double second) throws RuntimeException {
+        try {
+            this.movingRegion = new Region(first, second);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null,
+                    "Error: Paddle's moving region, " + e.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        }
     }
 
     /**
      * Sets the hit Regions : each Region changes the ball's velocity differently.
+     *
+     * @throws RuntimeException when setting the hit regions.
      */
-    private void setHitRegions() {
+    private void setHitRegions() throws RuntimeException {
 
-        //Divide the paddle to 5 regions, each region has equal length.
-        this.hitRegions = new Region[REGIONS_NUMBER];
-        double regionLength = getWidth() / REGIONS_NUMBER;
-        double startX = getUpperLeft().getX();
-        this.hitRegions[0] = new Region(startX, startX + regionLength);
-        this.hitRegions[1] = new Region(this.hitRegions[0].right(), this.hitRegions[0].right() + regionLength);
-        this.hitRegions[2] = new Region(this.hitRegions[1].right(), this.hitRegions[1].right() + regionLength);
-        this.hitRegions[3] = new Region(this.hitRegions[2].right(), this.hitRegions[2].right() + regionLength);
-        this.hitRegions[4] = new Region(this.hitRegions[3].right(), this.hitRegions[3].right() + regionLength);
+        try {
+            //Divide the paddle to 5 regions, each region has equal length.
+            this.hitRegions = new Region[REGIONS_NUMBER];
+            double regionLength = getWidth() / REGIONS_NUMBER;
+            double startX = getUpperLeft().getX();
+            //Each regions second edge is the first edge of the previous one.
+            this.hitRegions[0] = new Region(startX, startX + regionLength);
+            this.hitRegions[1] = new Region(this.hitRegions[0].second(), this.hitRegions[0].second() + regionLength);
+            this.hitRegions[2] = new Region(this.hitRegions[1].second(), this.hitRegions[1].second() + regionLength);
+            this.hitRegions[3] = new Region(this.hitRegions[2].second(), this.hitRegions[2].second() + regionLength);
+            this.hitRegions[4] = new Region(this.hitRegions[3].second(), this.hitRegions[3].second() + regionLength);
+        } catch (Exception e) {
+            System.out.println("Error: Paddle's hit regions\n" + e.getMessage());
+        }
+
     }
 
     //Class methods.
@@ -86,8 +105,8 @@ public class Paddle extends Block implements Sprite, Collidable {
         double x = getUpperLeft().getX() - dX;
         // If the paddle will be passing the left border of the movingRegion,
         // set the next point (x coordinate) to be exactly the left border.
-        if (x < this.movingRegion.left()) {
-            x = this.movingRegion.left();
+        if (x < this.movingRegion.first()) {
+            x = this.movingRegion.first();
         }
         double y = getUpperLeft().getY();
         Point newUpperLeft = new Point(x, y);
@@ -105,8 +124,8 @@ public class Paddle extends Block implements Sprite, Collidable {
         double x = getUpperLeft().getX() + dX;
         // If the paddle will be passing the right border of the movingRegion,
         // set the next point (x coordinate) to be exactly the right border.
-        if (x > this.movingRegion.right() - getWidth()) {
-            x = this.movingRegion.right() - getWidth();
+        if (x > this.movingRegion.second() - getWidth()) {
+            x = this.movingRegion.second() - getWidth();
         }
         double y = getUpperLeft().getY();
         Point newUpperLeft = new Point(x, y);
@@ -138,7 +157,7 @@ public class Paddle extends Block implements Sprite, Collidable {
     @Override
     public void drawOn(DrawSurface surface) {
         //First FILL a rectangle with the paddle's color.
-        surface.setColor(this.color);
+        surface.setColor(getColor());
         int x1 = (int) getUpperLeft().getX();
         int y1 = (int) getUpperLeft().getY();
         int width = (int) getWidth();
@@ -157,17 +176,15 @@ public class Paddle extends Block implements Sprite, Collidable {
      * @return New Velocity based on where on the paddle the collision occurred.
      */
     @Override
-    public Velocity hit(Point collisionPoint, Velocity currentVelocity) {
+    public Velocity hit(Point collisionPoint, Velocity currentVelocity) throws RuntimeException {
 
         //Check if the y coordinate of the collision is on the top side of the paddle.
         if (collisionPoint.getY() == getUpperLeft().getY()) {
             //Set hit regions.
             setHitRegions();
-            //Calculate the current speed : The speed vector is the longest side of a triangular,
-            //we can get that by the square root of the sum of the squares of the other two sides,
-            //which here are the velocity's changes in the x axis and y axis.
-            double speed = Math.sqrt(Math.pow(currentVelocity.getDx(), 2) + Math.pow(currentVelocity.getDy(), 2));
 
+            //Get the speed in units of the ball.
+            double speed = currentVelocity.toSpeed();
             if (this.hitRegions[0].isContains(collisionPoint.getX())) {
                 //If the balls hits the first region, send the ball in 300 degrees.
                 return Velocity.fromAngleAndSpeed(300, speed);
@@ -181,27 +198,24 @@ public class Paddle extends Block implements Sprite, Collidable {
                 //If the balls hits the fourth region, send the ball in 30 degrees.
                 return Velocity.fromAngleAndSpeed(30, speed);
             } else if (this.hitRegions[4].isContains(collisionPoint.getX())
-                    || collisionPoint.getX() == this.hitRegions[4].left()) {
+                    || collisionPoint.getX() == this.hitRegions[4].second()) {
                 //If the balls hits the fifth region, send the ball in 60 degrees.
-                //
+                //Needs to check if the collision point's x coordinate is the right edge of the paddle,
+                //because of the way isContains is implemented.
                 return Velocity.fromAngleAndSpeed(60, speed);
             }
         }
 
         Line[] blockSides = getRectangleSides();
-        Line left = blockSides[1];//Left side
-		Line bottom = blockSides[2];//Bottom side
-        Line right = blockSides[3];//Right side
+        Line left = blockSides[1]; //Left side
+        Line right = blockSides[3]; //Right side
+        //If the ball hits the left or right sides of the paddle, change its velocity too so it wont get in it.
         if ((collisionPoint.getX() == left.start().getX()
                 || collisionPoint.getX() == right.start().getX())
                 && (collisionPoint.getY() > left.start().getY()
                 && collisionPoint.getY() < left.end().getY())) {
             return new Velocity(-currentVelocity.getDx(), -currentVelocity.getDy());
         }
-		/*if (collisionPoint.getY() == bottom.start().getY()) {
-			throw new Exception("The ball hit the bottom side of the paddle.");
-		}*/
-
 
         return currentVelocity;
     }

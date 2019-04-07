@@ -175,17 +175,25 @@ public class Line {
     public Point closestIntersectionToStartOfLine(Rectangle rect) {
 
         List<Point> intersectionPoints = rect.intersectionPoints(this);
+
+        //If the list of the intersection points is empty, return null.
         if (intersectionPoints.isEmpty()) {
             return null;
         }
 
+        //Set the smallest distance of the first point in the list to the start of the line,
+        //and the first point as the closest intersection.
         double smallest = intersectionPoints.get(0).distance(this.start);
         Point closestIntersection = intersectionPoints.get(0);
+
+        //foreach of the other points in the list (if there are any) compare it to the current smallest distance.
         for (int i = 1; i < intersectionPoints.size(); i++) {
             Point currentPoint = intersectionPoints.get(i);
             double currentDistance = currentPoint.distance(this.start);
 
             if (currentDistance < smallest) {
+                //If the current distance is smaller, set it as the smallet distance and the current point as the
+                //closest intersection point.
                 smallest = currentDistance;
                 closestIntersection = currentPoint;
             }

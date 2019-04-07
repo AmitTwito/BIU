@@ -152,14 +152,16 @@ public class Ball implements Sprite {
             Point collisionPoint = collisionInfo.collisionPoint();
             Collidable collidableObject = collisionInfo.collisionObject();
             //If the collisionInfo is not null, check if the distance between the ball's center,
-            //and the collision point is smaller or equal to the radius,
+            //and the collision point is smaller or equal to the speed of the ball - difference in number of units,
             //the ball "hits" the collidable object - set it's velocity as the new velocity from the hit function.
-            if (this.point.distance(collisionPoint) <= this.r) {
+            //By that we can achieve more pleasant looks that a part of the ball wont get inside a collidable.
+            double speed = this.velocity.toSpeed();
+            if (this.point.distance(collisionPoint) <= speed) {
                 this.velocity = collidableObject.hit(collisionPoint, this.velocity);
             }
         }
         //Even if the collisionInfo is null (if its not, the new point affected by the new velocity),
-        //move the ball on step.
+        //move the ball one step.
         this.point = this.velocity.applyToPoint(this.point);
     }
 
@@ -173,8 +175,11 @@ public class Ball implements Sprite {
 
     /**
      * Add this ball to the sprites collection of a given Game.
+     *
+     * @param g The game to add the ball to.
      */
     public void addToGame(Game g) {
         g.addSprite(this);
     }
+
 }

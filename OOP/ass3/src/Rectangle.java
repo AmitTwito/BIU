@@ -64,7 +64,6 @@ public class Rectangle {
         return this.height;
     }
 
-    // .
 
     /**
      * Returns the upper left point of the rectangle.
@@ -129,14 +128,16 @@ public class Rectangle {
     public Line[] getRectangleSides() {
         Line[] rectSidesArray = new Line[4];
 
+        //Set the remaining points of the rectangle.
         Point upperRight = new Point(this.upperLeft.getX() + this.width, this.upperLeft.getY());
         Point lowerLeft = new Point(this.upperLeft.getX(), this.upperLeft.getY() + this.height);
         Point lowerRight = new Point(lowerLeft.getX() + this.width, lowerLeft.getY());
 
-        rectSidesArray[0] = new Line(this.upperLeft, upperRight);//Top side
-        rectSidesArray[1] = new Line(this.upperLeft, lowerLeft);//Left side
-        rectSidesArray[2] = new Line(lowerLeft, lowerRight);//Bottom side
-        rectSidesArray[3] = new Line(upperRight, lowerRight);//Right side
+        //Build every side of the rectangle.
+        rectSidesArray[0] = new Line(this.upperLeft, upperRight); //Top side
+        rectSidesArray[1] = new Line(this.upperLeft, lowerLeft); //Left side
+        rectSidesArray[2] = new Line(lowerLeft, lowerRight); //Bottom side
+        rectSidesArray[3] = new Line(upperRight, lowerRight); //Right side
 
         return rectSidesArray;
     }

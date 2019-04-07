@@ -1,4 +1,5 @@
 import biuoop.DrawSurface;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +47,8 @@ public class SpriteCollection {
 
     /**
      * Draws the Sprites on a given DrawSurface.
+     *
+     * @param d DrawSurface to draw the sprite on
      */
     public void drawAllOn(DrawSurface d) {
         for (Sprite s : this.spritesList) {

@@ -1,9 +1,9 @@
 
 compile: bin
-	javac -cp src -d bin src/HelloWorld.java 
+	javac -cp src -d bin src/*.java 
 
-run1:
-	java -cp bin HelloWorld
+run:
+	java -cp bin Ass3Game
 
 bin:
 	mkdir bin

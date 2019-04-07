@@ -1,6 +1,8 @@
 import biuoop.DrawSurface;
 import biuoop.GUI;
 import biuoop.Sleeper;
+
+import javax.swing.JOptionPane;
 import java.awt.Color;
 import java.util.Random;
 
@@ -10,7 +12,6 @@ import java.util.Random;
  * A Game object handles a game: initializes and runs.
  * The game itself is a game where there are blocks on the screen, a ball and a movable paddle,
  * controlled by the player, and the ball can collied with the
- *
  *
  * @author Amit Twito
  * @since 30.3.19
@@ -76,8 +77,10 @@ public class Game {
 
     /**
      * Initializes a new Game.
+     *
+     * @throws RuntimeException when adding blocks to the screen.
      */
-    public void initialize() {
+    public void initialize() throws RuntimeException {
 
         this.gui = new GUI(GUI_TITLE, GUI_WIDTH, GUI_HEIGHT);
         DrawSurface d = this.gui.getDrawSurface();
@@ -107,22 +110,20 @@ public class Game {
         int ballPointY = (int) paddle.getUpperLeft().getY() - RADIUS;
 
         //Build the balls, and add them to the game.
-        Ball ball1 = new Ball(ballPointX , ballPointY, RADIUS, Color.WHITE, this.environment);
-        Velocity v = Velocity.fromAngleAndSpeed(0, 6);
+        Ball ball1 = new Ball(ballPointX, ballPointY, RADIUS, Color.WHITE, this.environment);
+        Velocity v = Velocity.fromAngleAndSpeed(0, 10);
         ball1.setVelocity(v);
         ball1.addToGame(this);
 
-        v = Velocity.fromAngleAndSpeed(0, 4);
-        Ball ball2 = new Ball(ballPointX , ballPointY, RADIUS - 3, Color.red, this.environment);
+        v = Velocity.fromAngleAndSpeed(0, 10);
+        Ball ball2 = new Ball(ballPointX, ballPointY, RADIUS - 3, Color.red, this.environment);
         ball2.setVelocity(v);
         ball2.addToGame(this);
 
     }
 
-    // Run the game -- start the animation loop.
-
     /**
-     * Runs the game.
+     * Runs the game, in each frame everything is drawn and being notified that time has passed.
      */
     public void run() {
         Sleeper sleeper = new Sleeper();
@@ -132,7 +133,7 @@ public class Game {
             long startTime = System.currentTimeMillis(); // timing
             DrawSurface d = gui.getDrawSurface();
 
-            //Background
+            //Add background to the gui, behind every sprite.
             Color blue = new Color(0, 0, 128);
             d.setColor(blue);
             d.fillRectangle(0, 0, GUI_WIDTH, GUI_HEIGHT);
@@ -152,14 +153,16 @@ public class Game {
 
     /**
      * Add the blocks to the game - border blocks and inner blocks.
+     *
+     * @throws Exception when a row of blocks of block a redrawn outside of the border blocks.
      */
-    private void addBlocksToGame() {
+    private void addBlocksToGame() throws RuntimeException {
 
         //Build the border blocks and add them to the game.
 
         //Top block.
         Point upperLeft = new Point(0, 0);
-        Rectangle topRec = new Rectangle(upperLeft, GUI_WIDTH,BORDER_SIDE);
+        Rectangle topRec = new Rectangle(upperLeft, GUI_WIDTH, BORDER_SIDE);
         (new Block(topRec, Color.GRAY, 1)).addToGame(this);
 
         //Left block.
@@ -178,37 +181,60 @@ public class Game {
         (new Block(rightRec, Color.GRAY, 1)).addToGame(this);
 
 
-        //Build the inner colored blocks and add them to the game.
+        //Build the inner colored blocks (random color) and add them to the game.
 
         //Build lines of same-color blocks by a y position on the screen.
         int blocksNumber = BLOCKS_NUMBER;
         double yPosition = 5 * BLOCK_HEIGHT;
-        //First set top row of blocks with 2 hit points.
-        addColoredBlocks(blocksNumber, generateRandomColor(), yPosition, 2);
-        for (int i = 2; i <= BLOCK_LINES_NUMBER; i++) {
-            blocksNumber = blocksNumber - 1;
-            yPosition = yPosition + BLOCK_HEIGHT;
-            addColoredBlocks(blocksNumber, generateRandomColor(), yPosition, 1);
+
+        try {
+            //First set top row of blocks with 2 hit points.
+            addColoredBlocks(blocksNumber, generateRandomColor(), yPosition, 2);
+            //Then for every other row (till BLOCK_LINES_NUMBER) add a row with 1 hit points.
+            for (int i = 2; i <= BLOCK_LINES_NUMBER; i++) {
+                //Starting from BLOCKS_NUMBER, each loop reduce the blocks number by one.
+                blocksNumber = blocksNumber - 1;
+                //Change the position of each row by adding a BLOCK_HEIGHT to the y position.
+                yPosition = yPosition + BLOCK_HEIGHT;
+                if (yPosition >= GUI_HEIGHT - BORDER_SIDE) {
+                    throw new Exception("A row of blocks have gotten outside of the bottom border block and will " +
+                            "not shown.");
+                }
+                //Add the row of blocks.
+                addColoredBlocks(blocksNumber, generateRandomColor(), yPosition, 1);
+            }
+        } catch (Exception e) {
+            //Pop a message window on the screen with the error.
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error",
+                    JOptionPane.INFORMATION_MESSAGE);
         }
+
     }
 
     /**
+     * Adds a row of colored blocks to the game.
      *
-     *
-     *
-     * @param blocksNumber
-     * @param color
-     * @param yPosition
-     * @param hitPoints
+     * @param blocksNumber The number of blocks in the row.
+     * @param color        The color of the row.
+     * @param yPosition    The y position of the row.
+     * @param hitPoints    The hit points of the row.s
+     * @throws Exception when blocks where drawn out of the left border block.
      */
-    private void addColoredBlocks(int blocksNumber, Color color, double yPosition, int hitPoints) {
+    private void addColoredBlocks(int blocksNumber, Color color, double yPosition, int hitPoints) throws Exception {
+        //Start the adding the blocks at point of startPositionX.
         double startPositionX = GUI_WIDTH - BORDER_SIDE - BLOCK_WIDTH;
         for (int i = 1; i <= blocksNumber; i++) {
+            //build the block.
             Point upperLeft = new Point(startPositionX, yPosition);
             Rectangle rec = new Rectangle(upperLeft, BLOCK_WIDTH, BLOCK_HEIGHT);
             Block block = new Block(rec, color, hitPoints);
             block.addToGame(this);
+            //Change the current startPositionX to startPositionX - BLOCK_WIDTH :
+            // the next block will be in the left to the previous block.
             startPositionX = startPositionX - BLOCK_WIDTH;
+            if (startPositionX < BORDER_SIDE) {
+                throw new Exception("Blocks have gotten out of the left border block and will not be shown.");
+            }
         }
     }
 
