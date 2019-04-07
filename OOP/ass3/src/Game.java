@@ -154,7 +154,7 @@ public class Game {
     /**
      * Add the blocks to the game - border blocks and inner blocks.
      *
-     * @throws Exception when a row of blocks of block a redrawn outside of the border blocks.
+     * @throws RuntimeException when a row of blocks of block a redrawn outside of the border blocks.
      */
     private void addBlocksToGame() throws RuntimeException {
 
@@ -197,8 +197,8 @@ public class Game {
                 //Change the position of each row by adding a BLOCK_HEIGHT to the y position.
                 yPosition = yPosition + BLOCK_HEIGHT;
                 if (yPosition >= GUI_HEIGHT - BORDER_SIDE) {
-                    throw new Exception("A row of blocks have gotten outside of the bottom border block and will " +
-                            "not shown.");
+                    throw new Exception("A row of blocks have gotten outside of the bottom border block and will "
+                            + "not shown.");
                 }
                 //Add the row of blocks.
                 addColoredBlocks(blocksNumber, generateRandomColor(), yPosition, 1);

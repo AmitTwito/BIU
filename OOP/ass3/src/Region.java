@@ -24,7 +24,7 @@ public class Region {
      * @param second Right edge of the Region.
      * @throws Exception if both edges are equal.
      */
-    public Region(double first, double second) throws Exception{
+    public Region(double first, double second) throws Exception {
         if (first == second) {
             throw new Exception("The region edges can't be equal.");
         }
@@ -55,7 +55,6 @@ public class Region {
      *
      * @param x The number to check if its between the left and the right edges of the region.
      * @return True if the region contains x, else false.
-     *
      */
     public boolean isContains(double x) {
 

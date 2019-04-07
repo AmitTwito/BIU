@@ -171,9 +171,12 @@ public class Paddle extends Block implements Sprite, Collidable {
 
 
     /**
+     * Returns a new Velocity based on where on the Paddle the collision occurred.
+     *
      * @param collisionPoint  The collision point of the ball.
      * @param currentVelocity The current velocity of the ball.
      * @return New Velocity based on where on the paddle the collision occurred.
+     * @throws RuntimeException if there was a problem with setting the hit regions.
      */
     @Override
     public Velocity hit(Point collisionPoint, Velocity currentVelocity) throws RuntimeException {
