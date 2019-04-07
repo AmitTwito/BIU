@@ -111,11 +111,11 @@ public class Game {
 
         //Build the balls, and add them to the game.
         Ball ball1 = new Ball(ballPointX, ballPointY, RADIUS, Color.WHITE, this.environment);
-        Velocity v = Velocity.fromAngleAndSpeed(0, 10);
+        Velocity v = Velocity.fromAngleAndSpeed(0, 4);
         ball1.setVelocity(v);
         ball1.addToGame(this);
 
-        v = Velocity.fromAngleAndSpeed(0, 10);
+        v = Velocity.fromAngleAndSpeed(0, 6);
         Ball ball2 = new Ball(ballPointX, ballPointY, RADIUS - 3, Color.red, this.environment);
         ball2.setVelocity(v);
         ball2.addToGame(this);
