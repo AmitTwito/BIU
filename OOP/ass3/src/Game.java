@@ -197,8 +197,8 @@ public class Game {
                 //Change the position of each row by adding a BLOCK_HEIGHT to the y position.
                 yPosition = yPosition + BLOCK_HEIGHT;
                 if (yPosition >= GUI_HEIGHT - BORDER_SIDE) {
-                    throw new Exception("A row of blocks have gotten outside of the bottom border block and will "
-                            + "not shown.");
+                    throw new RuntimeException("A row of blocks have gotten outside of the bottom border block "
+                             + "and will not shown.");
                 }
                 //Add the row of blocks.
                 addColoredBlocks(blocksNumber, generateRandomColor(), yPosition, 1);
@@ -218,9 +218,10 @@ public class Game {
      * @param color        The color of the row.
      * @param yPosition    The y position of the row.
      * @param hitPoints    The hit points of the row.s
-     * @throws Exception when blocks where drawn out of the left border block.
+     * @throws RuntimeException when blocks where drawn out of the left border block.
      */
-    private void addColoredBlocks(int blocksNumber, Color color, double yPosition, int hitPoints) throws Exception {
+    private void addColoredBlocks(int blocksNumber, Color color, double yPosition, int hitPoints)
+            throws RuntimeException {
         //Start the adding the blocks at point of startPositionX.
         double startPositionX = GUI_WIDTH - BORDER_SIDE - BLOCK_WIDTH;
         for (int i = 1; i <= blocksNumber; i++) {
@@ -233,7 +234,7 @@ public class Game {
             // the next block will be in the left to the previous block.
             startPositionX = startPositionX - BLOCK_WIDTH;
             if (startPositionX < BORDER_SIDE) {
-                throw new Exception("Blocks have gotten out of the left border block and will not be shown.");
+                throw new RuntimeException("Blocks have gotten out of the left border block and will not be shown.");
             }
         }
     }
