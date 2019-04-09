@@ -1,9 +1,11 @@
+# 208445866
+# twitoam
 
 compile: bin
-	javac -cp src -d bin src/*.java 
+	javac -cp biuoop-1.4.jar:src -d bin src/*.java 
 
 run:
-	java -cp bin Ass3Game
+	java -cp biuoop-1.4.jar:bin Ass3Game
 
 bin:
 	mkdir bin
