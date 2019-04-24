@@ -1,3 +1,5 @@
+import java.util.Map;
+
 public abstract class BaseExpression {
 
 	public static final String OPEN_BRACKETS = "(";
@@ -19,10 +21,16 @@ public abstract class BaseExpression {
 		this.expressionString = expressionString;
 	}
 
+	public Expression getExpression1() {
+		return expression1;
+	}
 
-	// abstract double evaluate();
+	public Expression getExpression2() {
+		return expression2;
+	}
+
+	protected abstract double evaluate() throws Exception;
+	//public abstract double evaluate(Map<String, Double> assignment) throws Exception;
 	public abstract String toString();
-	public abstract double calculate();
-
 
 }

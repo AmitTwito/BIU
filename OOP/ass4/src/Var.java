@@ -18,12 +18,22 @@ public class Var implements Expression  {
 	// is thrown.
 	public double evaluate(Map<String, Double> assignment) throws Exception {
 
-		return
+		for (Map.Entry<String, Double> entry : assignment.entrySet()) {
+			if (this.var.equals(entry.getKey())) {
+				return entry.getValue().doubleValue();
+			} else {
+				throw new Exception("The var that you tried to assign a number to, " +
+						"does not exist in the expression.");
+			}
+		}
+		return 0;
 	}
 
 	// A convenience method. Like the `evaluate(assignment)` method above,
 	// but uses an empty assignment.
-	double evaluate() throws Exception;
+	public double evaluate() throws Exception {
+		throw new Exception("Can't evaluate variable without assignment");
+	}
 
 	// Returns a list of the variables in the expression.
 	public List<String> getVariables() {
@@ -40,5 +50,12 @@ public class Var implements Expression  {
 	// Returns a new expression in which all occurrences of the variable
 	// var are replaced with the provided expression (Does not modify the
 	// current expression).
-	Expression assign(String var, Expression expression)
+	public Expression assign(String var, Expression expression) {
+
+		if(this.var.equals(var)) {
+			return expression;
+		} else {
+			return this;
+		}
+	}
 }
