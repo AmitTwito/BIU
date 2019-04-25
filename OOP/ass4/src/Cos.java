@@ -10,20 +10,10 @@ public class Cos extends UnaryExpression implements Expression {
 	}
 
 	public Cos(String var) {
-		super(var, EXPRESSION_STRING);
+		super(new Var(var), EXPRESSION_STRING);
 	}
 
 	public Cos(double num) {
-		super(num, EXPRESSION_STRING);
-	}
-
-	// Returns a new expression in which all occurrences of the variable
-	// var are replaced with the provided expression (Does not modify the
-	// current expression).
-	@Override
-	public Expression assign(String var, Expression expression) {
-
-		Expression exp = getExpression1().assign(var, expression);
-		return new Cos(exp);
+		super(new Num(num), EXPRESSION_STRING);
 	}
 }

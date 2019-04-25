@@ -1,5 +1,3 @@
-import java.util.List;
-import java.util.Map;
 
 public class Div extends BinaryExpression implements Expression {
 
@@ -39,16 +37,5 @@ public class Div extends BinaryExpression implements Expression {
 
 	public Div(Expression expression, String var) {
 		super(expression, new Var(var), EXPRESSION_STRING);
-	}
-
-	@Override
-	// Returns a new expression in which all occurrences of the variable
-	// var are replaced with the provided expression (Does not modify the
-	// current expression).
-	public Expression assign(String var, Expression expression) {
-
-		Expression exp1 = getExpression1().assign(var, expression);
-		Expression exp2 = getExpression2().assign(var, expression);
-		return new Div(exp1, exp2);
 	}
 }

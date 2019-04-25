@@ -37,4 +37,8 @@ public abstract class BaseExpression {
 	public abstract double evaluate(Map<String, Double> assignment) throws Exception;
 
 	public abstract String toString();
+
+	public abstract Expression assign(String var, Expression expression);
+
+	public abstract Expression simplify();
 }

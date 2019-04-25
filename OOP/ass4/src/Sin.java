@@ -1,5 +1,4 @@
-import java.util.List;
-import java.util.Map;
+
 
 public class Sin extends UnaryExpression implements Expression {
 
@@ -10,20 +9,10 @@ public class Sin extends UnaryExpression implements Expression {
 	}
 
 	public Sin(String var) {
-		super(var, EXPRESSION_STRING);
+		super(new Var(var), EXPRESSION_STRING);
 	}
 
 	public Sin(double num) {
-		super(num, EXPRESSION_STRING);
-	}
-
-	// Returns a new expression in which all occurrences of the variable
-	// var are replaced with the provided expression (Does not modify the
-	// current expression).
-	@Override
-	public Expression assign(String var, Expression expression) {
-
-		Expression exp = getExpression1().assign(var, expression);
-		return new Sin(exp);
+		super(new Num(num), EXPRESSION_STRING);
 	}
 }

@@ -1,5 +1,3 @@
-import java.util.List;
-import java.util.Map;
 
 public class Mult extends BinaryExpression implements Expression {
 
@@ -42,14 +40,4 @@ public class Mult extends BinaryExpression implements Expression {
 		super(expression, new Var(var), EXPRESSION_STRING);
 	}
 
-	// Returns a new expression in which all occurrences of the variable
-	// var are replaced with the provided expression (Does not modify the
-	// current expression).
-	@Override
-	public Expression assign(String var, Expression expression) {
-
-		Expression exp1 = getExpression1().assign(var, expression);
-		Expression exp2 = getExpression2().assign(var, expression);
-		return new Mult(exp1, exp2);
-	}
 }
