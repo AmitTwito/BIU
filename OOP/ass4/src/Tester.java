@@ -34,5 +34,8 @@ public class Tester {
 			System.out.println(e.getMessage());
 		}
 
+		Expression e = new Pow(new Var("x"), new Num(4));
+		Expression de = e2.differentiate("x");
+		System.out.println(de);
 	}
 }

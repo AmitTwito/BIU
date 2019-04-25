@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.Map;
 
 public abstract class BaseExpression {
@@ -5,32 +6,35 @@ public abstract class BaseExpression {
 	public static final String OPEN_BRACKETS = "(";
 	public static final String CLOSE_BRACKETS = ")";
 	public static final String SPACE = " ";
+	public static final String COMMA = ", ";
 
-	protected Expression expression1;
-	protected Expression expression2;
-	protected String expressionString;
+	private Expression expression1;
+	private Expression expression2;
 
-	public BaseExpression(Expression expression, String expressionString) {
+
+	public BaseExpression(Expression expression) {
 		this.expression1 = expression;
-		this.expressionString = expressionString;
 	}
 
-	public BaseExpression(Expression expression1, Expression expression2, String expressionString) {
+	public BaseExpression(Expression expression1, Expression expression2) {
 		this.expression1 = expression1;
 		this.expression2 = expression2;
-		this.expressionString = expressionString;
 	}
 
-	public Expression getExpression1() {
-		return expression1;
+	protected Expression getExpression1() {
+		return this.expression1;
+	}
+	protected Expression getExpression2() {
+		return this.expression2;
 	}
 
-	public Expression getExpression2() {
-		return expression2;
-	}
+	public abstract double evaluate() throws Exception;
 
-	protected abstract double evaluate() throws Exception;
-	//public abstract double evaluate(Map<String, Double> assignment) throws Exception;
+	public abstract Expression differentiate(String var);
+
+	public abstract List<String> getVariables();
+
+	public abstract double evaluate(Map<String, Double> assignment) throws Exception;
+
 	public abstract String toString();
-
 }
