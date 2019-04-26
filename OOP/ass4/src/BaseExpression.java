@@ -6,7 +6,7 @@ public abstract class BaseExpression {
 	public static final String OPEN_BRACKETS = "(";
 	public static final String CLOSE_BRACKETS = ")";
 	public static final String SPACE = " ";
-	public static final String COMMA = ", ";
+	public static final String COMMA_WITH_SPACE = ", ";
 
 	private Expression expression1;
 	private Expression expression2;
@@ -24,9 +24,11 @@ public abstract class BaseExpression {
 	protected Expression getExpression1() {
 		return this.expression1;
 	}
+
 	protected Expression getExpression2() {
 		return this.expression2;
 	}
+
 
 	public abstract double evaluate() throws Exception;
 

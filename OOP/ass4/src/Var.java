@@ -78,4 +78,5 @@ public class Var implements Expression {
 	public Expression simplify() {
 		return new Var(this.var);
 	}
+
 }

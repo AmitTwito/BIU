@@ -14,7 +14,12 @@ public class UnaryExpression extends BaseExpression {
 
 	@Override
 	public String toString() {
-		return this.expressionString + OPEN_BRACKETS + getExpression1() + CLOSE_BRACKETS;
+		if (this.expressionString.equals(Sin.EXPRESSION_STRING)
+				||this.expressionString.equals(Cos.EXPRESSION_STRING)) {
+			return this.expressionString + OPEN_BRACKETS + getExpression1() + CLOSE_BRACKETS;
+		} else {
+			return this.expressionString + getExpression1();
+		}
 	}
 
 	@Override
@@ -65,7 +70,18 @@ public class UnaryExpression extends BaseExpression {
 
 	@Override
 	public Expression simplify(){
-		return null;
+		try {
+			double arg = getExpression1().evaluate();
+			return new Num(arg);
+		}catch (Exception e){
+			if (this.expressionString.equals(Sin.EXPRESSION_STRING)) {
+				return new Sin(getExpression1().simplify());
+			} else if (this.expressionString.equals(Cos.EXPRESSION_STRING)) {
+				return new Cos(getExpression1().simplify());
+			} else {
+				return new Cos(getExpression1().simplify());
+			}
+		}
 	}
 
 	private double calculateByMathFunction() throws Exception {
