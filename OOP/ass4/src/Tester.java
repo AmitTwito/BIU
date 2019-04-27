@@ -3,7 +3,6 @@ import java.util.TreeMap;
 
 public class Tester {
 	public static void main(String[] args) {
-		Expression e4 = new Div(1,0);
 		Expression e2 = new Pow(new Plus(new Var("x"), new Var("y")), new Num(2));
 
 		String s = e2.toString();
@@ -53,5 +52,46 @@ public class Tester {
 // ((e ^ x) * ((0.0 * (x / e)) + (1.0 * log(e, e))))
 		System.out.println(e3.differentiate("x").simplify());
 // (e ^ x)
+
+		Expression e4 = new Sin(new Cos(180));
+		try {
+			System.out.println(e4.simplify());
+		}
+		catch (Exception ex){
+
+		}
+
+		Expression e5 = new Sin(
+				new Pow(
+						new Mult(
+								new Plus(
+										new Mult(new Num(2), new Var("x")),
+										new Var("y")),
+								new Num(4)),
+						new Var("x")));
+		System.out.println(e5);
+
+		System.out.println(e5.simplify());
+		System.out.println(e5.differentiate("x").simplify().simplify());
+		for (String var : e5.getVariables()) {
+			System.out.println(var);
+
+		}
+		Expression e6 = new Pow(
+				new Mult(
+						new Plus(
+								new Mult(new Num(2), new Var("x")),
+								new Var("y")),
+						new Num(4)),
+				new Var("x"));
+
+		System.out.println(e6.simplify());
+		System.out.println(e6.differentiate("x"));
+		Expression e8 = e6.differentiate("X");
+
+		System.out.println(e8.simplify());
+
+		System.out.println((new Mult(1,new Plus(new Mult("x", 0) , 2))).simplify().simplify());
+
 	}
 }

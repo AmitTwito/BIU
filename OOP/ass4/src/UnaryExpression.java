@@ -15,7 +15,7 @@ public class UnaryExpression extends BaseExpression {
 	@Override
 	public String toString() {
 		if (this.expressionString.equals(Sin.EXPRESSION_STRING)
-				||this.expressionString.equals(Cos.EXPRESSION_STRING)) {
+				|| this.expressionString.equals(Cos.EXPRESSION_STRING)) {
 			return this.expressionString + OPEN_BRACKETS + getExpression1() + CLOSE_BRACKETS;
 		} else {
 			return this.expressionString + getExpression1();
@@ -44,8 +44,10 @@ public class UnaryExpression extends BaseExpression {
 
 	@Override
 	public Expression differentiate(String var) {
-		return differentiateByMathFunction(var);
-	}
+		if(!this.getVariables().contains(var)){
+			return new Num(0);
+		}
+		return differentiateByMathFunction(var);	}
 
 	@Override
 	public List<String> getVariables() {
@@ -69,17 +71,17 @@ public class UnaryExpression extends BaseExpression {
 	}
 
 	@Override
-	public Expression simplify(){
+	public Expression simplify() {
 		try {
 			double arg = getExpression1().evaluate();
 			return new Num(arg);
-		}catch (Exception e){
+		} catch (Exception e) {
 			if (this.expressionString.equals(Sin.EXPRESSION_STRING)) {
 				return new Sin(getExpression1().simplify());
 			} else if (this.expressionString.equals(Cos.EXPRESSION_STRING)) {
 				return new Cos(getExpression1().simplify());
 			} else {
-				return new Cos(getExpression1().simplify());
+				return new Neg(getExpression1().simplify());
 			}
 		}
 	}
@@ -100,7 +102,7 @@ public class UnaryExpression extends BaseExpression {
 		if (this.expressionString.equals(Cos.EXPRESSION_STRING)) {
 			Expression negExp = new Neg(new Sin(getExpression1()));
 			return new Mult(negExp, difExp);
-		} else if (this.expressionString.equals(Minus.EXPRESSION_STRING)) {
+		} else if (this.expressionString.equals(Sin.EXPRESSION_STRING)) {
 			Expression cosExp = new Cos(getExpression1());
 			return new Mult(cosExp, difExp);
 		} else {

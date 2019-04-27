@@ -5,7 +5,7 @@ import java.util.Map;
 public class Num implements Expression {
 
     public static final String E_CONST_STRING = "e";
-    public static final String PI_CONST_NUMBER = "Pi";
+    public static final String PI_CONST_STRING = "Pi";
 
     private double num;
 
@@ -16,7 +16,7 @@ public class Num implements Expression {
     public Num(String number) {
         if (number.equals(E_CONST_STRING)) {
             this.num = Math.E;
-        } else if (number.equals(PI_CONST_NUMBER)) {
+        } else if (number.equals(PI_CONST_STRING)) {
             this.num = Math.PI;
         } else {
             this.num = Double.parseDouble(number);
@@ -54,7 +54,7 @@ public class Num implements Expression {
         } else if (this.num == Math.E) {
             return E_CONST_STRING;
         } else if (this.num == Math.PI) {
-            return PI_CONST_NUMBER;
+            return PI_CONST_STRING;
         } else {
             return "" + this.num;
         }

@@ -31,7 +31,5 @@ public interface Expression {
 	// Returned a simplified version of the current expression.
 	Expression simplify();
 
-	//boolean isVariable();
-	//boolean isNumber();
 }
 

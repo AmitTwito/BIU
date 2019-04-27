@@ -13,9 +13,6 @@ public class Div extends BinaryExpression implements Expression {
 
 	public Div(String var, double num) {
 		super(new Var(var), new Num(num), EXPRESSION_STRING);
-		if(num == 0) {
-			throw new IllegalArgumentException("Cannot divide by zero.");
-		}
 	}
 
 	public Div(double num, String var) {
@@ -24,9 +21,6 @@ public class Div extends BinaryExpression implements Expression {
 
 	public Div(double num1, double num2) {
 		super(new Num(num1), new Num(num2), EXPRESSION_STRING);
-		if(num2 == 0) {
-			throw new IllegalArgumentException("Cannot divide by zero.");
-		}
 	}
 
 	public Div(double num, Expression expression) {

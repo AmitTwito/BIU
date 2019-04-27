@@ -9,6 +9,33 @@ public class BinaryExpression extends BaseExpression {
 
 	public BinaryExpression(Expression expression1, Expression expression2, String expressionString) {
 		super(expression1, expression2);
+
+		if (expressionString.equals(Div.EXPRESSION_STRING)) {
+			try {
+				if (getExpression2().evaluate() == 0) {
+					throw new IllegalArgumentException("Cannot divide by zero.");
+				}
+			} catch (Exception e) {
+
+			}
+		}
+		if (expressionString.equals(Log.EXPRESSION_STRING)) {
+			try {
+				if (getExpression1().evaluate() < 0) {
+					throw new IllegalArgumentException("Cannot calculate log with a negative base.");
+				}
+			} catch (Exception e) {
+
+			}
+
+			try {
+				if (getExpression2().evaluate() < 0) {
+					throw new IllegalArgumentException("Cannot calculate log of a negative number.");
+				}
+			} catch (Exception e) {
+
+			}
+		}
 		this.expressionString = expressionString;
 	}
 
@@ -16,10 +43,32 @@ public class BinaryExpression extends BaseExpression {
 	public String toString() {
 		if (this.expressionString.equals(Plus.EXPRESSION_STRING)
 				|| this.expressionString.equals(Minus.EXPRESSION_STRING)
-				|| this.expressionString.equals(Mult.EXPRESSION_STRING)
 				|| this.expressionString.equals(Div.EXPRESSION_STRING)) {
 			return OPEN_BRACKETS + getExpression1() + SPACE
 					+ this.expressionString + SPACE + getExpression2() + CLOSE_BRACKETS;
+		} else if (this.expressionString.equals(Mult.EXPRESSION_STRING)) {
+			if (tryParseDouble(getExpression1().toString())
+					&& !tryParseDouble(getExpression2().toString())) {
+				if (this.getVariables().contains(getExpression2().toString())) {
+					return getExpression1() + "" + getExpression2();
+				} else {
+					return OPEN_BRACKETS + getExpression1() + SPACE
+							+ this.expressionString + SPACE + getExpression2() + CLOSE_BRACKETS;
+				}
+			}
+			if (tryParseDouble(getExpression2().toString())
+					&& !tryParseDouble(getExpression1().toString())) {
+				if (this.getVariables().contains(getExpression1().toString())) {
+					return getExpression2() + "" + getExpression1();
+				} else {
+					return OPEN_BRACKETS + getExpression2() + SPACE
+							+ this.expressionString + SPACE + getExpression1() + CLOSE_BRACKETS;
+				}
+			}
+
+			return OPEN_BRACKETS + getExpression1() + SPACE
+					+ this.expressionString + SPACE + getExpression2() + CLOSE_BRACKETS;
+
 		} else if (this.expressionString.equals(Pow.EXPRESSION_STRING)) {
 			return getExpression1() + this.expressionString + getExpression2();
 		} else {
@@ -36,7 +85,9 @@ public class BinaryExpression extends BaseExpression {
 		for (Map.Entry<String, Double> entry : assignment.entrySet()) {
 			Expression expression = new Num(entry.getValue());
 			if (!vars.contains(entry.getKey())) {
-				throw new Exception("The var " + entry.getKey() + " does not exist in this expression.");
+				throw new Exception("Can't assign " + entry.getValue()
+						+ " to var " + entry.getKey()
+						+ " because it does not exist in this expression.");
 			}
 			exp1 = exp1.assign(entry.getKey(), expression);
 			exp2 = exp2.assign(entry.getKey(), expression);
@@ -51,6 +102,9 @@ public class BinaryExpression extends BaseExpression {
 
 	@Override
 	public Expression differentiate(String var) {
+		if (!this.getVariables().contains(var)) {
+			return new Num(0);
+		}
 		return differentiateByMathFunction(var);
 	}
 
@@ -80,94 +134,99 @@ public class BinaryExpression extends BaseExpression {
 		if (tryParseDouble(this.toString())) {
 			return new Num(Double.parseDouble(this.toString()));
 		}
-		if (this.expressionString.equals(Plus.EXPRESSION_STRING)) {
-			try {
-				if (tryParseDouble(getExpression1().toString())) {
-					if (Double.parseDouble(getExpression1().toString()) == 0) {
-						return getExpression2().simplify();
+		try {
+			return new Num(this.evaluate());
+		} catch (Exception e) {
+			Expression simpleExp1 = getExpression1().simplify();
+			Expression simpleExp2 = getExpression2().simplify();
+			if (this.expressionString.equals(Plus.EXPRESSION_STRING)) {
+				if (tryParseDouble(simpleExp1.toString())) {
+					if (parseDouble(simpleExp1.toString()) == 0) {
+						return simpleExp2;
 					}
 				}
-				if (tryParseDouble(getExpression2().toString())) {
-					if (Double.parseDouble(getExpression2().toString()) == 0) {
-						return getExpression1().simplify();
+				if (tryParseDouble(simpleExp2.toString())) {
+					if (parseDouble(simpleExp2.toString()) == 0) {
+						return simpleExp1;
 					}
 				}
-				return new Num(this.evaluate());
-			} catch (Exception e) {
-				return new Plus(getExpression1().simplify(), getExpression2().simplify());
-			}
-		} else if (this.expressionString.equals(Minus.EXPRESSION_STRING)) {
+				return new Plus(simpleExp1, simpleExp2);
 
-			if (getExpression1().toString().equals(getExpression2().toString())) {
-				return new Num(0);
-			}
-			try {
-				if (tryParseDouble(getExpression1().toString())) {
-					if (Double.parseDouble(getExpression1().toString()) == 0) {
-						return new Neg(getExpression2().simplify());
+			} else if (this.expressionString.equals(Minus.EXPRESSION_STRING)) {
+
+				if (getExpression1().toString().equals(getExpression2().toString())) {
+					return new Num(0);
+				}
+				if (tryParseDouble(simpleExp1.toString())) {
+					if (parseDouble(simpleExp1.toString()) == 0) {
+						return new Neg(simpleExp2);
 					}
 				}
-				if (tryParseDouble(getExpression2().toString())) {
-					if (Double.parseDouble(getExpression2().toString()) == 0) {
-						return getExpression1().simplify();
+				if (tryParseDouble(simpleExp2.toString())) {
+					if (parseDouble(simpleExp2.toString()) == 0) {
+						return simpleExp1;
 					}
 				}
-				return new Num(this.evaluate());
-			} catch (Exception e) {
-				return new Minus(getExpression1().simplify(), getExpression2().simplify());
-			}
-		} else if (this.expressionString.equals(Mult.EXPRESSION_STRING)) {
-			try {
-				if (tryParseDouble(getExpression1().toString())) {
-					if (Double.parseDouble(getExpression1().toString()) == 1) {
-						return getExpression2().simplify();
+
+				return new Minus(simpleExp1, simpleExp2);
+
+			} else if (this.expressionString.equals(Mult.EXPRESSION_STRING)) {
+				if (tryParseDouble(simpleExp1.toString())) {
+					if (parseDouble(simpleExp1.toString()) == 1) {
+						return simpleExp2;
 					}
 				}
-				if (tryParseDouble(getExpression2().toString())) {
-					if (Double.parseDouble(getExpression2().toString()) == 1) {
-						return getExpression1().simplify();
+				if (tryParseDouble(simpleExp2.toString())) {
+					if (parseDouble(simpleExp2.toString()) == 1) {
+						return simpleExp1;
 					}
 				}
-				return new Num(this.evaluate());
-			} catch (Exception e) {
-				return new Mult(getExpression1().simplify(), getExpression2().simplify());
-			}
-		} else if (this.expressionString.equals(Div.EXPRESSION_STRING)) {
-			if (getExpression1().toString().equals(getExpression2().toString())) {
-				return new Num(1);
-			}
-			try {
-				if (tryParseDouble(getExpression2().toString())) {
-					if (Double.parseDouble(getExpression2().toString()) == 1) {
-						return getExpression1().simplify();
+				if (tryParseDouble(simpleExp1.toString())) {
+					if (Double.parseDouble(simpleExp1.toString()) == 0) {
+						return new Num(0);
 					}
 				}
-				return new Num(this.evaluate());
-			} catch (Exception e) {
-				return new Div(getExpression1().simplify(), getExpression2().simplify());
-			}
-		} else if (this.expressionString.equals(Pow.EXPRESSION_STRING)) {
-			try {
-				if (tryParseDouble(getExpression2().toString())) {
-					if (Double.parseDouble(getExpression2().toString()) == 0) {
+				if (tryParseDouble(simpleExp2.toString())) {
+					if (parseDouble(simpleExp2.toString()) == 0) {
+						return new Num(0);
+					}
+				}
+				return new Mult(simpleExp1, simpleExp2);
+			} else if (this.expressionString.equals(Div.EXPRESSION_STRING)) {
+				if (getExpression1().toString().equals(getExpression2().toString())) {
+					return new Num(1);
+				}
+				if (tryParseDouble(simpleExp2.toString())) {
+					if (parseDouble(simpleExp2.toString()) == 1) {
+						return simpleExp1;
+					}
+				}
+				if (tryParseDouble(simpleExp1.toString())) {
+					if (parseDouble(simpleExp1.toString()) == 0) {
+						return new Num(0);
+					}
+				}
+				return new Div(simpleExp1, simpleExp2);
+			} else if (this.expressionString.equals(Pow.EXPRESSION_STRING)) {
+				if (tryParseDouble(simpleExp2.toString())) {
+					if (parseDouble(simpleExp2.toString()) == 0) {
 						return new Num(1);
 					}
-					if (Double.parseDouble(getExpression2().toString()) == 1) {
-						return getExpression1().simplify();
+					if (Double.parseDouble(simpleExp2.toString()) == 1) {
+						return simpleExp1;
 					}
 				}
-				return new Num(this.evaluate());
-			} catch (Exception e) {
-				return new Pow(getExpression1().simplify(), getExpression2().simplify());
-			}
-		} else {
-			if (getExpression1().toString().equals(getExpression2().toString())) {
-				return new Num(1);
-			}
-			try {
-				return new Num(this.evaluate());
-			} catch (Exception e) {
-				return new Log(getExpression1().simplify(), getExpression2().simplify());
+				return new Pow(simpleExp1, simpleExp2);
+			} else {
+				if (getExpression1().toString().equals(getExpression2().toString())) {
+					return new Num(1);
+				}
+				if (tryParseDouble(simpleExp2.toString())) {
+					if (parseDouble(simpleExp2.toString()) == 0) {
+						return new Num(1);
+					}
+				}
+				return new Log(simpleExp1, simpleExp2);
 			}
 		}
 	}
@@ -191,52 +250,35 @@ public class BinaryExpression extends BaseExpression {
 	}
 
 	private Expression differentiateByMathFunction(String var) {
-		Expression difExp1 = getExpression1().differentiate(var);
-		Expression difExp2 = getExpression2().differentiate(var);
 		if (this.expressionString.equals(Plus.EXPRESSION_STRING)) {
-			return new Plus(difExp1, difExp2);
+			return new Plus(getExpression1().differentiate(var), getExpression2().differentiate(var));
 		} else if (this.expressionString.equals(Minus.EXPRESSION_STRING)) {
-			return new Minus(difExp1, difExp2);
+			return new Minus(getExpression1().differentiate(var), getExpression2().differentiate(var));
 		} else if (this.expressionString.equals(Mult.EXPRESSION_STRING)) {
-			Expression multExp1 = new Mult(difExp1, getExpression2());
-			Expression multExp2 = new Mult(getExpression1(), difExp2);
+			Expression multExp1 = new Mult(getExpression1().differentiate(var), getExpression2());
+			Expression multExp2 = new Mult(getExpression1(), getExpression2().differentiate(var));
 			return new Plus(multExp1, multExp2);
 		} else if (this.expressionString.equals(Div.EXPRESSION_STRING)) {
-			Expression multExp1 = new Mult(difExp1, getExpression2());
-			Expression multExp2 = new Mult(getExpression1(), difExp2);
+			Expression multExp1 = new Mult(getExpression1().differentiate(var), getExpression2());
+			Expression multExp2 = new Mult(getExpression1(), getExpression2().differentiate(var));
 			Expression minusExp = new Minus(multExp1, multExp2);
 			Expression powExp = new Pow(getExpression2(), 2);
 			Expression divExp = new Div(minusExp, powExp);
 			return divExp;
 		} else if (this.expressionString.equals(Pow.EXPRESSION_STRING)) {
-			try {
-				double powForDif = getExpression2().evaluate();
-				if (powForDif == 1) {
-					return difExp1;
-				}
-				if (powForDif == 0) {
-					return new Num(0);
-				}
-				Expression powExp = new Pow(getExpression1(), powForDif - 1);
-				Expression multExp = new Mult(powForDif, powExp);
-				return new Pow(multExp, difExp1);
-			} catch (Exception e) {
-				//e^x ' = e^x * (x') * log(e,e)
-				Expression powExp = new Pow(getExpression1(), getExpression2());
-				Expression multExp = new Mult(powExp, difExp2);
-				return new Mult(multExp, new Log("e", getExpression1()));
-				//System.out.println("At differentiate of Pow function: " + e.getMessage());
-			}
+
+			Expression originalExp = new Pow(getExpression1(), getExpression2());
+			Expression divExp = new Div(getExpression2(), getExpression1());
+			Expression multExp1 = new Mult(getExpression1().differentiate(var), divExp);
+			Expression multExp2 = new Mult(getExpression2().differentiate(var),
+					new Log(new Num("e"), getExpression1()));
+			Expression plusExp = new Plus(multExp1, multExp2);
+			return new Mult(originalExp, plusExp);
 		} else {
-			try {
-				double base = getExpression1().evaluate();
-				Expression divExp = new Div(1, new Mult(getExpression2(), new Log(new Num("e"), base)));
-				Expression multExp = new Mult(divExp, difExp2);
-				return multExp;
-			} catch (Exception e) {
-				System.out.println("At differentiate of Log function: " + e.getMessage());
-				return null;
-			}
+
+			Expression topLogExp = new Log(new Num("e"), getExpression2());
+			Expression bottomLogExp = new Log(new Num("e"), getExpression1());
+			return new Div(topLogExp, bottomLogExp).differentiate(var);
 		}
 	}
 
@@ -260,12 +302,24 @@ public class BinaryExpression extends BaseExpression {
 	}
 
 	private boolean tryParseDouble(String str) {
-
 		try {
 			Double.parseDouble(str);
 			return true;
 		} catch (Exception e) {
+			if (str.equals(Num.E_CONST_STRING) || str.equals(Num.PI_CONST_STRING)) {
+				return true;
+			}
 			return false;
 		}
+	}
+
+	private double parseDouble(String str) {
+		if (str.equals(Num.E_CONST_STRING)) {
+			return Math.E;
+		}
+		if (str.equals(Num.PI_CONST_STRING)) {
+			return Math.PI;
+		}
+		return Double.parseDouble(str);
 	}
 }
