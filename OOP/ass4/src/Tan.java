@@ -1,37 +1,37 @@
-public class Cos extends UnaryExpression implements Expression {
+public class Tan extends UnaryExpression implements Expression{
 
 	public static final String EXPRESSION_STRING = "Cos";
 
-	public Cos(Expression expression) {
+	public Tan(Expression expression) {
 		super(expression, EXPRESSION_STRING);
 	}
 
-	public Cos(String var) {
+	public Tan(String var) {
 		super(new Var(var), EXPRESSION_STRING);
 	}
 
-	public Cos(double num) {
+	public Tan(double num) {
 		super(new Num(num), EXPRESSION_STRING);
 	}
 
 
 	public double evaluate() throws Exception {
 		double value = getExpression1().evaluate();
-		return Math.cos(value);
+		return Math.tan(value);
 	}
 
 	public Expression assign(String var, Expression expression) {
 
 		Expression newExpression = getExpression1().assign(var, expression);
-		return new Cos(newExpression);
+		return new Tan(newExpression);
 	}
 	public Expression differentiate(String var) {
 		if (!this.getVariables().contains(var)) {
 			return new Num(0);
 		}
-		Expression difExp = getExpression1().differentiate(var);
-		Expression negExp = new Neg(new Sin(getExpression1()));
-		return new Mult(negExp, difExp);
+
+		Expression innerDiff = getExpression1().differentiate();
+		return new Div(1, new Pow(new Cos(get),2));
 	}
 
 	public Expression simplify() {
@@ -39,7 +39,7 @@ public class Cos extends UnaryExpression implements Expression {
 			double arg = getExpression1().evaluate();
 			return new Num(arg);
 		} catch (Exception e) {
-			return new Cos(getExpression1().simplify());
+			return new Tan(getExpression1().simplify());
 		}
 	}
 }

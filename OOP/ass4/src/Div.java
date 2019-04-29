@@ -1,3 +1,5 @@
+import java.util.List;
+import java.util.Map;
 
 public class Div extends BinaryExpression implements Expression {
 
@@ -13,6 +15,9 @@ public class Div extends BinaryExpression implements Expression {
 
 	public Div(String var, double num) {
 		super(new Var(var), new Num(num), EXPRESSION_STRING);
+		if (num == 0) {
+			throw new IllegalArgumentException("Cannot divide by zero.");
+		}
 	}
 
 	public Div(double num, String var) {
@@ -37,5 +42,75 @@ public class Div extends BinaryExpression implements Expression {
 
 	public Div(Expression expression, String var) {
 		super(expression, new Var(var), EXPRESSION_STRING);
+	}
+
+	public double evaluate(Map<String, Double> assignment) throws Exception {
+		Expression exp1 = getExpression1();
+		Expression exp2 = getExpression2();
+		List<String> vars = getVariables();
+		for (Map.Entry<String, Double> entry : assignment.entrySet()) {
+			Expression expression = new Num(entry.getValue());
+			if (!vars.contains(entry.getKey())) {
+				throw new Exception("Can't assign " + entry.getValue()
+						+ " to var " + entry.getKey()
+						+ " because it does not exist in this expression.");
+			}
+			exp1 = exp1.assign(entry.getKey(), expression);
+			exp2 = exp2.assign(entry.getKey(), expression);
+		}
+		return new Div(exp1, exp2).evaluate();
+	}
+
+	public double evaluate() throws Exception {
+		if (getExpression2().evaluate() == 0) {
+			throw new ArithmeticException("An error occurred on dividing calculation: "
+					+ "can't divide by zero.");
+		}
+		return getExpression1().evaluate() / getExpression2().evaluate();
+	}
+
+	public Expression differentiate(String var) {
+		Expression multExp1 = new Mult(getExpression1().differentiate(var), getExpression2());
+		Expression multExp2 = new Mult(getExpression1(), getExpression2().differentiate(var));
+		Expression minusExp = new Minus(multExp1, multExp2);
+		Expression powExp = new Pow(getExpression2(), 2);
+		Expression divExp = new Div(minusExp, powExp);
+		return divExp;
+	}
+
+	public Expression assign(String var, Expression expression) {
+
+		Expression exp1 = getExpression1().assign(var, expression);
+		Expression exp2 = getExpression2().assign(var, expression);
+		return new Div(exp1, exp2);
+
+	}
+
+	public Expression simplify() {
+		Expression simpleExp1 = getExpression1().simplify();
+		Expression simpleExp2 = getExpression2().simplify();
+
+		if (canParseDouble(this.toString())) {
+			return new Num(parseDouble(this.toString()));
+		}
+
+		if (getExpression1().toString().equals(getExpression2().toString())) {
+			return new Num(1);
+		}
+		if (canParseDouble(simpleExp2.toString())) {
+			if (parseDouble(simpleExp2.toString()) == 1) {
+				return simpleExp1;
+			}
+		}
+		if (canParseDouble(simpleExp1.toString())) {
+			if (parseDouble(simpleExp1.toString()) == 0) {
+				return new Num(0);
+			}
+		}
+		try {
+			return new Num(simpleExp1.evaluate() / simpleExp2.evaluate());
+		} catch (Exception e) {
+			return new Div(simpleExp1, simpleExp2);
+		}
 	}
 }

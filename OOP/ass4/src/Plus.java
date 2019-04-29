@@ -41,4 +41,78 @@ public class Plus extends BinaryExpression implements Expression {
 		super(expression, new Var(var), EXPRESSION_STRING);
 	}
 
+
+	public double evaluate(Map<String, Double> assignment) throws Exception {
+		Expression exp1 = getExpression1();
+		Expression exp2 = getExpression2();
+		List<String> vars = getVariables();
+		for (Map.Entry<String, Double> entry : assignment.entrySet()) {
+			Expression expression = new Num(entry.getValue());
+			if (!vars.contains(entry.getKey())) {
+				throw new Exception("Can't assign " + entry.getValue()
+						+ " to var " + entry.getKey()
+						+ " because it does not exist in this expression.");
+			}
+			exp1 = exp1.assign(entry.getKey(), expression);
+			exp2 = exp2.assign(entry.getKey(), expression);
+		}
+		return new Plus(exp1, exp2).evaluate();
+	}
+
+	public double evaluate() throws Exception {
+
+		return getExpression1().evaluate() + getExpression2().evaluate();
+	}
+
+	public Expression differentiate(String var) {
+		return new Plus(getExpression1().differentiate(var), getExpression2().differentiate(var));
+
+	}
+
+	public Expression assign(String var, Expression expression) {
+
+		Expression exp1 = getExpression1().assign(var, expression);
+		Expression exp2 = getExpression2().assign(var, expression);
+		return new Plus(exp1, exp2);
+
+	}
+
+	public Expression simplify() {
+		Expression simpleExp1 = getExpression1().simplify();
+		Expression simpleExp2 = getExpression2().simplify();
+
+		if (canParseDouble(this.toString())) {
+			return new Num(parseDouble(this.toString()));
+		}
+
+		if (canParseDouble(simpleExp1.toString())) {
+			if (parseDouble(simpleExp1.toString()) == 0) {
+				return simpleExp2;
+			}
+		}
+		if (canParseDouble(simpleExp2.toString())) {
+			if (parseDouble(simpleExp2.toString()) == 0) {
+				return simpleExp1;
+			}
+		}
+		try {
+			return new Num(simpleExp1.evaluate() + simpleExp2.evaluate());
+		} catch (Exception e) {
+			return new Plus(simpleExp1, simpleExp2);
+
+		}
+	}
+
+	public Expression advancedSimplify() {
+		Expression simpleEx = simplify();
+		if (simpleEx instanceof Plus) {
+			Plus plus = (Plus) simpleEx;
+			if (plus.getExpression2() instanceof Mult && plus.getExpression1() instanceof Num) {
+				simpleEx = new Plus(plus.getExpression1(), plus.getExpression2());
+			}
+		}
+
+
+		return simpleEx;
+	}
 }
