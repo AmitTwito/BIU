@@ -30,5 +30,7 @@ public interface Expression {
 
 	// Returned a simplified version of the current expression.
 	Expression simplify();
+
+	Expression advancedSimplify();
 }
 

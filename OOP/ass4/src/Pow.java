@@ -1,3 +1,5 @@
+import org.omg.PortableServer.POA;
+
 import java.util.List;
 import java.util.Map;
 
@@ -113,4 +115,17 @@ public class Pow extends BinaryExpression implements Expression {
 		}
 	}
 
+	@Override
+	public Expression advancedSimplify() {
+
+		Expression advSimpleEx1 = getExpression1().advancedSimplify();
+		Expression advSimpleEx2 = getExpression1().advancedSimplify();
+
+		if(advSimpleEx1 instanceof  Pow) {
+			Pow innerPow = (Pow)advSimpleEx1;
+			return new Pow(innerPow.getExpression1(), new Mult(innerPow.getExpression2(), getExpression2()));
+		}
+
+		return new Pow(advSimpleEx1, advSimpleEx2).simplify();
+	}
 }

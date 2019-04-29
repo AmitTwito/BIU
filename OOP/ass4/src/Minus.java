@@ -105,4 +105,14 @@ public class Minus extends BinaryExpression implements Expression {
 			return new Minus(simpleExp1, simpleExp2);
 		}
 	}
+
+	@Override
+	public Expression advancedSimplify() {
+
+		Expression advSimpleEx1 = getExpression1().advancedSimplify();
+		Expression advSimpleEx2 = getExpression1().advancedSimplify();
+
+
+		return new Log(advSimpleEx1, advSimpleEx2);
+	}
 }

@@ -30,8 +30,8 @@ public class Tan extends UnaryExpression implements Expression{
 			return new Num(0);
 		}
 
-		Expression innerDiff = getExpression1().differentiate();
-		return new Div(1, new Pow(new Cos(get),2));
+		Expression innerDiff = getExpression1().differentiate(var);
+		return new Div(1, new Pow(new Cos(getExpression1()),2));
 	}
 
 	public Expression simplify() {
@@ -41,5 +41,10 @@ public class Tan extends UnaryExpression implements Expression{
 		} catch (Exception e) {
 			return new Tan(getExpression1().simplify());
 		}
+	}
+
+	@Override
+	public Expression advancedSimplify() {
+		return null;
 	}
 }

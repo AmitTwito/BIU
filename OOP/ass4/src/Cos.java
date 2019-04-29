@@ -25,6 +25,7 @@ public class Cos extends UnaryExpression implements Expression {
 		Expression newExpression = getExpression1().assign(var, expression);
 		return new Cos(newExpression);
 	}
+
 	public Expression differentiate(String var) {
 		if (!this.getVariables().contains(var)) {
 			return new Num(0);
@@ -41,5 +42,19 @@ public class Cos extends UnaryExpression implements Expression {
 		} catch (Exception e) {
 			return new Cos(getExpression1().simplify());
 		}
+	}
+
+	@Override
+	public Expression advancedSimplify() {
+		Expression advSimpleEx = advancedSimplify();
+
+		if (advSimpleEx instanceof Cos) {
+			Cos cos = (Cos) advSimpleEx;
+			if (cos.getExpression1() instanceof Neg) {
+
+				return new Cos(((Neg) cos.getExpression1()).getExpression1());
+			}
+		}
+		return advSimpleEx.simplify();
 	}
 }

@@ -113,4 +113,31 @@ public class Div extends BinaryExpression implements Expression {
 			return new Div(simpleExp1, simpleExp2);
 		}
 	}
+
+	@Override
+	public Expression advancedSimplify() {
+		Expression advSimpleEx1 = getExpression1().advancedSimplify();
+		Expression advSimpleEx2 = getExpression1().advancedSimplify();
+
+		if (advSimpleEx1 instanceof Sin
+				&& advSimpleEx2 instanceof Cos) {
+			Sin sin = (Sin) advSimpleEx1;
+			Cos cos = (Cos) advSimpleEx2;
+			if (sin.getExpression1().toString().equals(cos.getExpression1().toString())) {
+				return new Tan(sin.getExpression1());
+			}
+		}
+		if (advSimpleEx1 instanceof Cos
+				&& advSimpleEx2 instanceof Sin) {
+			Cos cos = (Cos) advSimpleEx1;
+			Sin sin = (Sin) advSimpleEx2;
+
+			if (sin.getExpression1().toString().equals(cos.getExpression1().toString())) {
+				return new Pow(new Tan(cos.getExpression1()), -1);
+			}
+		}
+
+
+		return new Div(advSimpleEx1, advSimpleEx2).simplify();
+	}
 }

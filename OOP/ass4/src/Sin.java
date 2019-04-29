@@ -45,5 +45,19 @@ public class Sin extends UnaryExpression implements Expression {
 		}
 	}
 
+	@Override
+	public Expression advancedSimplify() {
+		Expression advSimpleEx = advancedSimplify();
 
+		if (advSimpleEx instanceof Sin) {
+			Sin sin = (Sin) advSimpleEx;
+			if (sin.getExpression1() instanceof Neg) {
+
+				return new Neg(new Sin(((Neg)((Neg) sin.getExpression1()).getExpression1())));
+			}
+
+		}
+
+		return advSimpleEx.simplify();
+	}
 }

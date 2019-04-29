@@ -139,4 +139,12 @@ public class Mult extends BinaryExpression implements Expression {
 		}
 	}
 
+	@Override
+	public Expression advancedSimplify() {
+		Expression advSimpleEx1 = getExpression1().advancedSimplify();
+		Expression advSimpleEx2 = getExpression1().advancedSimplify();
+
+
+		return new Mult(advSimpleEx1, advSimpleEx2);
+	}
 }

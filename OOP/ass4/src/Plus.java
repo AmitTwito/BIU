@@ -104,15 +104,28 @@ public class Plus extends BinaryExpression implements Expression {
 	}
 
 	public Expression advancedSimplify() {
-		Expression simpleEx = simplify();
-		if (simpleEx instanceof Plus) {
-			Plus plus = (Plus) simpleEx;
-			if (plus.getExpression2() instanceof Mult && plus.getExpression1() instanceof Num) {
-				simpleEx = new Plus(plus.getExpression1(), plus.getExpression2());
+		//4x +6x
+		//1+ (4x + 6x)
+		// ((2x) + (2 + ((4x) + 1)))
+		Expression advSimpleEx1 = getExpression1().advancedSimplify();
+		Expression advSimpleEx2 = getExpression1().advancedSimplify();
+		if (advSimpleEx1 instanceof Num) {
+			return new Plus(advSimpleEx2, advSimpleEx1);
+		}
+		if (advSimpleEx1 instanceof Mult
+				&& advSimpleEx2 instanceof Mult) {
+			if (advSimpleEx1.toString()
+					.equals(advSimpleEx2.toString())) {
+				return new Mult(2, advSimpleEx1);
+			}
+			else {
+				Mult mult1 = (Mult) advSimpleEx1;
+				Mult mult2 = (Mult) advSimpleEx2;
+				
 			}
 		}
 
 
-		return simpleEx;
+		return new Plus(advSimpleEx1, advSimpleEx2).simplify();
 	}
 }

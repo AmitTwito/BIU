@@ -1,5 +1,4 @@
-import java.util.List;
-import java.util.Map;
+
 
 public class Neg extends UnaryExpression implements Expression {
 
@@ -50,5 +49,13 @@ public class Neg extends UnaryExpression implements Expression {
 		} catch (Exception e) {
 			return new Neg(getExpression1().simplify());
 		}
+	}
+
+	@Override
+	public Expression advancedSimplify() {
+		Expression advSimpleEx = advancedSimplify();
+
+
+		return new Neg(advSimpleEx);
 	}
 }
