@@ -14,37 +14,47 @@ public abstract class BaseExpression {
 	public static final String SPACE = " ";
 	public static final String COMMA_WITH_SPACE = ", ";
 
-	private Expression expression1;
-	private Expression expression2;
+	private Expression firstArgumentExpression;
+	private Expression secondArgumentExpression;
 
 	/**
 	 * A constructor for the BaseExpression class.
-	 * Built from
+	 * For a binary expression.
 	 *
-	 * @param expression
+	 * @param argument Expression for the BaseExpression to be built with.
 	 */
-	public BaseExpression(Expression expression) {
-		this.expression1 = expression;
+	public BaseExpression(Expression argument) {
+		this.firstArgumentExpression = argument;
 	}
 
 	/**
 	 * A constructor for the BaseExpression class.
-	 * Built from
+	 * For a unary expression.
 	 *
-	 * @param expression1
-	 * @param expression2
+	 * @param firstArgumentExpression First
+	 * @param secondArgumentExpression
 	 */
-	public BaseExpression(Expression expression1, Expression expression2) {
-		this.expression1 = expression1;
-		this.expression2 = expression2;
+	public BaseExpression(Expression firstArgumentExpression, Expression secondArgumentExpression) {
+		this.firstArgumentExpression = firstArgumentExpression;
+		this.secondArgumentExpression = secondArgumentExpression;
 	}
 
-	protected Expression getExpression1() {
-		return this.expression1;
+	/**
+	 * Returns the first argument of the expression.
+	 *
+	 * @return First argument expression.
+	 */
+	protected Expression getFirstArgumentExpression() {
+		return this.firstArgumentExpression;
 	}
 
-	protected Expression getExpression2() {
-		return this.expression2;
+	/**
+	 * Returns the second argument of the expression.
+	 *
+	 * @return Second argument expression.
+	 */
+	protected Expression getSecondArgumentExpression() {
+		return this.secondArgumentExpression;
 	}
 
 
@@ -70,7 +80,7 @@ public abstract class BaseExpression {
 			Double.parseDouble(str);
 			return true;
 		} catch (Exception e) {
-			if (str.equals(Num.E_CONST_STRING) || str.equals(Num.PI_CONST_STRING)) {
+			if (str.equals(Num.PI_CONST_STRING)) {
 				return true;
 			}
 			return false;
@@ -78,14 +88,9 @@ public abstract class BaseExpression {
 	}
 
 	protected double parseDouble(String str) {
-		if (str.equals(Num.E_CONST_STRING)) {
-			return Math.E;
-		}
 		if (str.equals(Num.PI_CONST_STRING)) {
 			return Math.PI;
 		}
 		return Double.parseDouble(str);
 	}
-
-
 }

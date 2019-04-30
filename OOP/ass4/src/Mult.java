@@ -44,27 +44,27 @@ public class Mult extends BinaryExpression implements Expression {
 
 
 	public String toString() {
-		if (canParseDouble(getExpression1().toString())
-				&& !canParseDouble(getExpression2().toString())) {
-			if (this.getVariables().contains(getExpression2().toString())) {
-				if (parseDouble(getExpression1().toString()) -
-						(int) parseDouble(getExpression1().toString()) == 0) {
-					return (int) parseDouble(getExpression1().toString()) + "" + getExpression2();
+		if (canParseDouble(getFirstArgumentExpression().toString())
+				&& !canParseDouble(getSecondArgumentExpression().toString())) {
+			if (this.getVariables().contains(getSecondArgumentExpression().toString())) {
+				if (parseDouble(getFirstArgumentExpression().toString()) -
+						(int) parseDouble(getFirstArgumentExpression().toString()) == 0) {
+					return (int) parseDouble(getFirstArgumentExpression().toString()) + "" + getSecondArgumentExpression();
 				}
-				return getExpression1() + "" + getExpression2();
+				return getFirstArgumentExpression() + "" + getSecondArgumentExpression();
 			}
 		}
-		if (canParseDouble(getExpression2().toString())
-				&& !canParseDouble(getExpression1().toString())) {
-			if (this.getVariables().contains(getExpression1().toString())) {
-				if (parseDouble(getExpression2().toString()) -
-						(int) parseDouble(getExpression2().toString()) == 0) {
-					return (int) parseDouble(getExpression2().toString()) + "" + getExpression1();
+		if (canParseDouble(getSecondArgumentExpression().toString())
+				&& !canParseDouble(getFirstArgumentExpression().toString())) {
+			if (this.getVariables().contains(getFirstArgumentExpression().toString())) {
+				if (parseDouble(getSecondArgumentExpression().toString()) -
+						(int) parseDouble(getSecondArgumentExpression().toString()) == 0) {
+					return (int) parseDouble(getSecondArgumentExpression().toString()) + "" + getFirstArgumentExpression();
 				}
-				return getExpression2() + "" + getExpression1();
+				return getSecondArgumentExpression() + "" + getFirstArgumentExpression();
 			} else {
-				return OPEN_BRACKETS + getExpression2() + SPACE
-						+ EXPRESSION_STRING + SPACE + getExpression1() + CLOSE_BRACKETS;
+				return OPEN_BRACKETS + getSecondArgumentExpression() + SPACE
+						+ EXPRESSION_STRING + SPACE + getFirstArgumentExpression() + CLOSE_BRACKETS;
 			}
 		}
 
@@ -73,8 +73,8 @@ public class Mult extends BinaryExpression implements Expression {
 	}
 
 	public double evaluate(Map<String, Double> assignment) throws Exception {
-		Expression exp1 = getExpression1();
-		Expression exp2 = getExpression2();
+		Expression exp1 = getFirstArgumentExpression();
+		Expression exp2 = getSecondArgumentExpression();
 		List<String> vars = getVariables();
 		for (Map.Entry<String, Double> entry : assignment.entrySet()) {
 			Expression expression = new Num(entry.getValue());
@@ -90,26 +90,26 @@ public class Mult extends BinaryExpression implements Expression {
 	}
 
 	public double evaluate() throws Exception {
-		double value1 = getExpression1().evaluate();
-		double value2 = getExpression2().evaluate();
+		double value1 = getFirstArgumentExpression().evaluate();
+		double value2 = getSecondArgumentExpression().evaluate();
 		return value1 * value2;
 	}
 
 	public Expression differentiate(String var) {
-		Expression multExp1 = new Mult(getExpression1().differentiate(var), getExpression2());
-		Expression multExp2 = new Mult(getExpression1(), getExpression2().differentiate(var));
+		Expression multExp1 = new Mult(getFirstArgumentExpression().differentiate(var), getSecondArgumentExpression());
+		Expression multExp2 = new Mult(getFirstArgumentExpression(), getSecondArgumentExpression().differentiate(var));
 		return new Plus(multExp1, multExp2);
 	}
 
 	public Expression assign(String var, Expression expression) {
-		Expression exp1 = getExpression1().assign(var, expression);
-		Expression exp2 = getExpression2().assign(var, expression);
+		Expression exp1 = getFirstArgumentExpression().assign(var, expression);
+		Expression exp2 = getSecondArgumentExpression().assign(var, expression);
 		return new Mult(exp1, exp2);
 	}
 
 	public Expression simplify() {
-		Expression simpleExp1 = getExpression1().simplify();
-		Expression simpleExp2 = getExpression2().simplify();
+		Expression simpleExp1 = getFirstArgumentExpression().simplify();
+		Expression simpleExp2 = getSecondArgumentExpression().simplify();
 
 		if (canParseDouble(this.toString())) {
 			return new Num(parseDouble(this.toString()));
@@ -134,17 +134,44 @@ public class Mult extends BinaryExpression implements Expression {
 
 		try {
 			return new Num(simpleExp1.evaluate() * simpleExp2.evaluate());
+		} catch (ArithmeticException ae) {
+			throw new ArithmeticException("Cannot simplify the expression "
+					+ " with the following reason: " + ae.getMessage());
 		} catch (Exception e) {
 			return new Mult(simpleExp1, simpleExp2);
 		}
 	}
 
+	/**
+	 * @return
+	 */
 	@Override
 	public Expression advancedSimplify() {
-		Expression advSimpleEx1 = getExpression1().advancedSimplify();
-		Expression advSimpleEx2 = getExpression1().advancedSimplify();
+		Expression advSimpleEx1 = getFirstArgumentExpression().advancedSimplify();
+		Expression advSimpleEx2 = getFirstArgumentExpression().advancedSimplify();
 
+		//X*X = X^2
+		if (advSimpleEx1.toString().equals(advSimpleEx2.toString())) {
+			return new Pow(advSimpleEx1, 2);
+		}
+		//X * Num = Num * X
+		if (advSimpleEx2 instanceof Num && !(advSimpleEx1 instanceof Num)) {
+			return new Mult(advSimpleEx2, advSimpleEx1);
+		}
 
-		return new Mult(advSimpleEx1, advSimpleEx2);
+		if (advSimpleEx1 instanceof Num) {
+			//2(2x) => (2*2)x
+			if (advSimpleEx2 instanceof Mult) {
+				Mult mult = (Mult) advSimpleEx2;
+				if (mult.getFirstArgumentExpression() instanceof Num) {
+					return new Mult(new Mult(advSimpleEx1, mult.getFirstArgumentExpression()), mult.getSecondArgumentExpression());
+				}
+			}
+		}
+		if(advSimpleEx1 instanceof Pow && advSimpleEx2 instanceof Pow) {
+			if()
+		}
+
+		return new Mult(advSimpleEx1, advSimpleEx2).simplify();
 	}
 }

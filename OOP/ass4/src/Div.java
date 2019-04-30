@@ -45,8 +45,8 @@ public class Div extends BinaryExpression implements Expression {
 	}
 
 	public double evaluate(Map<String, Double> assignment) throws Exception {
-		Expression exp1 = getExpression1();
-		Expression exp2 = getExpression2();
+		Expression exp1 = getFirstArgumentExpression();
+		Expression exp2 = getSecondArgumentExpression();
 		List<String> vars = getVariables();
 		for (Map.Entry<String, Double> entry : assignment.entrySet()) {
 			Expression expression = new Num(entry.getValue());
@@ -62,39 +62,39 @@ public class Div extends BinaryExpression implements Expression {
 	}
 
 	public double evaluate() throws Exception {
-		if (getExpression2().evaluate() == 0) {
+		if (getSecondArgumentExpression().evaluate() == 0) {
 			throw new ArithmeticException("An error occurred on dividing calculation: "
 					+ "can't divide by zero.");
 		}
-		return getExpression1().evaluate() / getExpression2().evaluate();
+		return getFirstArgumentExpression().evaluate() / getSecondArgumentExpression().evaluate();
 	}
 
 	public Expression differentiate(String var) {
-		Expression multExp1 = new Mult(getExpression1().differentiate(var), getExpression2());
-		Expression multExp2 = new Mult(getExpression1(), getExpression2().differentiate(var));
+		Expression multExp1 = new Mult(getFirstArgumentExpression().differentiate(var), getSecondArgumentExpression());
+		Expression multExp2 = new Mult(getFirstArgumentExpression(), getSecondArgumentExpression().differentiate(var));
 		Expression minusExp = new Minus(multExp1, multExp2);
-		Expression powExp = new Pow(getExpression2(), 2);
+		Expression powExp = new Pow(getSecondArgumentExpression(), 2);
 		Expression divExp = new Div(minusExp, powExp);
 		return divExp;
 	}
 
 	public Expression assign(String var, Expression expression) {
 
-		Expression exp1 = getExpression1().assign(var, expression);
-		Expression exp2 = getExpression2().assign(var, expression);
+		Expression exp1 = getFirstArgumentExpression().assign(var, expression);
+		Expression exp2 = getSecondArgumentExpression().assign(var, expression);
 		return new Div(exp1, exp2);
 
 	}
 
 	public Expression simplify() {
-		Expression simpleExp1 = getExpression1().simplify();
-		Expression simpleExp2 = getExpression2().simplify();
+		Expression simpleExp1 = getFirstArgumentExpression().simplify();
+		Expression simpleExp2 = getSecondArgumentExpression().simplify();
 
 		if (canParseDouble(this.toString())) {
 			return new Num(parseDouble(this.toString()));
 		}
 
-		if (getExpression1().toString().equals(getExpression2().toString())) {
+		if (getFirstArgumentExpression().toString().equals(getSecondArgumentExpression().toString())) {
 			return new Num(1);
 		}
 		if (canParseDouble(simpleExp2.toString())) {
@@ -109,6 +109,8 @@ public class Div extends BinaryExpression implements Expression {
 		}
 		try {
 			return new Num(simpleExp1.evaluate() / simpleExp2.evaluate());
+		} catch (ArithmeticException ae) {
+			throw new ArithmeticException("Cannot simplify the expression: " + ae.getMessage());
 		} catch (Exception e) {
 			return new Div(simpleExp1, simpleExp2);
 		}
@@ -116,15 +118,15 @@ public class Div extends BinaryExpression implements Expression {
 
 	@Override
 	public Expression advancedSimplify() {
-		Expression advSimpleEx1 = getExpression1().advancedSimplify();
-		Expression advSimpleEx2 = getExpression1().advancedSimplify();
+		Expression advSimpleEx1 = getFirstArgumentExpression().advancedSimplify();
+		Expression advSimpleEx2 = getFirstArgumentExpression().advancedSimplify();
 
 		if (advSimpleEx1 instanceof Sin
 				&& advSimpleEx2 instanceof Cos) {
 			Sin sin = (Sin) advSimpleEx1;
 			Cos cos = (Cos) advSimpleEx2;
-			if (sin.getExpression1().toString().equals(cos.getExpression1().toString())) {
-				return new Tan(sin.getExpression1());
+			if (sin.getFirstArgumentExpression().toString().equals(cos.getFirstArgumentExpression().toString())) {
+				return new Tan(sin.getFirstArgumentExpression());
 			}
 		}
 		if (advSimpleEx1 instanceof Cos
@@ -132,8 +134,8 @@ public class Div extends BinaryExpression implements Expression {
 			Cos cos = (Cos) advSimpleEx1;
 			Sin sin = (Sin) advSimpleEx2;
 
-			if (sin.getExpression1().toString().equals(cos.getExpression1().toString())) {
-				return new Pow(new Tan(cos.getExpression1()), -1);
+			if (sin.getFirstArgumentExpression().toString().equals(cos.getFirstArgumentExpression().toString())) {
+				return new Pow(new Tan(cos.getFirstArgumentExpression()), -1);
 			}
 		}
 

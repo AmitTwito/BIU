@@ -1,5 +1,3 @@
-import org.omg.PortableServer.POA;
-
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +24,10 @@ public class Pow extends BinaryExpression implements Expression {
 
 	public Pow(double num1, double num2) {
 		super(new Num(num1), new Num(num2), EXPRESSION_STRING);
+
+		if (num1 == 0 && num2 <= 0) {
+			throw new IllegalArgumentException("Cannot calculate a power of zero with a zero or negative number");
+		}
 	}
 
 	public Pow(double num, Expression expression) {
@@ -45,13 +47,13 @@ public class Pow extends BinaryExpression implements Expression {
 	}
 
 
-	public String toString(){
-		return OPEN_BRACKETS + getExpression1() + EXPRESSION_STRING + getExpression2() + CLOSE_BRACKETS;
+	public String toString() {
+		return OPEN_BRACKETS + getFirstArgumentExpression() + EXPRESSION_STRING + getSecondArgumentExpression() + CLOSE_BRACKETS;
 	}
 
 	public double evaluate(Map<String, Double> assignment) throws Exception {
-		Expression exp1 = getExpression1();
-		Expression exp2 = getExpression2();
+		Expression exp1 = getFirstArgumentExpression();
+		Expression exp2 = getSecondArgumentExpression();
 		List<String> vars = getVariables();
 		for (Map.Entry<String, Double> entry : assignment.entrySet()) {
 			Expression expression = new Num(entry.getValue());
@@ -63,37 +65,41 @@ public class Pow extends BinaryExpression implements Expression {
 			exp1 = exp1.assign(entry.getKey(), expression);
 			exp2 = exp2.assign(entry.getKey(), expression);
 		}
-		return new Pow(exp1,exp2).evaluate();
+		return new Pow(exp1, exp2).evaluate();
 	}
 
 	public double evaluate() throws Exception {
-		double value1 = getExpression1().evaluate();
-		double value2 = getExpression2().evaluate();
+		double value1 = getFirstArgumentExpression().evaluate();
+		double value2 = getSecondArgumentExpression().evaluate();
 
+		if (value1 == 0 && value2 <= 0) {
+			throw new ArithmeticException("Can't evaluate 0 ^ " + value2 + " in this expression, "
+					+ " undefined number");
+		}
 		return Math.pow(value1, value2);
 	}
 
 	public Expression differentiate(String var) {
-		Expression originalExp = new Pow(getExpression1(), getExpression2());
-		Expression divExp = new Div(getExpression2(), getExpression1());
-		Expression multExp1 = new Mult(getExpression1().differentiate(var), divExp);
-		Expression multExp2 = new Mult(getExpression2().differentiate(var),
-				new Log(new Num("e"), getExpression1()));
+		Expression originalExp = new Pow(getFirstArgumentExpression(), getSecondArgumentExpression());
+		Expression divExp = new Div(getSecondArgumentExpression(), getFirstArgumentExpression());
+		Expression multExp1 = new Mult(getFirstArgumentExpression().differentiate(var), divExp);
+		Expression multExp2 = new Mult(getSecondArgumentExpression().differentiate(var),
+				new Log(new Num("e"), getFirstArgumentExpression()));
 		Expression plusExp = new Plus(multExp1, multExp2);
 		return new Mult(originalExp, plusExp);
 	}
 
 	public Expression assign(String var, Expression expression) {
 
-		Expression exp1 = getExpression1().assign(var, expression);
-		Expression exp2 = getExpression2().assign(var, expression);
+		Expression exp1 = getFirstArgumentExpression().assign(var, expression);
+		Expression exp2 = getSecondArgumentExpression().assign(var, expression);
 		return new Pow(exp1, exp2);
 
 	}
 
 	public Expression simplify() {
-		Expression simpleExp1 = getExpression1().simplify();
-		Expression simpleExp2 = getExpression2().simplify();
+		Expression simpleExp1 = getFirstArgumentExpression().simplify();
+		Expression simpleExp2 = getSecondArgumentExpression().simplify();
 
 		if (canParseDouble(this.toString())) {
 			return new Num(parseDouble(this.toString()));
@@ -109,6 +115,8 @@ public class Pow extends BinaryExpression implements Expression {
 		}
 		try {
 			return new Num(Math.pow(simpleExp1.evaluate(), simpleExp2.evaluate()));
+		} catch (ArithmeticException ae) {
+			throw new ArithmeticException("Cannot simplify the expression: " + ae.getMessage());
 		} catch (Exception e) {
 			return new Pow(simpleExp1, simpleExp2);
 
@@ -118,12 +126,12 @@ public class Pow extends BinaryExpression implements Expression {
 	@Override
 	public Expression advancedSimplify() {
 
-		Expression advSimpleEx1 = getExpression1().advancedSimplify();
-		Expression advSimpleEx2 = getExpression1().advancedSimplify();
+		Expression advSimpleEx1 = getFirstArgumentExpression().advancedSimplify();
+		Expression advSimpleEx2 = getFirstArgumentExpression().advancedSimplify();
 
-		if(advSimpleEx1 instanceof  Pow) {
-			Pow innerPow = (Pow)advSimpleEx1;
-			return new Pow(innerPow.getExpression1(), new Mult(innerPow.getExpression2(), getExpression2()));
+		if (advSimpleEx1 instanceof Pow) {
+			Pow innerPow = (Pow) advSimpleEx1;
+			return new Pow(innerPow.getFirstArgumentExpression(), new Mult(innerPow.getSecondArgumentExpression(), getSecondArgumentExpression()));
 		}
 
 		return new Pow(advSimpleEx1, advSimpleEx2).simplify();

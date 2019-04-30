@@ -43,8 +43,8 @@ public class Plus extends BinaryExpression implements Expression {
 
 
 	public double evaluate(Map<String, Double> assignment) throws Exception {
-		Expression exp1 = getExpression1();
-		Expression exp2 = getExpression2();
+		Expression exp1 = getFirstArgumentExpression();
+		Expression exp2 = getSecondArgumentExpression();
 		List<String> vars = getVariables();
 		for (Map.Entry<String, Double> entry : assignment.entrySet()) {
 			Expression expression = new Num(entry.getValue());
@@ -61,25 +61,25 @@ public class Plus extends BinaryExpression implements Expression {
 
 	public double evaluate() throws Exception {
 
-		return getExpression1().evaluate() + getExpression2().evaluate();
+		return getFirstArgumentExpression().evaluate() + getSecondArgumentExpression().evaluate();
 	}
 
 	public Expression differentiate(String var) {
-		return new Plus(getExpression1().differentiate(var), getExpression2().differentiate(var));
+		return new Plus(getFirstArgumentExpression().differentiate(var), getSecondArgumentExpression().differentiate(var));
 
 	}
 
 	public Expression assign(String var, Expression expression) {
 
-		Expression exp1 = getExpression1().assign(var, expression);
-		Expression exp2 = getExpression2().assign(var, expression);
+		Expression exp1 = getFirstArgumentExpression().assign(var, expression);
+		Expression exp2 = getSecondArgumentExpression().assign(var, expression);
 		return new Plus(exp1, exp2);
 
 	}
 
 	public Expression simplify() {
-		Expression simpleExp1 = getExpression1().simplify();
-		Expression simpleExp2 = getExpression2().simplify();
+		Expression simpleExp1 = getFirstArgumentExpression().simplify();
+		Expression simpleExp2 = getSecondArgumentExpression().simplify();
 
 		if (canParseDouble(this.toString())) {
 			return new Num(parseDouble(this.toString()));
@@ -97,9 +97,10 @@ public class Plus extends BinaryExpression implements Expression {
 		}
 		try {
 			return new Num(simpleExp1.evaluate() + simpleExp2.evaluate());
+		} catch (ArithmeticException ae) {
+			throw new ArithmeticException("Cannot simplify the expression: " + ae.getMessage());
 		} catch (Exception e) {
 			return new Plus(simpleExp1, simpleExp2);
-
 		}
 	}
 
@@ -107,23 +108,43 @@ public class Plus extends BinaryExpression implements Expression {
 		//4x +6x
 		//1+ (4x + 6x)
 		// ((2x) + (2 + ((4x) + 1)))
-		Expression advSimpleEx1 = getExpression1().advancedSimplify();
-		Expression advSimpleEx2 = getExpression1().advancedSimplify();
-		if (advSimpleEx1 instanceof Num) {
+		Expression advSimpleEx1 = getFirstArgumentExpression().advancedSimplify();
+		Expression advSimpleEx2 = getFirstArgumentExpression().advancedSimplify();
+
+		//X + X = 2X
+		if (advSimpleEx1.toString().equals(advSimpleEx2.toString())) {
+			return new Mult(2, advSimpleEx1);
+		}
+		// Num + X => X + Num
+		if (advSimpleEx1 instanceof Num && !(advSimpleEx2 instanceof Num)) {
 			return new Plus(advSimpleEx2, advSimpleEx1);
 		}
-		if (advSimpleEx1 instanceof Mult
-				&& advSimpleEx2 instanceof Mult) {
-			if (advSimpleEx1.toString()
-					.equals(advSimpleEx2.toString())) {
-				return new Mult(2, advSimpleEx1);
-			}
-			else {
-				Mult mult1 = (Mult) advSimpleEx1;
-				Mult mult2 = (Mult) advSimpleEx2;
-				
+		//((4x +1) + 2) => (4x + (1+2)).
+		if (advSimpleEx1 instanceof Plus && advSimpleEx2 instanceof Num) {
+			Plus plusExp = (Plus) advSimpleEx1;
+			if (plusExp.getSecondArgumentExpression() instanceof Num) {
+				return new Plus(plusExp.getFirstArgumentExpression(), new Plus(plusExp.getSecondArgumentExpression(), advSimpleEx2));
 			}
 		}
+		//(2x + (4x + 1))
+		if (advSimpleEx1 instanceof Mult && advSimpleEx2 instanceof Plus) {
+			Plus plusExp = (Plus) advSimpleEx2;
+			if (plusExp.getSecondArgumentExpression() instanceof Num) {
+				return new Plus(new Plus(advSimpleEx1, plusExp.getFirstArgumentExpression()), plusExp.getSecondArgumentExpression());
+			}
+
+		}
+		//(4x + 6x) = ((4+6)x)
+		if (advSimpleEx1 instanceof Mult
+				&& advSimpleEx2 instanceof Mult) {
+			Mult firstMult = (Mult) advSimpleEx1;
+			Mult secondMult = (Mult) advSimpleEx2;
+			if (firstMult.getSecondArgumentExpression().toString().equals(secondMult.getSecondArgumentExpression().toString())) {
+				return new Mult(new Plus(firstMult.getFirstArgumentExpression(),
+						secondMult.getFirstArgumentExpression()), firstMult.getSecondArgumentExpression());
+			}
+		}
+
 
 
 		return new Plus(advSimpleEx1, advSimpleEx2).simplify();

@@ -1,4 +1,3 @@
-import javax.swing.text.EditorKit;
 import java.util.List;
 import java.util.Map;
 
@@ -17,39 +16,39 @@ public class Log extends BinaryExpression implements Expression {
 	public Log(String var, double num) {
 		super(new Num(num), new Var(var), EXPRESSION_STRING);
 
-		if (num < 0) {
-			throw new IllegalArgumentException("Cannot calculate log of a negative number.");
+		if (num <= 0) {
+			throw new IllegalArgumentException("Cannot calculate log of a negative number or a zero.");
 		}
 	}
 
 	public Log(double num, String var) {
 		super(new Num(num), new Var(var), EXPRESSION_STRING);
-		if (num < 0) {
-			throw new IllegalArgumentException("Cannot calculate log with a negative base.");
+		if (num <= 0) {
+			throw new IllegalArgumentException("Cannot calculate log with a negative base or zero.");
 		}
 	}
 
 	public Log(double num1, double num2) {
 		super(new Num(num1), new Num(num2), EXPRESSION_STRING);
-		if (num1 < 0) {
-			throw new IllegalArgumentException("Cannot calculate log with a negative base.");
+		if (num1 <= 0) {
+			throw new IllegalArgumentException("Cannot calculate log with a negative base or zero.");
 		}
-		if (num2 < 0) {
-			throw new IllegalArgumentException("Cannot calculate log of a negative number.");
+		if (num2 <= 0) {
+			throw new IllegalArgumentException("Cannot calculate log of a negative number or a zero.");
 		}
 	}
 
 	public Log(double num, Expression expression) {
 		super(new Num(num), expression, EXPRESSION_STRING);
-		if (num < 0) {
-			throw new IllegalArgumentException("Cannot calculate log with a negative base.");
+		if (num <= 0) {
+			throw new IllegalArgumentException("Cannot calculate log with a negative base or zero.");
 		}
 	}
 
 	public Log(Expression expression, double num) {
 		super(expression, new Num(num), EXPRESSION_STRING);
-		if (num < 0) {
-			throw new IllegalArgumentException("Cannot calculate log of a negative number.");
+		if (num <= 0) {
+			throw new IllegalArgumentException("Cannot calculate log of a negative number or a zero.");
 		}
 	}
 
@@ -63,13 +62,13 @@ public class Log extends BinaryExpression implements Expression {
 
 	@Override
 	public String toString() {
-		return EXPRESSION_STRING + OPEN_BRACKETS + getExpression1()
-				+ COMMA_WITH_SPACE + getExpression2() + CLOSE_BRACKETS;
+		return EXPRESSION_STRING + OPEN_BRACKETS + getFirstArgumentExpression()
+				+ COMMA_WITH_SPACE + getSecondArgumentExpression() + CLOSE_BRACKETS;
 	}
 
 	public double evaluate(Map<String, Double> assignment) throws Exception {
-		Expression exp1 = getExpression1();
-		Expression exp2 = getExpression2();
+		Expression exp1 = getFirstArgumentExpression();
+		Expression exp2 = getSecondArgumentExpression();
 		List<String> vars = getVariables();
 		for (Map.Entry<String, Double> entry : assignment.entrySet()) {
 			Expression expression = new Num(entry.getValue());
@@ -85,8 +84,8 @@ public class Log extends BinaryExpression implements Expression {
 	}
 
 	public double evaluate() throws Exception {
-		double value1 = getExpression1().evaluate();
-		double value2 = getExpression2().evaluate();
+		double value1 = getFirstArgumentExpression().evaluate();
+		double value2 = getSecondArgumentExpression().evaluate();
 		if (Math.log(value1) == Double.NaN
 				|| Math.log(value1) == Double.NaN
 				|| Double.isInfinite(Math.log(value1))
@@ -98,28 +97,28 @@ public class Log extends BinaryExpression implements Expression {
 	}
 
 	public Expression differentiate(String var) {
-		Expression topLogExp = new Log(new Num("e"), getExpression2());
-		Expression bottomLogExp = new Log(new Num("e"), getExpression1());
+		Expression topLogExp = new Log(new Num("e"), getSecondArgumentExpression());
+		Expression bottomLogExp = new Log(new Num("e"), getFirstArgumentExpression());
 		return new Div(topLogExp, bottomLogExp).differentiate(var);
 	}
 
 	public Expression assign(String var, Expression expression) {
 
-		Expression exp1 = getExpression1().assign(var, expression);
-		Expression exp2 = getExpression2().assign(var, expression);
+		Expression exp1 = getFirstArgumentExpression().assign(var, expression);
+		Expression exp2 = getSecondArgumentExpression().assign(var, expression);
 		return new Log(exp1, exp2);
 
 	}
 
 	public Expression simplify() {
-		Expression simpleExp1 = getExpression1().simplify();
-		Expression simpleExp2 = getExpression2().simplify();
+		Expression simpleExp1 = getFirstArgumentExpression().simplify();
+		Expression simpleExp2 = getSecondArgumentExpression().simplify();
 
 		if (canParseDouble(this.toString())) {
 			return new Num(parseDouble(this.toString()));
 		}
 
-		if (getExpression1().toString().equals(getExpression2().toString())) {
+		if (getFirstArgumentExpression().toString().equals(getSecondArgumentExpression().toString())) {
 			return new Num(1);
 		}
 		if (canParseDouble(simpleExp2.toString())) {
@@ -129,8 +128,26 @@ public class Log extends BinaryExpression implements Expression {
 		}
 		try {
 			return new Num(Math.log(simpleExp2.evaluate()) / Math.log(simpleExp1.evaluate()));
+		} catch (ArithmeticException ae) {
+			throw new ArithmeticException("Cannot simplify the expression: " + ae.getMessage());
 		} catch (Exception e) {
 			return new Log(simpleExp1, simpleExp2);
 		}
+	}
+
+	/**
+	 * @return
+	 */
+	@Override
+	public Expression advancedSimplify() {
+		Expression advSimpleEx1 = getFirstArgumentExpression().advancedSimplify();
+		Expression advSimpleEx2 = getFirstArgumentExpression().advancedSimplify();
+
+		if (getSecondArgumentExpression() instanceof Pow) {
+			Pow pow = (Pow) getSecondArgumentExpression();
+			return new Mult(pow.getSecondArgumentExpression(), new Log(getFirstArgumentExpression(), pow.getFirstArgumentExpression()));
+		}
+
+		return new Log(advSimpleEx1, advSimpleEx2);
 	}
 }

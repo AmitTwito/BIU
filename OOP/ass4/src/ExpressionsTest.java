@@ -30,5 +30,17 @@ public class ExpressionsTest {
 		}
 
 		System.out.println(e.differentiate("x").simplify());
+
+		Expression e4 = new Pow(new Num("e"), 2);
+		Expression e5 = new Pow("e", "2");
+
+		try {
+			System.out.println(e4.evaluate());
+			System.out.println(e5.evaluate());
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		}
+
+
 	}
 }

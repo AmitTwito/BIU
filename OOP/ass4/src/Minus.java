@@ -42,8 +42,8 @@ public class Minus extends BinaryExpression implements Expression {
 	}
 
 	public double evaluate(Map<String, Double> assignment) throws Exception {
-		Expression exp1 = getExpression1();
-		Expression exp2 = getExpression2();
+		Expression exp1 = getFirstArgumentExpression();
+		Expression exp2 = getSecondArgumentExpression();
 		List<String> vars = getVariables();
 		for (Map.Entry<String, Double> entry : assignment.entrySet()) {
 			Expression expression = new Num(entry.getValue());
@@ -59,34 +59,34 @@ public class Minus extends BinaryExpression implements Expression {
 	}
 
 	public double evaluate() throws Exception {
-		double value1 = getExpression1().evaluate();
-		double value2 = getExpression2().evaluate();
+		double value1 = getFirstArgumentExpression().evaluate();
+		double value2 = getSecondArgumentExpression().evaluate();
 
 		return value1 - value2;
 	}
 
 	public Expression differentiate(String var) {
-		return new Minus(getExpression1().differentiate(var), getExpression2().differentiate(var));
+		return new Minus(getFirstArgumentExpression().differentiate(var), getSecondArgumentExpression().differentiate(var));
 
 	}
 
 	public Expression assign(String var, Expression expression) {
 
-		Expression exp1 = getExpression1().assign(var, expression);
-		Expression exp2 = getExpression2().assign(var, expression);
+		Expression exp1 = getFirstArgumentExpression().assign(var, expression);
+		Expression exp2 = getSecondArgumentExpression().assign(var, expression);
 		return new Minus(exp1, exp2);
 
 	}
 
 	public Expression simplify() {
-		Expression simpleExp1 = getExpression1().simplify();
-		Expression simpleExp2 = getExpression2().simplify();
+		Expression simpleExp1 = getFirstArgumentExpression().simplify();
+		Expression simpleExp2 = getSecondArgumentExpression().simplify();
 
 		if (canParseDouble(this.toString())) {
 			return new Num(parseDouble(this.toString()));
 		}
 
-		if (getExpression1().toString().equals(getExpression2().toString())) {
+		if (getFirstArgumentExpression().toString().equals(getSecondArgumentExpression().toString())) {
 			return new Num(0);
 		}
 		if (canParseDouble(simpleExp1.toString())) {
@@ -101,6 +101,8 @@ public class Minus extends BinaryExpression implements Expression {
 		}
 		try {
 			return new Num(simpleExp1.evaluate() - simpleExp2.evaluate());
+		} catch (ArithmeticException ae) {
+			throw new ArithmeticException("Cannot simplify the expression: " + ae.getMessage());
 		} catch (Exception e) {
 			return new Minus(simpleExp1, simpleExp2);
 		}
@@ -109,8 +111,8 @@ public class Minus extends BinaryExpression implements Expression {
 	@Override
 	public Expression advancedSimplify() {
 
-		Expression advSimpleEx1 = getExpression1().advancedSimplify();
-		Expression advSimpleEx2 = getExpression1().advancedSimplify();
+		Expression advSimpleEx1 = getFirstArgumentExpression().advancedSimplify();
+		Expression advSimpleEx2 = getFirstArgumentExpression().advancedSimplify();
 
 
 		return new Log(advSimpleEx1, advSimpleEx2);

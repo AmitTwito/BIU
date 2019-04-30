@@ -13,18 +13,19 @@ public abstract class UnaryExpression extends BaseExpression {
 	}
 
 	@Override
-	protected Expression getExpression2() {
-		throw new NullPointerException("Unary expressions do not have a second argument.");
+	protected Expression getSecondArgumentExpression() {
+		throw new RuntimeException("Unable to access a second argument of a unary expression, "
+				+ "because it does not have one.");
 	}
 
 	@Override
 	public String toString() {
-		return this.expressionString + OPEN_BRACKETS + getExpression1() + CLOSE_BRACKETS;
+		return this.expressionString + OPEN_BRACKETS + getFirstArgumentExpression() + CLOSE_BRACKETS;
 	}
 
 	@Override
 	public double evaluate(Map<String, Double> assignment) throws Exception {
-		Expression exp = getExpression1();
+		Expression exp = getFirstArgumentExpression();
 		List<String> vars = getVariables();
 		for (Map.Entry<String, Double> entry : assignment.entrySet()) {
 			Expression expression = new Num(entry.getValue());
@@ -43,7 +44,7 @@ public abstract class UnaryExpression extends BaseExpression {
 
 	@Override
 	public List<String> getVariables() {
-		return new ArrayList<>(new HashSet<>(getExpression1().getVariables()));
+		return new ArrayList<>(new HashSet<>(getFirstArgumentExpression().getVariables()));
 	}
 
 	// Returns a new expression in which all occurrences of the variable
