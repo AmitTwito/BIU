@@ -5,46 +5,113 @@ public class Plus extends BinaryExpression implements Expression {
 
 	public static final String EXPRESSION_STRING = "+";
 
-	public Plus(Expression expression1, Expression expression2) {
-		super(expression1, expression2, EXPRESSION_STRING);
+	/**
+	 * A constructor for the Plus class.
+	 *
+	 * @param firstArgument  The first argument..
+	 * @param secondArgument The second argument..
+	 */
+	public Plus(Expression firstArgument, Expression secondArgument) {
+		super(firstArgument, secondArgument, EXPRESSION_STRING);
 	}
 
+	/**
+	 * A constructor for the Plus class.
+	 *
+	 * @param var1 The first argument..
+	 * @param var2 The second argument..
+	 */
 	public Plus(String var1, String var2) {
 		super(new Var(var1), new Var(var2), EXPRESSION_STRING);
 	}
 
+	/**
+	 * A constructor for the Plus class.
+	 *
+	 * @param var The first argument..
+	 * @param num The second argument..
+	 */
 	public Plus(String var, double num) {
 		super(new Var(var), new Num(num), EXPRESSION_STRING);
 	}
 
+	/**
+	 * A constructor for the Plus class.
+	 *
+	 * @param num The first argument..
+	 * @param var The second argument..
+	 */
 	public Plus(double num, String var) {
 		super(new Var(var), new Num(num), EXPRESSION_STRING);
 	}
 
+	/**
+	 * A constructor for the Plus class.
+	 *
+	 * @param num1 The first argument..
+	 * @param num2 The second argument..
+	 */
 	public Plus(double num1, double num2) {
 		super(new Num(num1), new Num(num2), EXPRESSION_STRING);
 	}
 
+	/**
+	 * A constructor for the Plus class.
+	 *
+	 * @param num        The first argument..
+	 * @param expression The second argument..
+	 */
 	public Plus(double num, Expression expression) {
-		super(new Num(num), expression, EXPRESSION_STRING);
+		super(expression, new Num(num), EXPRESSION_STRING);
 	}
 
+	/**
+	 * A constructor for the Plus class.
+	 *
+	 * @param expression The first argument..
+	 * @param num        The second argument..
+	 */
 	public Plus(Expression expression, double num) {
 		super(expression, new Num(num), EXPRESSION_STRING);
 	}
 
+	/**
+	 * A constructor for the Plus class.
+	 *
+	 * @param var        The first argument..
+	 * @param expression The second argument..
+	 */
 	public Plus(String var, Expression expression) {
 		super(new Var(var), expression, EXPRESSION_STRING);
 	}
 
+	/**
+	 * A constructor for the Plus class.
+	 *
+	 * @param expression The first argument..
+	 * @param var        The second argument..
+	 */
 	public Plus(Expression expression, String var) {
 		super(expression, new Var(var), EXPRESSION_STRING);
 	}
 
-
+	/**
+	 * Evaluate the expression using the variable values provided
+	 * in the assignment, and return the result.  If the expression
+	 * contains a variable which is not in the assignment, an exception
+	 * is thrown.
+	 *
+	 * @param assignment Map of variable and values for assigning in the expression.
+	 * @return Evaluated result of the Expression after an assignment.
+	 * @throws Exception if the expression contains a variable which is not in the assignment.
+	 */
+	@Override
 	public double evaluate(Map<String, Double> assignment) throws Exception {
-		Expression exp1 = getFirstArgumentExpression();
-		Expression exp2 = getSecondArgumentExpression();
+		if (assignment == null) {
+			throw new IllegalArgumentException("Can't assign Null to the expression.");
+		}
+		Expression exp1 = getFirstArgument();
+		Expression exp2 = getSecondArgument();
 		List<String> vars = getVariables();
 		for (Map.Entry<String, Double> entry : assignment.entrySet()) {
 			Expression expression = new Num(entry.getValue());
@@ -58,28 +125,56 @@ public class Plus extends BinaryExpression implements Expression {
 		}
 		return new Plus(exp1, exp2).evaluate();
 	}
-
+	/**
+	 * A convenience method. Like the `evaluate(assignment)` method above,
+	 * but uses an empty assignment.
+	 *
+	 * @return Evaluated result of the Expression.
+	 * @throws Exception If the Expression was not assigned with values.
+	 */
+	@Override
 	public double evaluate() throws Exception {
 
-		return getFirstArgumentExpression().evaluate() + getSecondArgumentExpression().evaluate();
+		return getFirstArgument().evaluate() + getSecondArgument().evaluate();
 	}
-
+	/**
+	 * Returns the expression tree resulting from differentiating
+	 * the current expression relative to variable `var`.
+	 *
+	 * @param var The var to differentiate by.
+	 * @return Expression, the differentiation of the expression.
+	 */
+	@Override
 	public Expression differentiate(String var) {
-		return new Plus(getFirstArgumentExpression().differentiate(var), getSecondArgumentExpression().differentiate(var));
+		return new Plus(getFirstArgument().differentiate(var), getSecondArgument().differentiate(var));
 
 	}
-
+	/**
+	 * Returns a new expression in which all occurrences of the variable
+	 * var are replaced with the provided expression (Does not modify the
+	 * current expression).
+	 *
+	 * @param var        The variable to assign an expression to.
+	 * @param expression The expression to assign into a variable.
+	 * @return New expression with the assigned variable.
+	 */
+	@Override
 	public Expression assign(String var, Expression expression) {
 
-		Expression exp1 = getFirstArgumentExpression().assign(var, expression);
-		Expression exp2 = getSecondArgumentExpression().assign(var, expression);
+		Expression exp1 = getFirstArgument().assign(var, expression);
+		Expression exp2 = getSecondArgument().assign(var, expression);
 		return new Plus(exp1, exp2);
 
 	}
-
+	/**
+	 * Returned a simplified version of the current expression.
+	 *
+	 * @return New simplified version of the current expression.
+	 */
+	@Override
 	public Expression simplify() {
-		Expression simpleExp1 = getFirstArgumentExpression().simplify();
-		Expression simpleExp2 = getSecondArgumentExpression().simplify();
+		Expression simpleExp1 = getFirstArgument().simplify();
+		Expression simpleExp2 = getSecondArgument().simplify();
 
 		if (canParseDouble(this.toString())) {
 			return new Num(parseDouble(this.toString()));
@@ -108,45 +203,81 @@ public class Plus extends BinaryExpression implements Expression {
 		//4x +6x
 		//1+ (4x + 6x)
 		// ((2x) + (2 + ((4x) + 1)))
-		Expression advSimpleEx1 = getFirstArgumentExpression().advancedSimplify();
-		Expression advSimpleEx2 = getFirstArgumentExpression().advancedSimplify();
+		Expression advSimpleEx1 = getFirstArgument().advancedSimplify().simplify();
+		Expression advSimpleEx2 = getSecondArgument().advancedSimplify().simplify();
 
 		//X + X = 2X
 		if (advSimpleEx1.toString().equals(advSimpleEx2.toString())) {
-			return new Mult(2, advSimpleEx1);
+			return new Mult(2, advSimpleEx1).advancedSimplify();
+		}
+
+		if (advSimpleEx1 instanceof Neg && !(advSimpleEx2 instanceof Neg)) {
+			return new Plus(advSimpleEx2, advSimpleEx1).advancedSimplify();
 		}
 		// Num + X => X + Num
 		if (advSimpleEx1 instanceof Num && !(advSimpleEx2 instanceof Num)) {
-			return new Plus(advSimpleEx2, advSimpleEx1);
+			return new Plus(advSimpleEx2, advSimpleEx1).advancedSimplify();
 		}
 		//((4x +1) + 2) => (4x + (1+2)).
 		if (advSimpleEx1 instanceof Plus && advSimpleEx2 instanceof Num) {
 			Plus plusExp = (Plus) advSimpleEx1;
-			if (plusExp.getSecondArgumentExpression() instanceof Num) {
-				return new Plus(plusExp.getFirstArgumentExpression(), new Plus(plusExp.getSecondArgumentExpression(), advSimpleEx2));
+			if (plusExp.getSecondArgument() instanceof Num) {
+				return new Plus(plusExp.getFirstArgument().simplify(),
+						new Plus(plusExp.getSecondArgument().simplify(), advSimpleEx2)).advancedSimplify();
 			}
 		}
-		//(2x + (4x + 1))
-		if (advSimpleEx1 instanceof Mult && advSimpleEx2 instanceof Plus) {
-			Plus plusExp = (Plus) advSimpleEx2;
-			if (plusExp.getSecondArgumentExpression() instanceof Num) {
-				return new Plus(new Plus(advSimpleEx1, plusExp.getFirstArgumentExpression()), plusExp.getSecondArgumentExpression());
+		if (advSimpleEx1 instanceof Mult) {
+
+			if (advSimpleEx2 instanceof Var) {
+				Mult mult = (Mult) advSimpleEx1;
+				if (mult.getSecondArgument().toString().equals(advSimpleEx2.toString())) {
+					return new Mult(new Plus(mult.getFirstArgument().simplify(), 1),
+							advSimpleEx2).advancedSimplify();
+				}
 			}
 
+			//(2x + (4x + 1))
+			if (advSimpleEx2 instanceof Plus) {
+				Plus plusExp = (Plus) advSimpleEx2;
+				if (plusExp.getSecondArgument() instanceof Num) {
+					return new Plus(new Plus(advSimpleEx1, plusExp.getFirstArgument().simplify()),
+							plusExp.getSecondArgument().simplify()).advancedSimplify();
+				}
+			}
+			//(4x + 6x) = ((4+6)x)
+			if (advSimpleEx2 instanceof Mult) {
+				Mult firstMult = (Mult) advSimpleEx1;
+				Mult secondMult = (Mult) advSimpleEx2;
+				if (firstMult.getSecondArgument().toString().equals(secondMult.getSecondArgument().toString())) {
+					return new Mult(new Plus(firstMult.getFirstArgument().simplify(),
+							secondMult.getFirstArgument().simplify()),
+							firstMult.getSecondArgument().simplify()).advancedSimplify();
+				}
+			}
 		}
-		//(4x + 6x) = ((4+6)x)
-		if (advSimpleEx1 instanceof Mult
-				&& advSimpleEx2 instanceof Mult) {
-			Mult firstMult = (Mult) advSimpleEx1;
-			Mult secondMult = (Mult) advSimpleEx2;
-			if (firstMult.getSecondArgumentExpression().toString().equals(secondMult.getSecondArgumentExpression().toString())) {
-				return new Mult(new Plus(firstMult.getFirstArgumentExpression(),
-						secondMult.getFirstArgumentExpression()), firstMult.getSecondArgumentExpression());
+		if (advSimpleEx2 instanceof Mult) {
+
+			//(2x + (4x + 1))
+			if (advSimpleEx1 instanceof Plus) {
+				Plus plusExp = (Plus) advSimpleEx1;
+				if (plusExp.getSecondArgument() instanceof Num) {
+					return new Plus(new Plus(advSimpleEx2.simplify(), plusExp.getFirstArgument().simplify()),
+							plusExp.getSecondArgument().simplify()).advancedSimplify();
+				}
+			}
+			//(4x + 6x) = ((4+6)x)
+			if (advSimpleEx1 instanceof Mult) {
+				Mult firstMult = (Mult) advSimpleEx2;
+				Mult secondMult = (Mult) advSimpleEx1;
+				if (firstMult.getSecondArgument().toString().equals(secondMult.getSecondArgument().toString())) {
+					return new Mult(new Plus(firstMult.getFirstArgument().simplify(),
+							secondMult.getFirstArgument().simplify()),
+							firstMult.getSecondArgument().simplify()).advancedSimplify();
+				}
 			}
 		}
 
 
-
-		return new Plus(advSimpleEx1, advSimpleEx2).simplify();
+		return new Plus(advSimpleEx1.simplify(), advSimpleEx2.simplify());
 	}
 }

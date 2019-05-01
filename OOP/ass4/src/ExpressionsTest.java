@@ -31,15 +31,19 @@ public class ExpressionsTest {
 
 		System.out.println(e.differentiate("x").simplify());
 
-		Expression e4 = new Pow(new Num("e"), 2);
-		Expression e5 = new Pow("e", "2");
+		Expression e3 = new Sin(
+				new Pow(
+						new Mult(
+								new Plus(
+										new Mult(new Num(2), new Var("x")),
+										new Var("y")),
+								new Num(4)),
+						new Var("x")));
+		System.out.println(e3);
 
-		try {
-			System.out.println(e4.evaluate());
-			System.out.println(e5.evaluate());
-		} catch (Exception ex) {
-			System.out.println(ex.getMessage());
-		}
+		System.out.println(e3.differentiate("x"));
+		System.out.println(e3.differentiate("x").simplify());
+		System.out.println(e3.differentiate("x").advancedSimplify());
 
 
 	}

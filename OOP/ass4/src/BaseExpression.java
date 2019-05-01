@@ -14,8 +14,8 @@ public abstract class BaseExpression {
 	public static final String SPACE = " ";
 	public static final String COMMA_WITH_SPACE = ", ";
 
-	private Expression firstArgumentExpression;
-	private Expression secondArgumentExpression;
+	private Expression firstArgument;
+	private Expression secondArgument;
 
 	/**
 	 * A constructor for the BaseExpression class.
@@ -24,19 +24,19 @@ public abstract class BaseExpression {
 	 * @param argument Expression for the BaseExpression to be built with.
 	 */
 	public BaseExpression(Expression argument) {
-		this.firstArgumentExpression = argument;
+		this.firstArgument = argument;
 	}
 
 	/**
 	 * A constructor for the BaseExpression class.
 	 * For a unary expression.
 	 *
-	 * @param firstArgumentExpression First
-	 * @param secondArgumentExpression
+	 * @param firstArgument  First
+	 * @param secondArgument
 	 */
-	public BaseExpression(Expression firstArgumentExpression, Expression secondArgumentExpression) {
-		this.firstArgumentExpression = firstArgumentExpression;
-		this.secondArgumentExpression = secondArgumentExpression;
+	public BaseExpression(Expression firstArgument, Expression secondArgument) {
+		this.firstArgument = firstArgument;
+		this.secondArgument = secondArgument;
 	}
 
 	/**
@@ -44,8 +44,8 @@ public abstract class BaseExpression {
 	 *
 	 * @return First argument expression.
 	 */
-	protected Expression getFirstArgumentExpression() {
-		return this.firstArgumentExpression;
+	protected Expression getFirstArgument() {
+		return this.firstArgument;
 	}
 
 	/**
@@ -53,25 +53,75 @@ public abstract class BaseExpression {
 	 *
 	 * @return Second argument expression.
 	 */
-	protected Expression getSecondArgumentExpression() {
-		return this.secondArgumentExpression;
+	protected Expression getSecondArgument() {
+		return this.secondArgument;
 	}
 
-
-	public abstract Expression differentiate(String var);
-
-	public abstract double evaluate() throws Exception;
-
-	public abstract List<String> getVariables();
-
+	/**
+	 * Evaluate the expression using the variable values provided
+	 * in the assignment, and return the result.  If the expression
+	 * contains a variable which is not in the assignment, an exception
+	 * is thrown.
+	 *
+	 * @param assignment Map of variable and values for assigning in the expression.
+	 * @return Evaluated result of the Expression after an assignment.
+	 * @throws Exception if the expression contains a variable which is not in the assignment.
+	 */
 	public abstract double evaluate(Map<String, Double> assignment) throws Exception;
 
-	public abstract String toString();
+	/**
+	 * A convenience method. Like the `evaluate(assignment)` method above,
+	 * but uses an empty assignment.
+	 *
+	 * @return Evaluated result of the Expression.
+	 * @throws Exception If the Expression was not assigned with values.
+	 */
+	public abstract double evaluate() throws Exception;
 
+	/**
+	 * Returns a list of the variables in the expression.
+	 *
+	 * @return A list of the variables in the expression.
+	 */
+	public abstract List<String> getVariables();
+
+	/**
+	 * Returns a new expression in which all occurrences of the variable
+	 * var are replaced with the provided expression (Does not modify the
+	 * current expression).
+	 *
+	 * @param var        The variable to assign an expression to.
+	 * @param expression The expression to assign into a variable.
+	 * @return New expression with the assigned variable.
+	 */
 	public abstract Expression assign(String var, Expression expression);
 
+	/**
+	 * Returns the expression tree resulting from differentiating
+	 * the current expression relative to variable `var`.
+	 *
+	 * @param var The var to differentiate by.
+	 * @return Expression, the differentiation of the expression.
+	 */
+	public abstract Expression differentiate(String var);
+
+	/**
+	 * Returns a nice string representation of the expression.
+	 *
+	 * @return String representation of the expression.
+	 */
+	public abstract String toString();
+
+	/**
+	 * Returned a simplified version of the current expression.
+	 *
+	 * @return New simplified version of the current expression.
+	 */
 	public abstract Expression simplify();
 
+	/**
+	 * @return
+	 */
 	public abstract Expression advancedSimplify();
 
 

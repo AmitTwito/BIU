@@ -1,3 +1,4 @@
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -7,25 +8,51 @@ public abstract class UnaryExpression extends BaseExpression {
 
 	private String expressionString;
 
-	public UnaryExpression(Expression expression, String expressionString) {
-		super(expression);
+	/**
+	 * A constructor for the UnaryExpression class.
+	 *
+	 * @param argument
+	 * @param expressionString
+	 */
+	public UnaryExpression(Expression argument, String expressionString) {
+		super(argument);
 		this.expressionString = expressionString;
 	}
 
+	/**
+	 * Throws runtime
+	 *
+	 * @return
+	 */
 	@Override
-	protected Expression getSecondArgumentExpression() {
-		throw new RuntimeException("Unable to access a second argument of a unary expression, "
-				+ "because it does not have one.");
+	public Expression getSecondArgument() {
+		throw new RuntimeException("Unsuccessful try to access a second argument of a unary expression, "
+				+ "unary expressions do not have one.");
 	}
 
+	/**
+	 * Returns a nice string representation of the expression.
+	 *
+	 * @return String representation of the expression.
+	 */
 	@Override
 	public String toString() {
-		return this.expressionString + OPEN_BRACKETS + getFirstArgumentExpression() + CLOSE_BRACKETS;
+		return this.expressionString + OPEN_BRACKETS + getFirstArgument() + CLOSE_BRACKETS;
 	}
 
+	/**
+	 * Evaluate the expression using the variable values provided
+	 * in the assignment, and return the result.  If the expression
+	 * contains a variable which is not in the assignment, an exception
+	 * is thrown.
+	 *
+	 * @param assignment Map of variables and values for assigning in the expression.
+	 * @return Evaluated result of the Expression after an assignment.
+	 * @throws Exception if the expression contains a variable which is not in the assignment.
+	 */
 	@Override
 	public double evaluate(Map<String, Double> assignment) throws Exception {
-		Expression exp = getFirstArgumentExpression();
+		Expression exp = getFirstArgument();
 		List<String> vars = getVariables();
 		for (Map.Entry<String, Double> entry : assignment.entrySet()) {
 			Expression expression = new Num(entry.getValue());
@@ -38,22 +65,14 @@ public abstract class UnaryExpression extends BaseExpression {
 	}
 
 
-	@Override
-	public abstract Expression differentiate(String var);
-
-
+	/**
+	 * Returns a list of the variables in the expression.
+	 *
+	 * @return A list of the variables in the expression.
+	 */
 	@Override
 	public List<String> getVariables() {
-		return new ArrayList<>(new HashSet<>(getFirstArgumentExpression().getVariables()));
+		return new ArrayList<>(new HashSet<>(getFirstArgument().getVariables()));
 	}
-
-	// Returns a new expression in which all occurrences of the variable
-	// var are replaced with the provided expression (Does not modify the
-	// current expression).
-	@Override
-	public abstract Expression assign(String var, Expression expression);
-
-	@Override
-	public abstract Expression simplify();
 
 }
