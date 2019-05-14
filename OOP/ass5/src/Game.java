@@ -23,19 +23,22 @@ public class Game {
     //Constants.
 
     public static final String GUI_TITLE = "Title";
-    public static final int GUI_WIDTH = 1000;
+    public static final int GUI_WIDTH = 800;
     public static final int GUI_HEIGHT = 600;
+    public static final double BORDER_SIDE = 30;    //The shorter side of the borders blocks.
     public static final int FRAMES_PER_SECOND = 60;
     public static final int MILLISECONDS = 1000;
     public static final int PADDLE_WIDTH = 90;
     public static final int RADIUS = 8;
     public static final double BLOCK_WIDTH = 60;
     public static final double BLOCK_HEIGHT = 25;
-    public static final int BLOCK_LINES_NUMBER = 6; // Number of blocks lines.
-    public static final int BLOCKS_NUMBER = 12; // Number of block in each line.
-
-    //The shorter side of the borders blocks.
-    public static final double BORDER_SIDE = 30;
+    public static final int BLOCK_LINES_NUMBER = 5; // Number of blocks lines.
+    public static final int BLOCKS_NUMBER = 10; // Number of block in each line.
+    public static final int SCORE_BLOCK_HEIGHT = 25;
+    public static final int MAX_LIVES_NUMBER = 4;
+    public static final int MAX_BALLS_NUMBER = 3;
+    public static final Point PADDLE_UPPER_LEFT_POINT = new Point((GUI_WIDTH / 2) - (PADDLE_WIDTH / 2)
+            , GUI_HEIGHT - BORDER_SIDE - BLOCK_HEIGHT);
 
 
     //Members.
@@ -45,6 +48,8 @@ public class Game {
     private GUI gui; //The GUI of the Game
     private Counter remainingBlocks;
     private Counter availableBalls;
+    private Counter scoreCounter;
+    private Counter livesCounter;
 
 
     //Constructors.
@@ -57,6 +62,9 @@ public class Game {
         this.environment = new GameEnvironment();
         this.remainingBlocks = new Counter();
         this.availableBalls = new Counter();
+        this.scoreCounter = new Counter();
+        this.livesCounter = new Counter();
+        this.livesCounter.increase(MAX_LIVES_NUMBER);
     }
 
     //Getters.
@@ -97,79 +105,73 @@ public class Game {
         BlockRemover blockRemover = new BlockRemover(this, remainingBlocks);
         hitListenerList.add(blockRemover);
 
+        ScoreTrackingListener scoreTrackingListener = new ScoreTrackingListener(scoreCounter);
+        hitListenerList.add(scoreTrackingListener);
+
 
         this.gui = new GUI(GUI_TITLE, GUI_WIDTH, GUI_HEIGHT);
         DrawSurface d = this.gui.getDrawSurface();
 
-        //Build the paddle, to start in the middle of the screen -
-        //the upper left point of the paddle will be in a distance of PADDLE_WIDTH/2 from
-        //the middle of the GUI_WIDTH.
-        double upperLeftPointX = (GUI_WIDTH / 2) - (PADDLE_WIDTH / 2);
-        //The paddle needs to be close to the bottom border block.
-        double upperLeftPointY = GUI_HEIGHT - BORDER_SIDE - BLOCK_HEIGHT;
-        Point upperLeft = new Point(upperLeftPointX, upperLeftPointY);
-        Rectangle recPaddle = new Rectangle(upperLeft, PADDLE_WIDTH, BLOCK_HEIGHT);
-        Paddle paddle = new Paddle(recPaddle, Color.ORANGE, this.gui.getKeyboardSensor());
 
-        //Set the moving region of the paddle to be between the left and the right border blocks.
-        double x1 = BORDER_SIDE;
-        double x2 = GUI_WIDTH - BORDER_SIDE;
-        paddle.setMovingRegion(x1, x2);
-        paddle.addToGame(this);
+        //Indicators block at top.
+        Point upperLeft = new Point(0, 0);
+        Rectangle scoreRec = new Rectangle(upperLeft, GUI_WIDTH, SCORE_BLOCK_HEIGHT);
+        Block indicatorsBlock = new Block(scoreRec, Color.WHITE);
+        indicatorsBlock.addToGame(this);
 
-		//Bottom death block.
-		upperLeft = new Point(BORDER_SIDE, GUI_HEIGHT);
-		Rectangle botRec = new Rectangle(upperLeft, GUI_WIDTH - 2 * BORDER_SIDE, BORDER_SIDE);
-		Block bottomBlock = new Block(botRec, Color.GRAY);
-		bottomBlock.addToGame(this);
+        //Indicators.
+        ScoreIndicator scoreIndicator = new ScoreIndicator(scoreRec, this.scoreCounter);
+        this.addSprite(scoreIndicator);
 
-		//Create ball remover hit listener.
-		BallRemover ballRemover = new BallRemover(this,availableBalls);
-		bottomBlock.addHitListener(ballRemover);
+        LivesIndicator livesIndicator = new LivesIndicator(scoreRec, this.livesCounter);
+        this.addSprite(livesIndicator);
 
+
+        //Bottom death block.
+        upperLeft = new Point(BORDER_SIDE, GUI_HEIGHT);
+        Rectangle botRec = new Rectangle(upperLeft, GUI_WIDTH - 2 * BORDER_SIDE, BORDER_SIDE);
+        Block bottomBlock = new Block(botRec, Color.GRAY);
+        bottomBlock.addToGame(this);
+
+        //Create ball remover hit listener.
+        BallRemover ballRemover = new BallRemover(this, availableBalls);
+        bottomBlock.addHitListener(ballRemover);
 
         //Add blocks to the game.
         addBlocksToGame(hitListenerList);
 
-        //Set the balls position to be the middle of the screen : middle of the paddle.
-        int ballPointX = (int) paddle.getUpperLeft().getX() + PADDLE_WIDTH / 2;
-        //The height of the balls is above the paddle, in a RADIUS distance from it.
-        int ballPointY = (int) paddle.getUpperLeft().getY() - RADIUS;
-
-        //Build the balls, and add them to the game.
-        Ball ball = new Ball(ballPointX, ballPointY, RADIUS, Color.WHITE, this.environment);
-        Velocity v = Velocity.fromAngleAndSpeed(0, 4);
-        ball.setVelocity(v);
-        ball.addToGame(this);
-        this.availableBalls.increase(1);
-
-        ball = new Ball(ballPointX, ballPointY, RADIUS, Color.WHITE, this.environment);
-        v = Velocity.fromAngleAndSpeed(0, 4);
-        ball.setVelocity(v);
-        ball.addToGame(this);
-        this.availableBalls.increase(1);
+    }
 
 
-        ball = new Ball(ballPointX, ballPointY, RADIUS - 3, Color.red, this.environment);
-        v = Velocity.fromAngleAndSpeed(0, 6);
-        ball.setVelocity(v);
-        ball.addToGame(this);
-        this.availableBalls.increase(1);
+    public void run() {
 
-
+        while (this.livesCounter.getValue() != 0) {
+            playOneTurn();
+        }
+        gui.close();
     }
 
     /**
-     * Runs the game, in each frame everything is drawn and being notified that time has passed.
+     * Runs one turn of the game, in each frame everything is drawn and being notified that time has passed.
      */
-    public void run() {
+    private void playOneTurn() {
+
+        addPaddleToGame();
+        addBallsToGame();
+
         Sleeper sleeper = new Sleeper();
         int framesPerSecond = FRAMES_PER_SECOND;
         int millisecondsPerFrame = MILLISECONDS / framesPerSecond;
         while (true) {
-            if (this.remainingBlocks.getValue() == 0 || this.availableBalls.getValue() == 0) {
+            if (this.remainingBlocks.getValue() == 0 && this.availableBalls.getValue() != 0) {
+                this.scoreCounter.increase(100);
                 gui.close();
             }
+            if (this.remainingBlocks.getValue() != 0 && this.availableBalls.getValue() == 0) {
+                this.livesCounter.decrease(1);
+                return;
+            }
+
             long startTime = System.currentTimeMillis(); // timing
             DrawSurface d = gui.getDrawSurface();
 
@@ -189,9 +191,8 @@ public class Game {
                 sleeper.sleepFor(milliSecondLeftToSleep);
             }
         }
-
-
     }
+
 
     public void removeCollidable(Collidable c) {
         this.environment.removeCollidable(c);
@@ -212,7 +213,7 @@ public class Game {
         //Build the border blocks and add them to the game.
 
         //Top block.
-        Point upperLeft = new Point(0, 0);
+        Point upperLeft = new Point(0, SCORE_BLOCK_HEIGHT);
         Rectangle topRec = new Rectangle(upperLeft, GUI_WIDTH, BORDER_SIDE);
         Block topBlock = new Block(topRec, Color.GRAY);
         topBlock.addToGame(this);
@@ -220,21 +221,20 @@ public class Game {
         //this.remainingBlocks.increase(1);
 
         //Left block.
-        upperLeft = new Point(0, BORDER_SIDE);
-        Rectangle leftRec = new Rectangle(upperLeft, BORDER_SIDE, GUI_HEIGHT - BORDER_SIDE);
+        upperLeft = new Point(0, BORDER_SIDE + SCORE_BLOCK_HEIGHT);
+        Rectangle leftRec = new Rectangle(upperLeft, BORDER_SIDE, GUI_HEIGHT - upperLeft.getY());
         Block leftBlock = new Block(leftRec, Color.GRAY);
         leftBlock.addToGame(this);
         //addHitListenersToBlock(leftBlock, hitListenersList);
         //this.remainingBlocks.increase(1);
 
         //Right block.
-        upperLeft = new Point(GUI_WIDTH - BORDER_SIDE, BORDER_SIDE);
-        Rectangle rightRec = new Rectangle(upperLeft, BORDER_SIDE, GUI_HEIGHT - BORDER_SIDE);
+        upperLeft = new Point(GUI_WIDTH - BORDER_SIDE, BORDER_SIDE + SCORE_BLOCK_HEIGHT);
+        Rectangle rightRec = new Rectangle(upperLeft, BORDER_SIDE, GUI_HEIGHT - upperLeft.getY());
         Block rightBlock = new Block(rightRec, Color.GRAY);
         rightBlock.addToGame(this);
         //addHitListenersToBlock(rightBlock, hitListenersList);
         //this.remainingBlocks.increase(1);
-
 
 
         //Build the inner colored blocks (random color) and add them to the game.
@@ -322,4 +322,43 @@ public class Game {
         }
     }
 
+    private void addPaddleToGame() {
+
+        //Build the paddle, to start in the middle of the screen -
+        //the upper left point of the paddle will be in a distance of PADDLE_WIDTH/2 from
+        //the middle of the GUI_WIDTH.
+        //double upperLeftPointX = (GUI_WIDTH / 2) - (PADDLE_WIDTH / 2);
+        //The paddle needs to be close to the bottom border block.
+        //double upperLeftPointY = GUI_HEIGHT - BORDER_SIDE - BLOCK_HEIGHT;
+        //Point upperLeft = new Point(upperLeftPointX, upperLeftPointY);
+        Rectangle recPaddle = new Rectangle(PADDLE_UPPER_LEFT_POINT, PADDLE_WIDTH, BLOCK_HEIGHT);
+        Paddle paddle = new Paddle(recPaddle, Color.ORANGE, this.gui.getKeyboardSensor());
+
+        //Set the moving region of the paddle to be between the left and the right border blocks.
+        double x1 = BORDER_SIDE;
+        double x2 = GUI_WIDTH - BORDER_SIDE;
+        paddle.setMovingRegion(x1, x2);
+        paddle.addToGame(this);
+
+    }
+
+    private void addBallsToGame() {
+
+        //The height of the balls is above the paddle, in a RADIUS distance from it.
+        int ballPointY = (int) PADDLE_UPPER_LEFT_POINT.getY() - RADIUS;
+        //
+        int ballPointX = (int) (PADDLE_UPPER_LEFT_POINT.getX() + PADDLE_WIDTH / (MAX_BALLS_NUMBER + 1));
+
+        for (int i = 1; i <= MAX_BALLS_NUMBER; i++) {
+
+            //Build the balls, and add them to the game.
+            Ball ball = new Ball(ballPointX, ballPointY, RADIUS, generateRandomColor(), this.environment);
+            Velocity v = Velocity.fromAngleAndSpeed(0, 5);
+            ball.setVelocity(v);
+            ball.addToGame(this);
+            this.availableBalls.increase(1);
+
+            ballPointX += PADDLE_WIDTH / (MAX_BALLS_NUMBER + 1);
+        }
+    }
 }

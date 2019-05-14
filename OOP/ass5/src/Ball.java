@@ -1,5 +1,7 @@
 import biuoop.DrawSurface;
 
+import java.awt.*;
+
 /**
  * The Ball class represents a ball object.
  * Represented by point - the center of the ball on the x-y axises,
@@ -136,6 +138,8 @@ public class Ball implements Sprite {
     public void drawOn(DrawSurface surface) {
         surface.setColor(this.color);
         surface.fillCircle((int) this.point.getX(), (int) this.point.getY(), this.r);
+        surface.setColor(Color.BLACK);
+        surface.drawCircle((int) this.point.getX(), (int) this.point.getY(), this.r);
     }
 
     /**

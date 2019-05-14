@@ -161,14 +161,6 @@ public class Block extends Rectangle implements Collidable, Sprite, HitNotifier 
         if (!this.isBlockWithoutHitPoints) {
             surface.setColor(Color.BLACK);
             surface.drawRectangle(x1, y1, width, height);
-
-            surface.setColor(Color.WHITE);
-            String textToDraw = this.hitPoints == 0 ? "X" : "" + this.hitPoints;
-
-            int x = (int) (getUpperLeft().getX() + getWidth() / 2);
-            int y = (int) (getUpperLeft().getY() + getHeight() / 2);
-
-            surface.drawText(x, y, textToDraw, 20);
         }
     }
 
