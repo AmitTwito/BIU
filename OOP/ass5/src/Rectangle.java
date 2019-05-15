@@ -142,5 +142,14 @@ public class Rectangle {
         return rectSidesArray;
     }
 
+    /**
+     * Returns a copy of this rectangle.
+     *
+     * @return A copy of this rectangle.
+     */
+    protected Rectangle copy() {
+        return new Rectangle(this);
+    }
+
 
 }

@@ -1,6 +1,6 @@
 import biuoop.DrawSurface;
 
-import java.awt.*;
+import java.awt.Color;
 
 /**
  * The Ball class represents a ball object.
@@ -188,6 +188,11 @@ public class Ball implements Sprite {
         g.addSprite(this);
     }
 
+    /**
+     * Removes the ball from a given game.
+     *
+     * @param g The game to remove the ball from.
+     */
     public void removeFromGame(Game g) {
         g.removeSprite(this);
     }

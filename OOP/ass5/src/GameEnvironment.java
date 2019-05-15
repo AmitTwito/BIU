@@ -98,6 +98,10 @@ public class GameEnvironment {
         return new CollisionInfo(collisionInfo.collisionPoint(), collisionInfo.collisionObject());
     }
 
+    /**
+     * Removes a collidable from the game environment.
+     * @param c The collidable to remove.
+     */
     public void removeCollidable(Collidable c) {
         this.collidablesList.remove(c);
     }

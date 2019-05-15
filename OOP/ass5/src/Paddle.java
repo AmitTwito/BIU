@@ -1,5 +1,6 @@
 import biuoop.DrawSurface;
 import biuoop.KeyboardSensor;
+
 import javax.swing.JOptionPane;
 import java.awt.Color;
 
@@ -173,13 +174,14 @@ public class Paddle extends Block implements Sprite, Collidable {
     /**
      * Returns a new Velocity based on where on the Paddle the collision occurred.
      *
+     * @param hitter The hitting ball.
      * @param collisionPoint  The collision point of the ball.
      * @param currentVelocity The current velocity of the ball.
      * @return New Velocity based on where on the paddle the collision occurred.
      * @throws RuntimeException if there was a problem with setting the hit regions.
      */
     @Override
-    public Velocity hit(Ball hitter,Point collisionPoint, Velocity currentVelocity) throws RuntimeException {
+    public Velocity hit(Ball hitter, Point collisionPoint, Velocity currentVelocity) throws RuntimeException {
 
         //Check if the y coordinate of the collision is on the top side of the paddle.
         if (collisionPoint.getY() == getUpperLeft().getY()) {
@@ -232,15 +234,6 @@ public class Paddle extends Block implements Sprite, Collidable {
     public void addToGame(Game g) {
         g.addCollidable(this);
         g.addSprite(this);
-    }
-
-    @Override
-    public void removeHitListener(HitListener hl) {
-    }
-
-    @Override
-    public void addHitListener(HitListener hl) {
-
     }
 
 }

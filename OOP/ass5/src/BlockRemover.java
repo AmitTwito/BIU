@@ -1,24 +1,44 @@
-// a BlockRemover is in charge of removing blocks from the game, as well as keeping count
-// of the number of blocks that remain.
+/**
+ * A BlockRemover is in charge of removing blocks from the game, as well as keeping count
+ * of the number of blocks that remain.
+ *
+ * @author Amit Twito
+ * @since 15.5.19
+ */
 public class BlockRemover implements HitListener {
-	private Game game;
-	private Counter remainingBlocks;
-
-	public BlockRemover(Game game, Counter remainingBlocks) {
-		this.game = game;
-		this.remainingBlocks = remainingBlocks;
-	}
+    private Game game;
+    private Counter remainingBlocks;
 
 
-	// Blocks that are hit and reach 0 hit-points should be removed
-	// from the game. Remember to remove this listener from the block
-	// that is being removed from the game.
-	public void hitEvent(Block beingHit, Ball hitter) {
+    /**
+     * A constructor for the BlockRemover class.
+     *
+     * @param game            The game to remove the blocks from.
+     * @param remainingBlocks The counter of remaining blocks in the game.
+     */
+    public BlockRemover(Game game, Counter remainingBlocks) {
+        this.game = game;
+        this.remainingBlocks = remainingBlocks;
+    }
 
-		if (!beingHit.isBlockWithoutHitPoints() && beingHit.getHitPoints() == 0) {
-			beingHit.removeFromGame(this.game);
-			beingHit.removeHitListener(this);
-			this.remainingBlocks.decrease(1);
-		}
-	}
+
+    // from the game. Remember to remove this listener from the block
+    // that is being removed from the game.
+
+    /**
+     * This method is called whenever the beingHit object is hit.
+     * Removes Blocks that are hit and reach 0 hit-points, in other words,
+     * when they have 1 point before the hit.
+     *
+     * @param beingHit The object that being hit by a ball.
+     * @param hitter   The Ball that's doing the hitting.
+     */
+    @Override
+    public void hitEvent(Block beingHit, Ball hitter) {
+        if (!beingHit.isBlockWithoutHitPoints() && beingHit.getHitPoints() == 1) {
+            beingHit.removeFromGame(this.game);
+            beingHit.removeHitListener(this);
+            this.remainingBlocks.decrease(1);
+        }
+    }
 }

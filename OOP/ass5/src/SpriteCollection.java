@@ -1,7 +1,6 @@
 import biuoop.DrawSurface;
 
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 
 /**
@@ -13,53 +12,58 @@ import java.util.List;
  */
 public class SpriteCollection {
 
-	//Members.
-	private List<Sprite> spritesList; //The Sprites list.
+    //Members.
+    private List<Sprite> spritesList; //The Sprites list.
 
-	//Constructors.
+    //Constructors.
 
-	/**
-	 * Constructor for the SpriteCollection class.
-	 * Initialize a List of Sprites.
-	 */
-	public SpriteCollection() {
-		this.spritesList = new ArrayList<>();
-	}
+    /**
+     * Constructor for the SpriteCollection class.
+     * Initialize a List of Sprites.
+     */
+    public SpriteCollection() {
+        this.spritesList = new ArrayList<>();
+    }
 
-	//Class methods.
+    //Class methods.
 
-	/**
-	 * Add a Sprite to the collection.
-	 *
-	 * @param s Right edge of the Region.
-	 */
-	public void addSprite(Sprite s) {
-		this.spritesList.add(s);
-	}
+    /**
+     * Add a Sprite to the collection.
+     *
+     * @param s Right edge of the Region.
+     */
+    public void addSprite(Sprite s) {
+        this.spritesList.add(s);
+    }
 
-	/**
-	 * Notifies every Sprite in the collection that the time has passed.
-	 */
-	public void notifyAllTimePassed() {
+    /**
+     * Notifies every Sprite in the collection that the time has passed.
+     */
+    public void notifyAllTimePassed() {
 
-		for (int i = 0; i < this.spritesList.size(); i++){
-			this.spritesList.get(i).timePassed();
-		}
-	}
+        for (int i = 0; i < this.spritesList.size(); i++) {
+            this.spritesList.get(i).timePassed();
+        }
+    }
 
-	/**
-	 * Draws the Sprites on a given DrawSurface.
-	 *
-	 * @param d DrawSurface to draw the sprite on
-	 */
-	public void drawAllOn(DrawSurface d) {
-		for (int i = 0; i < this.spritesList.size(); i++){
-			this.spritesList.get(i).drawOn(d);
-		}
-	}
+    /**
+     * Draws the Sprites on a given DrawSurface.
+     *
+     * @param d DrawSurface to draw the sprite on
+     */
+    public void drawAllOn(DrawSurface d) {
+        for (int i = 0; i < this.spritesList.size(); i++) {
+            this.spritesList.get(i).drawOn(d);
+        }
+    }
 
-	public void removeSprite(Sprite s) {
-		this.spritesList.remove(s);
-	}
+    /**
+     * Removes a sprite from the collection.
+     *
+     * @param s The sprite to remove.
+     */
+    public void removeSprite(Sprite s) {
+        this.spritesList.remove(s);
+    }
 }
 

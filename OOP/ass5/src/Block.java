@@ -19,7 +19,7 @@ public class Block extends Rectangle implements Collidable, Sprite, HitNotifier 
     private Color color; // The color of the block.
     private int hitPoints; // The base hit points of the block.
     private List<HitListener> hitListeners;
-    private boolean isBlockWithoutHitPoints;
+    private boolean isBlockWithoutHitPoints; // For a paddle or border blocks.
 
     //Constructors.
 
@@ -60,8 +60,7 @@ public class Block extends Rectangle implements Collidable, Sprite, HitNotifier 
      */
     @Override
     public Rectangle getCollisionRectangle() {
-        //Block is a rectangle.
-        return this;
+        return super.copy();
     }
 
     /**
@@ -115,6 +114,7 @@ public class Block extends Rectangle implements Collidable, Sprite, HitNotifier 
                 || collisionPoint.getY() == bottom.start().getY())
                 && (collisionPoint.getX() >= top.start().getX()
                 && collisionPoint.getX() <= top.end().getX())) {
+            //Notify that was a hit.
             notifyHit(hitter);
             reduceHitPoints();
             return new Velocity(currentVelocity.getDx(), -currentVelocity.getDy());
@@ -125,6 +125,7 @@ public class Block extends Rectangle implements Collidable, Sprite, HitNotifier 
                 || collisionPoint.getX() == right.start().getX())
                 && (collisionPoint.getY() >= left.start().getY()
                 && collisionPoint.getY() <= left.end().getY())) {
+            //Notify that was a hit.
             notifyHit(hitter);
             reduceHitPoints();
             return new Velocity(-currentVelocity.getDx(), currentVelocity.getDy());
@@ -133,6 +134,7 @@ public class Block extends Rectangle implements Collidable, Sprite, HitNotifier 
         // change both vertical and horizontal directions.
         if (collisionPoint.equals(top.start()) || collisionPoint.equals(top.end())
                 || collisionPoint.equals(bottom.start()) || collisionPoint.equals(bottom.end())) {
+            //Notify that was a hit.
             notifyHit(hitter);
             reduceHitPoints();
             return new Velocity(-currentVelocity.getDx(), -currentVelocity.getDy());
@@ -161,6 +163,14 @@ public class Block extends Rectangle implements Collidable, Sprite, HitNotifier 
         if (!this.isBlockWithoutHitPoints) {
             surface.setColor(Color.BLACK);
             surface.drawRectangle(x1, y1, width, height);
+
+            surface.setColor(Color.WHITE);
+            String textToDraw = this.hitPoints == 0 ? "X" : "" + this.hitPoints;
+
+            int x = (int) (getUpperLeft().getX() + getWidth() / 2);
+            int y = (int) (getUpperLeft().getY() + getHeight() / 2);
+
+            surface.drawText(x, y, textToDraw, 20);
         }
     }
 
@@ -191,11 +201,22 @@ public class Block extends Rectangle implements Collidable, Sprite, HitNotifier 
         this.hitPoints = newHitPoints <= 0 ? 0 : newHitPoints;
     }
 
+    /**
+     * Removes this block from the given game.
+     *
+     * @param game The game to remove the block from.
+     */
     public void removeFromGame(Game game) {
         game.removeCollidable(this);
         game.removeSprite(this);
     }
 
+
+    /**
+     * Notifies the listeners of the block that there was a hit.
+     *
+     * @param hitter The hitting ball.
+     */
     private void notifyHit(Ball hitter) {
         // Make a copy of the hitListeners before iterating over them.
         List<HitListener> listeners = new ArrayList<>(this.hitListeners);
@@ -205,11 +226,21 @@ public class Block extends Rectangle implements Collidable, Sprite, HitNotifier 
         }
     }
 
+    /**
+     * Adds a HitListener as a listener to hit events.
+     *
+     * @param hl The HitListener to add to the list of listeners.
+     */
     @Override
     public void removeHitListener(HitListener hl) {
         this.hitListeners.remove(hl);
     }
 
+    /**
+     * Removes hl from the list of listeners to hit events.
+     *
+     * @param hl The HitListener to remove from the list of listeners list.
+     */
     @Override
     public void addHitListener(HitListener hl) {
         this.hitListeners.add(hl);

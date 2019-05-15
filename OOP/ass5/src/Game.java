@@ -22,7 +22,7 @@ public class Game {
 
     //Constants.
 
-    public static final String GUI_TITLE = "Title";
+    public static final String GUI_TITLE = "Arkanoid";
     public static final int GUI_WIDTH = 800;
     public static final int GUI_HEIGHT = 600;
     public static final double BORDER_SIDE = 30;    //The shorter side of the borders blocks.
@@ -36,7 +36,8 @@ public class Game {
     public static final int BLOCKS_NUMBER = 10; // Number of block in each line.
     public static final int SCORE_BLOCK_HEIGHT = 25;
     public static final int MAX_LIVES_NUMBER = 4;
-    public static final int MAX_BALLS_NUMBER = 3;
+    public static final int MAX_BALLS_NUMBER = 2;
+    public static final double BALL_SPEED = 5;
     public static final Point PADDLE_UPPER_LEFT_POINT = new Point((GUI_WIDTH / 2) - (PADDLE_WIDTH / 2)
             , GUI_HEIGHT - BORDER_SIDE - BLOCK_HEIGHT);
 
@@ -50,6 +51,7 @@ public class Game {
     private Counter availableBalls;
     private Counter scoreCounter;
     private Counter livesCounter;
+    private Paddle gamePaddle;
 
 
     //Constructors.
@@ -99,9 +101,6 @@ public class Game {
     public void initialize() throws RuntimeException {
         List<HitListener> hitListenerList = new ArrayList<>();
 
-        PrintingHitListener printingHitListener = new PrintingHitListener();
-        hitListenerList.add(printingHitListener);
-
         BlockRemover blockRemover = new BlockRemover(this, remainingBlocks);
         hitListenerList.add(blockRemover);
 
@@ -140,9 +139,15 @@ public class Game {
         //Add blocks to the game.
         addBlocksToGame(hitListenerList);
 
+        //Add the paddle to the game.
+        addPaddleToGame();
+
     }
 
 
+    /**
+     * Runs the Arkanoid game.
+     */
     public void run() {
 
         while (this.livesCounter.getValue() != 0) {
@@ -154,9 +159,12 @@ public class Game {
     /**
      * Runs one turn of the game, in each frame everything is drawn and being notified that time has passed.
      */
-    private void playOneTurn() {
+    public void playOneTurn() {
 
+        //Remove the current paddle and add a new one to start from the center of the screen.
+        this.gamePaddle.removeFromGame(this);
         addPaddleToGame();
+        //Add the balls.
         addBallsToGame();
 
         Sleeper sleeper = new Sleeper();
@@ -193,11 +201,19 @@ public class Game {
         }
     }
 
-
+    /**
+     * Removes a collidable from the game.
+     *
+     * @param c The collidable to remove from the game.
+     */
     public void removeCollidable(Collidable c) {
         this.environment.removeCollidable(c);
     }
 
+    /**
+     * Removes a sprite from the game.
+     * @param s The sprite to remove from the game.
+     */
     public void removeSprite(Sprite s) {
         this.sprites.removeSprite(s);
     }
@@ -217,24 +233,18 @@ public class Game {
         Rectangle topRec = new Rectangle(upperLeft, GUI_WIDTH, BORDER_SIDE);
         Block topBlock = new Block(topRec, Color.GRAY);
         topBlock.addToGame(this);
-        //addHitListenersToBlock(topBlock, hitListenersList);
-        //this.remainingBlocks.increase(1);
 
         //Left block.
         upperLeft = new Point(0, BORDER_SIDE + SCORE_BLOCK_HEIGHT);
         Rectangle leftRec = new Rectangle(upperLeft, BORDER_SIDE, GUI_HEIGHT - upperLeft.getY());
         Block leftBlock = new Block(leftRec, Color.GRAY);
         leftBlock.addToGame(this);
-        //addHitListenersToBlock(leftBlock, hitListenersList);
-        //this.remainingBlocks.increase(1);
 
         //Right block.
         upperLeft = new Point(GUI_WIDTH - BORDER_SIDE, BORDER_SIDE + SCORE_BLOCK_HEIGHT);
         Rectangle rightRec = new Rectangle(upperLeft, BORDER_SIDE, GUI_HEIGHT - upperLeft.getY());
         Block rightBlock = new Block(rightRec, Color.GRAY);
         rightBlock.addToGame(this);
-        //addHitListenersToBlock(rightBlock, hitListenersList);
-        //this.remainingBlocks.increase(1);
 
 
         //Build the inner colored blocks (random color) and add them to the game.
@@ -315,6 +325,12 @@ public class Game {
         return new Color(r, g, b);
     }
 
+    /**
+     * Adds a list of listeners to a given block.
+     *
+     * @param block           The block to add the listeners to.
+     * @param hitListenerList The listeners to add to the block.
+     */
     private void addHitListenersToBlock(Block block, List<HitListener> hitListenerList) {
 
         for (HitListener hl : hitListenerList) {
@@ -322,6 +338,9 @@ public class Game {
         }
     }
 
+    /**
+     * Creates and adds A paddle to the game.
+     */
     private void addPaddleToGame() {
 
         //Build the paddle, to start in the middle of the screen -
@@ -338,22 +357,30 @@ public class Game {
         double x1 = BORDER_SIDE;
         double x2 = GUI_WIDTH - BORDER_SIDE;
         paddle.setMovingRegion(x1, x2);
+
         paddle.addToGame(this);
+
+        this.gamePaddle = paddle;
 
     }
 
+    /**
+     * Creates and adds balls to the game.
+     */
     private void addBallsToGame() {
 
         //The height of the balls is above the paddle, in a RADIUS distance from it.
         int ballPointY = (int) PADDLE_UPPER_LEFT_POINT.getY() - RADIUS;
-        //
+        //I wanted to create even distances between the start of tha paddle, the balls between the,
+        // and the end of the paddle : for 2 balls the paddle needs to have 3 parts,for 3 : 4 parts, and so on.
+        // number_of_balls + 1.
         int ballPointX = (int) (PADDLE_UPPER_LEFT_POINT.getX() + PADDLE_WIDTH / (MAX_BALLS_NUMBER + 1));
 
         for (int i = 1; i <= MAX_BALLS_NUMBER; i++) {
 
             //Build the balls, and add them to the game.
             Ball ball = new Ball(ballPointX, ballPointY, RADIUS, generateRandomColor(), this.environment);
-            Velocity v = Velocity.fromAngleAndSpeed(0, 5);
+            Velocity v = Velocity.fromAngleAndSpeed(0, BALL_SPEED);
             ball.setVelocity(v);
             ball.addToGame(this);
             this.availableBalls.increase(1);

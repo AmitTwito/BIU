@@ -1,23 +1,44 @@
+/**
+ * The Counter class is a simple class that is used for counting things.
+ *
+ * @author Amit Twito
+ * @since 15.5.19
+ */
 public class Counter {
 
-	private int count;
+    private int count;
 
-	public Counter() {
-		this.count = 0;
-	}
+    /**
+     * A constructor for the Counter class.
+     */
+    public Counter() {
+        this.count = 0;
+    }
 
-	// add number to current count.
-	public void increase(int number) {
-		this.count += number;
-	}
+    /**
+     * Adds a given number to current count.
+     *
+     * @param number The number to add to the count.
+     */
+    public void increase(int number) {
+        this.count += number;
+    }
 
-	// subtract number from current count.
-	public void decrease(int number) {
-		this.count -= number;
-	}
+    /**
+     * Decreases the current count by a given number.
+     *
+     * @param number The number to decrease the count by.
+     */
+    public void decrease(int number) {
+        this.count -= number;
+    }
 
-	// get current count.
-	public int getValue() {
-		return this.count;
-	}
+    /**
+     * Returns the current count.
+     *
+     * @return Current count.
+     */
+    public int getValue() {
+        return this.count;
+    }
 }

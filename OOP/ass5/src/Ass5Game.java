@@ -1,11 +1,11 @@
 /**
- * The main class for assignment 3.
- * The Ass3Game class initializes and runs the Game.
+ * The main class for assignment 5.
+ * The Ass5Game class initializes and runs the Game.
  *
  * @author Amit Twito
  * @since 4.4.19
  */
-public class Ass3Game {
+public class Ass5Game {
 
     /**
      * initializes and runs the Game.
