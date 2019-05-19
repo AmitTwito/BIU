@@ -2,10 +2,13 @@
 #twitoam 
 
 compile: bin
-	javac -cp src -d bin src/*.java 
+	javac -cp biuoop-1.4.jar:src -d bin src/*.java 
 
 run:
-	java -cp bin ExpressionsTest
+	java -cp biuoop-1.4.jar:bin Ass5Game
+
+jar:
+	jar cfm ass5game.jar Manifest.mf -C bin/ .
 	
 bin:
 	mkdir bin

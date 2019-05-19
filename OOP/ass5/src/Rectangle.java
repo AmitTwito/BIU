@@ -81,7 +81,7 @@ public class Rectangle {
      *
      * @param newUpperLeft New upper left point of the rectangle.
      */
-    public void setUpperLeft(Point newUpperLeft) {
+    protected void setUpperLeft(Point newUpperLeft) {
         this.upperLeft = new Point(newUpperLeft.getX(), newUpperLeft.getY());
     }
 

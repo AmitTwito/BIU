@@ -171,12 +171,15 @@ public class Game {
         int framesPerSecond = FRAMES_PER_SECOND;
         int millisecondsPerFrame = MILLISECONDS / framesPerSecond;
         while (true) {
+            //If there are no available blocks - the player won the game.
             if (this.remainingBlocks.getValue() == 0 && this.availableBalls.getValue() != 0) {
                 this.scoreCounter.increase(100);
                 gui.close();
             }
+            //If there are no available blocks - the player loses one life.
             if (this.remainingBlocks.getValue() != 0 && this.availableBalls.getValue() == 0) {
                 this.livesCounter.decrease(1);
+                //Stop the turn.
                 return;
             }
 
@@ -184,8 +187,8 @@ public class Game {
             DrawSurface d = gui.getDrawSurface();
 
             //Add background to the gui, behind every sprite.
-            Color blue = new Color(42, 129, 21);
-            d.setColor(blue);
+            Color color = new Color(42, 129, 21);
+            d.setColor(color);
             d.fillRectangle(0, 0, GUI_WIDTH, GUI_HEIGHT);
 
             this.sprites.drawAllOn(d);

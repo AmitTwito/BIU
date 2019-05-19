@@ -18,7 +18,7 @@ public class Paddle extends Block implements Sprite, Collidable {
     //Constants.
 
     private static final int REGIONS_NUMBER = 5;
-    private static final double MOVING_DISTANCE_DIVIDER = 10;
+    private static final double MOVING_DISTANCE_DIVIDER = 9;
 
     //Members.
 
@@ -100,7 +100,7 @@ public class Paddle extends Block implements Sprite, Collidable {
     /**
      * Moves the paddle in left direction.
      */
-    public void moveLeft() {
+    private void moveLeft() {
         //Set the distance that the paddle will be moved from his current position.
         double dX = getWidth() / MOVING_DISTANCE_DIVIDER;
         double x = getUpperLeft().getX() - dX;
@@ -118,7 +118,7 @@ public class Paddle extends Block implements Sprite, Collidable {
     /**
      * Moves the paddle in right direction.
      */
-    public void moveRight() {
+    private void moveRight() {
         //Set the distance that the paddle will be moved from his current position.
         double dX = getWidth() / MOVING_DISTANCE_DIVIDER;
 
