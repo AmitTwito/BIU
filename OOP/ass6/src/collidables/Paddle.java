@@ -2,7 +2,7 @@ package collidables;
 
 import biuoop.DrawSurface;
 import biuoop.KeyboardSensor;
-import animations.Game;
+import animations.GameLevel;
 import geometry.Line;
 import geometry.Point;
 import geometry.Rectangle;
@@ -36,6 +36,7 @@ public class Paddle extends Block implements Sprite, Collidable {
     private KeyboardSensor keyboard; // The keyboard sensor of the current gui.
     private Region movingRegion; // The region the paddle can move in.
     private Region[] hitRegions; // The different-behaviour-hit-regions for the ball.
+    private int speed;
 
     //Constructors.
 
@@ -45,10 +46,12 @@ public class Paddle extends Block implements Sprite, Collidable {
      * @param rectangle The rectangle that the paddle will be represented by.
      * @param color     The color of the paddle.
      * @param keyboard  The KeyBoardSensor of the current gui.
+     * @param speed The speed of the paddle.
      */
-    public Paddle(Rectangle rectangle, Color color, KeyboardSensor keyboard) {
+    public Paddle(Rectangle rectangle, Color color, KeyboardSensor keyboard, int speed) {
         super(rectangle, color);
         this.keyboard = keyboard;
+        this.speed = speed;
     }
 
     //Getters.
@@ -66,7 +69,7 @@ public class Paddle extends Block implements Sprite, Collidable {
             this.movingRegion = new Region(first, second);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
-                    "Error: collidables.Paddle's moving region, " + e.getMessage(), "Error",
+                    "Error: Paddle's moving region, " + e.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
@@ -91,7 +94,7 @@ public class Paddle extends Block implements Sprite, Collidable {
             this.hitRegions[3] = new Region(this.hitRegions[2].second(), this.hitRegions[2].second() + regionLength);
             this.hitRegions[4] = new Region(this.hitRegions[3].second(), this.hitRegions[3].second() + regionLength);
         } catch (Exception e) {
-            System.out.println("Error: collidables.Paddle's hit regions\n" + e.getMessage());
+            System.out.println("Error: Paddle's hit regions\n" + e.getMessage());
         }
 
     }
@@ -103,8 +106,9 @@ public class Paddle extends Block implements Sprite, Collidable {
      */
     public void moveLeft() {
         //Set the distance that the paddle will be moved from his current position.
-        double dX = getWidth() / MOVING_DISTANCE_DIVIDER;
-        double x = getUpperLeft().getX() - dX;
+        //double dX = getWidth() / MOVING_DISTANCE_DIVIDER;
+
+        double x = getUpperLeft().getX() - this.speed;
         // If the paddle will be passing the left border of the movingRegion,
         // set the next point (x coordinate) to be exactly the left border.
         if (x < this.movingRegion.first()) {
@@ -121,9 +125,9 @@ public class Paddle extends Block implements Sprite, Collidable {
      */
     public void moveRight() {
         //Set the distance that the paddle will be moved from his current position.
-        double dX = getWidth() / MOVING_DISTANCE_DIVIDER;
+        //double dX = getWidth() / MOVING_DISTANCE_DIVIDER;
 
-        double x = getUpperLeft().getX() + dX;
+        double x = getUpperLeft().getX() + this.speed;
         // If the paddle will be passing the right border of the movingRegion,
         // set the next point (x coordinate) to be exactly the right border.
         if (x > this.movingRegion.second() - getWidth()) {
@@ -232,7 +236,7 @@ public class Paddle extends Block implements Sprite, Collidable {
      *
      * @param g The game to add this paddle to.
      */
-    public void addToGame(Game g) {
+    public void addToGame(GameLevel g) {
         g.addCollidable(this);
         g.addSprite(this);
     }

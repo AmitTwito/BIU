@@ -6,6 +6,7 @@ import movement.Velocity;
 import java.util.List;
 
 public interface LevelInformation {
+
     int numberOfBalls();
 
     // The initial velocity of each ball

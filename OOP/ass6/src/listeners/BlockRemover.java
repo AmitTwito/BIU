@@ -1,7 +1,7 @@
 package listeners;
 
 import collidables.Block;
-import animations.Game;
+import animations.GameLevel;
 import sprites.Ball;
 import utilities.Counter;
 import interfaces.HitListener;
@@ -14,18 +14,18 @@ import interfaces.HitListener;
  * @since 15.5.19
  */
 public class BlockRemover implements HitListener {
-    private Game game;
+    private GameLevel gameLevel;
     private Counter remainingBlocks;
 
 
     /**
      * A constructor for the listeners.BlockRemover class.
      *
-     * @param game            The game to remove the blocks from.
+     * @param gameLevel            The game to remove the blocks from.
      * @param remainingBlocks The counter of remaining blocks in the game.
      */
-    public BlockRemover(Game game, Counter remainingBlocks) {
-        this.game = game;
+    public BlockRemover(GameLevel gameLevel, Counter remainingBlocks) {
+        this.gameLevel = gameLevel;
         this.remainingBlocks = remainingBlocks;
     }
 
@@ -44,7 +44,7 @@ public class BlockRemover implements HitListener {
     @Override
     public void hitEvent(Block beingHit, Ball hitter) {
         if (!beingHit.isBlockWithoutHitPoints() && beingHit.getHitPoints() == 1) {
-            beingHit.removeFromGame(this.game);
+            beingHit.removeFromGame(this.gameLevel);
             beingHit.removeHitListener(this);
             this.remainingBlocks.decrease(1);
         }

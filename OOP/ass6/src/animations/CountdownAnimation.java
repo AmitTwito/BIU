@@ -16,21 +16,21 @@ import java.util.concurrent.TimeUnit;
 public class CountdownAnimation implements Animation {
 	private int countFrom;
 	private SpriteCollection gameScreen;
-	private boolean runnig;
+	private boolean running;
 	private long millisecondsPerCount;
 
 	public CountdownAnimation(double numOfSeconds, int countFrom, SpriteCollection gameScreen) {
 		this.countFrom = countFrom;
 		this.gameScreen = gameScreen;
-		this.runnig = true;
-		this.millisecondsPerCount = TimeUnit.SECONDS.toMillis((long) numOfSeconds / countFrom);
+		this.running = true;
+		this.millisecondsPerCount = TimeUnit.SECONDS.toMillis((long) numOfSeconds) / countFrom;
 	}
 
 	public void doOneFrame(DrawSurface d) {
 		gameScreen.drawAllOn(d);
 		Sleeper sleeper = new Sleeper();
 		if (this.countFrom == 0) {
-			this.runnig = false;
+			this.running = false;
 		}
 		if (this.countFrom > 0) {
 			d.drawText(d.getWidth() / 2, 60, "" + this.countFrom, 60);
@@ -40,6 +40,6 @@ public class CountdownAnimation implements Animation {
 	}
 
 	public boolean shouldStop() {
-		return !this.runnig;
+		return !this.running;
 	}
 }

@@ -1,7 +1,7 @@
 package collidables;
 
 import biuoop.DrawSurface;
-import animations.Game;
+import animations.GameLevel;
 import geometry.Line;
 import geometry.Point;
 import geometry.Rectangle;
@@ -190,7 +190,7 @@ public class Block extends Rectangle implements Collidable, Sprite, HitNotifier 
      *
      * @param g The game to add the block to.
      */
-    public void addToGame(Game g) {
+    public void addToGame(GameLevel g) {
         g.addCollidable(this);
         g.addSprite(this);
     }
@@ -207,11 +207,11 @@ public class Block extends Rectangle implements Collidable, Sprite, HitNotifier 
     /**
      * Removes this block from the given game.
      *
-     * @param game The game to remove the block from.
+     * @param gameLevel The game to remove the block from.
      */
-    public void removeFromGame(Game game) {
-        game.removeCollidable(this);
-        game.removeSprite(this);
+    public void removeFromGame(GameLevel gameLevel) {
+        gameLevel.removeCollidable(this);
+        gameLevel.removeSprite(this);
     }
 
 

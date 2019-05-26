@@ -1,7 +1,7 @@
 package listeners;
 
 import collidables.Block;
-import animations.Game;
+import animations.GameLevel;
 import utilities.Counter;
 import interfaces.HitListener;
 import sprites.Ball;
@@ -15,17 +15,17 @@ import sprites.Ball;
  */
 public class BallRemover implements HitListener {
 
-    private Game game;
+    private GameLevel gameLevel;
     private Counter availableBalls;
 
     /**
      * A constructor for the listeners.BallRemover class.
      *
-     * @param game           The game to remove balls from.
+     * @param gameLevel           The game to remove balls from.
      * @param availableBalls The current available balls.
      */
-    public BallRemover(Game game, Counter availableBalls) {
-        this.game = game;
+    public BallRemover(GameLevel gameLevel, Counter availableBalls) {
+        this.gameLevel = gameLevel;
         this.availableBalls = availableBalls;
     }
 
@@ -39,7 +39,7 @@ public class BallRemover implements HitListener {
      */
     @Override
     public void hitEvent(Block beingHit, Ball hitter) {
-        hitter.removeFromGame(this.game);
+        hitter.removeFromGame(this.gameLevel);
         availableBalls.decrease(1);
     }
 }
