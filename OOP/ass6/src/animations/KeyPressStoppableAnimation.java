@@ -23,12 +23,18 @@ public class KeyPressStoppableAnimation implements Animation {
 
     @Override
     public void doOneFrame(DrawSurface d) {
-		this.animation.doOneFrame(d);
+        this.animation.doOneFrame(d);
 
-		if (this.keyboard.isPressed(key)) {
-			this.running = false;
+		if(!this.keyboard.isPressed(key)) {
+			this.isAlreadyPressed = false;
 		}
-	}
+
+        if (this.keyboard.isPressed(key) && !this.isAlreadyPressed) {
+            this.running = false;
+        }
+
+
+    }
 
     @Override
     public boolean shouldStop() {

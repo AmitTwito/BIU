@@ -47,8 +47,8 @@ public class Ass6Game {
 		gameFlow.runLevels(levelInformationList);
 
 
-        levelInformationList.add(new FirstLevel());
-        levelInformationList.add(new SecondLevel());
+        //levelInformationList.add(new FirstLevel());
+        //levelInformationList.add(new SecondLevel());
         levelInformationList.add(new ThirdLevel());
         levelInformationList.add(new FourthLevel());
         gameFlow.runLevels(levelInformationList);

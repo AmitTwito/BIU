@@ -3,12 +3,16 @@ package level;
 import animations.AnimationRunner;
 import animations.GameLevel;
 import collidables.Block;
+import com.sun.org.apache.regexp.internal.RECompiler;
 import geometry.Point;
 import geometry.Rectangle;
 import interfaces.LevelInformation;
 import interfaces.Sprite;
+import javafx.scene.layout.Background;
 import movement.Velocity;
+import sprites.ColoredCircle;
 import sprites.ColoredRectangle;
+import sprites.LevelBackground;
 
 import javax.swing.JOptionPane;
 import java.awt.Color;
@@ -37,16 +41,16 @@ public class ThirdLevel implements LevelInformation {
 
     @Override
     public List<Velocity> initialBallVelocities() {
-		List<Velocity> velocities = new ArrayList<>();
+        List<Velocity> velocities = new ArrayList<>();
 
-		double angle = -45;
-		for (int i = 0; i < numberOfBalls; i++) {
+        double angle = -45;
+        for (int i = 0; i < numberOfBalls; i++) {
 
-			velocities.add(Velocity.fromAngleAndSpeed(angle, GameLevel.BALL_SPEED));
-			angle += -180;
-		}
+            velocities.add(Velocity.fromAngleAndSpeed(angle, GameLevel.BALL_SPEED));
+            angle += -180;
+        }
 
-		return velocities;
+        return velocities;
     }
 
     @Override
@@ -67,12 +71,76 @@ public class ThirdLevel implements LevelInformation {
     @Override
     public Sprite getBackground() {
 
+        LevelBackground levelBackground = new LevelBackground();
+
         Rectangle backgroundRectangle = new Rectangle(new Point(0, 0), AnimationRunner.GUI_WIDTH,
-                AnimationRunner.GUI_HEIGHT
-        );
+                AnimationRunner.GUI_HEIGHT);
+
         Color color = new Color(42, 129, 21);
 
-        return new ColoredRectangle(backgroundRectangle, color);
+        levelBackground.addSprite(new ColoredRectangle(backgroundRectangle, color));
+
+
+        Rectangle towerRectangle = new Rectangle(
+                new Point(GameLevel.BORDER_SIDE + 50, 2 * AnimationRunner.GUI_HEIGHT / 3),
+                AnimationRunner.GUI_WIDTH / 7.5,
+                AnimationRunner.GUI_HEIGHT / 3);
+        ColoredRectangle coloredRectangle = new ColoredRectangle(towerRectangle, Color.BLACK);
+        levelBackground.addSprite(coloredRectangle);
+
+        double windowWidth = towerRectangle.getWidth() / 10;
+        double windowHeight = towerRectangle.getHeight() / 7;
+        double distanceBetweenWindows = towerRectangle.getHeight() / 23;
+
+
+        double yPosition = towerRectangle.getUpperLeft().getY() - 20;
+        double xPosition = towerRectangle.getUpperLeft().getX() - 10;
+        for (int i = 0; i < 6; i++) {
+
+            yPosition = yPosition + windowHeight + distanceBetweenWindows;
+            for (int j = 0; j < 5; j++) {
+                xPosition = xPosition + windowWidth + distanceBetweenWindows;
+                Point upperLeft = new Point(xPosition, yPosition);
+                Rectangle windowRectangle = new Rectangle(upperLeft, windowWidth, windowHeight);
+                ColoredRectangle window = new ColoredRectangle(windowRectangle, Color.WHITE);
+                levelBackground.addSprite(window);
+            }
+
+            xPosition = towerRectangle.getUpperLeft().getX() - 10;
+
+        }
+        double upperBuildHeight = 70;
+        double upperBuildWidth = towerRectangle.getWidth() / 3;
+        Point upperLeft = new Point(towerRectangle.getUpperLeft().getX() + upperBuildWidth,
+                towerRectangle.getUpperLeft().getY() - upperBuildHeight);
+        Rectangle rectangle = new Rectangle(upperLeft, upperBuildWidth, upperBuildHeight);
+        coloredRectangle = new ColoredRectangle(rectangle, new Color(62, 58, 57));
+        levelBackground.addSprite(coloredRectangle);
+
+        upperBuildHeight = AnimationRunner.GUI_HEIGHT / 3.5;
+        upperBuildWidth = upperBuildWidth / 3;
+        upperLeft = new Point(upperLeft.getX() + upperBuildWidth, upperLeft.getY() - upperBuildHeight + 1);
+        rectangle = new Rectangle(upperLeft, upperBuildWidth, upperBuildHeight);
+		coloredRectangle = new ColoredRectangle(rectangle, new Color(78, 74, 73));
+		levelBackground.addSprite(coloredRectangle);
+
+		int radius = 16;
+
+		Color[] colors = new Color[3];
+		colors[2] = new Color(253, 253, 254);
+		colors[1] = new Color(245, 77, 54);
+		colors[0] = new Color(215, 171, 102);
+		Point center = new Point(upperLeft.getX() + radius / 3,  upperLeft.getY() - radius + radius);
+
+
+
+		for (int i = 0; i < colors.length; i++) {
+
+			ColoredCircle c = new ColoredCircle(center, radius, null, colors[i]);
+			levelBackground.addSprite(c);
+			radius = radius - 5;
+		}
+        return levelBackground;
     }
 
     @Override
