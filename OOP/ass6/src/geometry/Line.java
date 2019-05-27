@@ -1,7 +1,10 @@
 package geometry;
 
+import biuoop.DrawSurface;
+import interfaces.Sprite;
 import utilities.LinearEquation;
 
+import java.awt.Color;
 import java.util.List;
 import java.util.Random;
 
@@ -205,4 +208,6 @@ public class Line {
 
         return closestIntersection;
     }
+
+
 }

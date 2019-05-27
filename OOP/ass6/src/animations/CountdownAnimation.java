@@ -5,6 +5,7 @@ import biuoop.Sleeper;
 import game.SpriteCollection;
 import interfaces.Animation;
 
+import java.awt.*;
 import java.util.concurrent.TimeUnit;
 
 
@@ -33,7 +34,8 @@ public class CountdownAnimation implements Animation {
 			this.running = false;
 		}
 		if (this.countFrom > 0) {
-			d.drawText(d.getWidth() / 2, 60, "" + this.countFrom, 60);
+			d.setColor(Color.GRAY);
+			d.drawText(d.getWidth() / 2 - 20, AnimationRunner.GUI_HEIGHT / 2, "" + this.countFrom, 60);
 			this.countFrom = this.countFrom - 1;
 		}
 		sleeper.sleepFor(this.millisecondsPerCount);

@@ -202,6 +202,9 @@ public class Block extends Rectangle implements Collidable, Sprite, HitNotifier 
     public void reduceHitPoints() {
         int newHitPoints = this.hitPoints - 1;
         this.hitPoints = newHitPoints <= 0 ? 0 : newHitPoints;
+        if(!this.isBlockWithoutHitPoints) {
+            this.color = this.color.darker();
+        }
     }
 
     /**

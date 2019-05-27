@@ -25,9 +25,9 @@ public class ThirdLevel implements LevelInformation {
     private String levelName;
 
     public ThirdLevel() {
-        this.numberOfBalls = 1;
+        this.numberOfBalls = 2;
         this.paddleWidth = GameLevel.PADDLE_WIDTH;
-        this.levelName = "Green3";
+        this.levelName = "Green 3";
     }
 
     @Override
@@ -43,7 +43,7 @@ public class ThirdLevel implements LevelInformation {
 		for (int i = 0; i < numberOfBalls; i++) {
 
 			velocities.add(Velocity.fromAngleAndSpeed(angle, GameLevel.BALL_SPEED));
-			angle += -90;
+			angle += -180;
 		}
 
 		return velocities;
@@ -135,16 +135,17 @@ public class ThirdLevel implements LevelInformation {
                                   List<Block> blocks)
             throws RuntimeException {
         //Start the adding the blocks at point of startPositionX.
-        double startPositionX = AnimationRunner.GUI_WIDTH - GameLevel.BORDER_SIDE - GameLevel.BLOCK_WIDTH;
+        double startPositionX = AnimationRunner.GUI_WIDTH - GameLevel.BORDER_SIDE;
         for (int i = 1; i <= blocksNumber; i++) {
+            //Change the current startPositionX to startPositionX - BLOCK_WIDTH :
+            // the next block will be in the left to the previous block.
+            startPositionX = startPositionX - GameLevel.BLOCK_WIDTH;
+
             //build the block.
             Point upperLeft = new Point(startPositionX, yPosition);
             Rectangle rec = new Rectangle(upperLeft, GameLevel.BLOCK_WIDTH, GameLevel.BLOCK_HEIGHT);
             blocks.add(new Block(rec, color, hitPoints));
 
-            //Change the current startPositionX to startPositionX - BLOCK_WIDTH :
-            // the next block will be in the left to the previous block.
-            startPositionX = startPositionX - GameLevel.BLOCK_WIDTH;
             if (startPositionX < GameLevel.BORDER_SIDE) {
                 throw new RuntimeException("Blocks have gotten out of the left border block and will not be shown.");
             }

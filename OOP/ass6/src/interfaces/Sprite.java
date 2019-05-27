@@ -10,6 +10,8 @@ import biuoop.DrawSurface;
  */
 public interface Sprite {
 
+    int FONT = 20;
+
     /**
      * Draws the interfaces.Sprite on a given DrawSurface (to the screen).
      *

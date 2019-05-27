@@ -41,7 +41,6 @@ public class LivesIndicator implements Sprite {
         //Set the location on the right side at the top of the screen.
 
         int x = (int) (this.rectangleToDrawTheTextOn.getUpperLeft().getX());
-
         int y = (int) (this.rectangleToDrawTheTextOn.getUpperLeft().getY()
                 + this.rectangleToDrawTheTextOn.getHeight() - 5);
 

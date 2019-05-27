@@ -18,7 +18,7 @@ import java.util.List;
 public class FourthLevel implements LevelInformation {
 
     public static final int BLOCK_LINES_NUMBER = 5; // Number of blocks lines.
-    public static final int BLOCKS_NUMBER = 10; // Number of block in each line.
+    public static final int BLOCKS_NUMBER = GameLevel.MAX_BLOCKS_PER_ROW; // Number of block in each line.
 
 
     private int numberOfBalls;
@@ -27,7 +27,7 @@ public class FourthLevel implements LevelInformation {
     private int numberOfBlocks;
 
     public FourthLevel() {
-        this.numberOfBalls = 1;
+        this.numberOfBalls = 3;
         this.paddleWidth = GameLevel.PADDLE_WIDTH;
         this.levelName = "Final Four";
         this.numberOfBlocks = BLOCKS_NUMBER * BLOCK_LINES_NUMBER;
@@ -40,16 +40,16 @@ public class FourthLevel implements LevelInformation {
 
     @Override
     public List<Velocity> initialBallVelocities() {
-		List<Velocity> velocities = new ArrayList<>();
+        List<Velocity> velocities = new ArrayList<>();
 
-		double angle = -45;
-		for (int i = 0; i < numberOfBalls; i++) {
+        double angle = -45;
+        for (int i = 0; i < numberOfBalls; i++) {
 
-			velocities.add(Velocity.fromAngleAndSpeed(angle, GameLevel.BALL_SPEED));
-			angle += -45;
-		}
+            velocities.add(Velocity.fromAngleAndSpeed(angle, GameLevel.BALL_SPEED));
+            angle += 45;
+        }
 
-		return velocities;
+        return velocities;
     }
 
     @Override
@@ -101,8 +101,10 @@ public class FourthLevel implements LevelInformation {
 
         try {
             //First set top row of blocks with 2 hit points.
+
             addColoredBlocks(GameLevel.generateRandomColor(), yPosition, 2, blocks);
             //Then for every other row (till BLOCK_LINES_NUMBER) add a row with 1 hit points.
+
             for (int i = 2; i <= BLOCK_LINES_NUMBER; i++) {
                 //Starting from BLOCKS_NUMBER, each loop reduce the blocks number by one.
                 //Change the position of each row by adding a BLOCK_HEIGHT to the y position.
@@ -111,8 +113,9 @@ public class FourthLevel implements LevelInformation {
                     throw new RuntimeException("A row of blocks have gotten outside of the bottom border block "
                             + "and will not shown.");
                 }
-                //Add the row of blocks.
+                //Add the row of blocks.s
                 addColoredBlocks(GameLevel.generateRandomColor(), yPosition, 1, blocks);
+
             }
         } catch (Exception e) {
             //Pop a message window on the screen with the error.
@@ -136,16 +139,18 @@ public class FourthLevel implements LevelInformation {
                                   List<Block> blocks)
             throws RuntimeException {
         //Start the adding the blocks at point of startPositionX.
-        double startPositionX = AnimationRunner.GUI_WIDTH - GameLevel.BORDER_SIDE - GameLevel.BLOCK_WIDTH;
+        double startPositionX = AnimationRunner.GUI_WIDTH - GameLevel.BORDER_SIDE;
         for (int i = 1; i <= BLOCKS_NUMBER; i++) {
+            //Change the current startPositionX to startPositionX - BLOCK_WIDTH :
+            // the next block will be in the left to the previous block.
+            startPositionX = startPositionX - GameLevel.BLOCK_WIDTH;
+
             //build the block.
             geometry.Point upperLeft = new geometry.Point(startPositionX, yPosition);
             geometry.Rectangle rec = new Rectangle(upperLeft, GameLevel.BLOCK_WIDTH, GameLevel.BLOCK_HEIGHT);
             blocks.add(new Block(rec, color, hitPoints));
 
-            //Change the current startPositionX to startPositionX - BLOCK_WIDTH :
-            // the next block will be in the left to the previous block.
-            startPositionX = startPositionX - GameLevel.BLOCK_WIDTH;
+
             if (startPositionX < GameLevel.BORDER_SIDE) {
                 throw new RuntimeException("Blocks have gotten out of the left border block and will not be shown.");
             }

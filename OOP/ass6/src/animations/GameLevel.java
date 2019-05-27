@@ -34,11 +34,12 @@ public class GameLevel implements Animation {
 
     //Constants.
 
-    public static final double BORDER_SIDE = 30;    //The shorter side of the borders blocks.
+    public static final double BORDER_SIDE = 25;    //The shorter side of the borders blocks.
     public static final int PADDLE_WIDTH = 90;
     public static final int RADIUS = 6;
     public static final int MAX_BLOCKS_PER_ROW = 15;
-    public static final double BLOCK_WIDTH = (AnimationRunner.GUI_WIDTH - 2 * BORDER_SIDE) / MAX_BLOCKS_PER_ROW ;
+    public static final double BLOCK_WIDTH =
+            (AnimationRunner.GUI_WIDTH - 2 * BORDER_SIDE) / MAX_BLOCKS_PER_ROW;
     public static final double BLOCK_HEIGHT = 25;
     public static final int INDICATORS_BLOCK_HEIGHT = 25;
     public static final double BALL_SPEED = 6;
@@ -70,7 +71,6 @@ public class GameLevel implements Animation {
         this.sprites = new SpriteCollection();
         this.environment = new GameEnvironment();
         this.remainingBlocks = new Counter();
-        this.remainingBlocks.increase(levelInformation.numberOfBlocksToRemove());
         this.availableBalls = new Counter();
         this.scoreCounter = scoreCounter;
         this.livesCounter = livesCounter;
@@ -79,11 +79,14 @@ public class GameLevel implements Animation {
         this.keyboard = keyboardSensor;
         this.levelInformation = levelInformation;
 
-        //Indicators block at top.
+		addSprite(this.levelInformation.getBackground());
+
+
+		//Indicators block at top.
         Point upperLeft = new Point(0, 0);
         Rectangle indicatorsRec = new Rectangle(upperLeft, AnimationRunner.GUI_WIDTH, INDICATORS_BLOCK_HEIGHT);
         Color c = new Color(237, 237, 237);
-        addSprite(new ColoredRectangle(indicatorsRec,c));
+        addSprite(new ColoredRectangle(indicatorsRec, c));
         //Indicators.
         ScoreIndicator scoreIndicator = new ScoreIndicator(indicatorsRec, this.scoreCounter);
         addSprite(scoreIndicator);
@@ -94,7 +97,6 @@ public class GameLevel implements Animation {
         LevelIndicator levelIndicator = new LevelIndicator(indicatorsRec, this.levelInformation.levelName());
         addSprite(levelIndicator);
 
-        addSprite(this.levelInformation.getBackground());
 
     }
 
@@ -140,7 +142,7 @@ public class GameLevel implements Animation {
 
 
         //Bottom death block.
-        Point upperLeft = new Point(BORDER_SIDE, AnimationRunner.GUI_WIDTH);
+        Point upperLeft = new Point(BORDER_SIDE, AnimationRunner.GUI_HEIGHT);
         Rectangle botRec = new Rectangle(upperLeft, AnimationRunner.GUI_WIDTH - 2 * BORDER_SIDE, BORDER_SIDE);
         Block bottomBlock = new Block(botRec, Color.GRAY);
         bottomBlock.addToGame(this);
@@ -159,15 +161,15 @@ public class GameLevel implements Animation {
 
     /**
      * Runs the Arkanoid game.
-     */
+     *//*
     public void run() {
 
         while (this.livesCounter.getValue() != 0) {
             playOneTurn();
         }
-        this.runner.getGui().close();
+        this.runner.closeGUI();
     }
-
+*/
     public boolean shouldStop() {
         return !this.running;
     }
@@ -181,17 +183,18 @@ public class GameLevel implements Animation {
         //If there are no available blocks - the player won the game.
         if (this.remainingBlocks.getValue() == 0 && this.availableBalls.getValue() != 0) {
             this.scoreCounter.increase(100);
+            this.running = false;
 
         }
         //If there are no available blocks - the player loses one life.
-        if (this.remainingBlocks.getValue() != 0 && this.availableBalls.getValue() == 0) {
+        if (this.availableBalls.getValue() == 0) {
             this.livesCounter.decrease(1);
             //stop the turn.
             this.running = false;
         }
+        if(this.keyboard.isPressed("p")) {
+            this.runner.run(new KeyPressStoppableAnimation(this.keyboard ,this.keyboard.SPACE_KEY,new PauseScreen()));
 
-        if (this.keyboard.isPressed("p")) {
-            this.runner.run(new PauseScreen(this.keyboard));
         }
 
 
@@ -272,6 +275,7 @@ public class GameLevel implements Animation {
         for (Block block : blocks) {
             addHitListenersToBlock(block, hitListenersList);
             block.addToGame(this);
+            this.remainingBlocks.increase(1);
         }
 
     }
@@ -357,7 +361,7 @@ public class GameLevel implements Animation {
         }
     }
 
-    public int getRemainingBlocks() {
+    public int getRemainingBlocksNumber() {
         return this.remainingBlocks.getValue();
     }
 }
