@@ -1,2 +1,2 @@
-Main-Class: Ass5Game
+Main-Class: Ass6Game
 Class-Path: biuoop-1.4.jar

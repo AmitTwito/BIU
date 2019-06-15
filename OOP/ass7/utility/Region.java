@@ -1,8 +1,8 @@
-package utilities;
+package utility;
 
 /**
- * The utilities.Region class represents a region object.
- * A utilities.Region object is built by a first and second values/points,
+ * The utility.Region class represents a region object.
+ * A utility.Region object is built by a first and second values/points,
  * the first is the smaller than the second,
  * those are the edges of a zone (on the x-axis).
  * This object also helps to determine the hit place of the ball on the paddle.
@@ -13,17 +13,17 @@ package utilities;
 public class Region {
 
     //Members.
-    private double first; //Left edge of the utilities.Region.
-    private double second; //Right edge of the utilities.Region.
+    private double first; //Left edge of the utility.Region.
+    private double second; //Right edge of the utility.Region.
 
     //Constructors.
 
     /**
-     * Constructor for the utilities.Region class.
+     * Constructor for the utility.Region class.
      * Build a region from left and right values.
      *
-     * @param first  Left edge of the utilities.Region.
-     * @param second Right edge of the utilities.Region.
+     * @param first  Left edge of the utility.Region.
+     * @param second Right edge of the utility.Region.
      * @throws Exception if both edges are equal.
      */
     public Region(double first, double second) throws Exception {

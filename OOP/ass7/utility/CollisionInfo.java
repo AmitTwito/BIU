@@ -1,11 +1,11 @@
-package utilities;
+package utility;
 
 import geometry.Point;
 import interfaces.Collidable;
 
 /**
- * The utilities.CollisionInfo class represents a collision info object.
- * A utilities.CollisionInfo class is represented by a collision point,
+ * The utility.CollisionInfo class represents a collision info object.
+ * A utility.CollisionInfo class is represented by a collision point,
  * and a collidable object involved in the collision.
  *
  * @author Amit Twito
@@ -21,8 +21,8 @@ public class CollisionInfo {
     //Constructors.
 
     /**
-     * Constructor for the utilities.CollisionInfo class.
-     * Builds a utilities.CollisionInfo with a collision point,
+     * Constructor for the utility.CollisionInfo class.
+     * Builds a utility.CollisionInfo with a collision point,
      * and the collidable object involved in the collision.
      *
      * @param point      The collision point.

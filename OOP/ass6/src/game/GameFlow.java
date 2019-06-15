@@ -1,14 +1,22 @@
 package game;
 
-import animations.*;
+import animations.GameOverAnimation;
+import animations.GameLevel;
+import animations.KeyPressStoppableAnimation;
+import animations.YouWinAnimation;
 import biuoop.GUI;
 import biuoop.KeyboardSensor;
 import interfaces.LevelInformation;
-import utilities.Counter;
+import utility.AnimationRunner;
+import utility.Counter;
 
 import java.util.List;
 
-
+/**
+ * The GameFlow class represents a game flow object.
+ *
+ * @author Amit Twito
+ */
 public class GameFlow {
 
     public static final int MAX_LIVES_NUMBER = 7;
@@ -19,6 +27,13 @@ public class GameFlow {
     private Counter scoreCounter;
     private Counter livesCounter;
 
+    /**
+     * A constructor for the GameFlow class.
+     *
+     * @param ar  The animation runner.
+     * @param ks  The keyboard.
+     * @param gui The gui.
+     */
     public GameFlow(AnimationRunner ar, KeyboardSensor ks, GUI gui) {
         this.gui = gui;
         this.animationRunner = ar;
@@ -28,6 +43,11 @@ public class GameFlow {
         this.livesCounter.increase(MAX_LIVES_NUMBER);
     }
 
+    /**
+     * Runs the given list of levels.
+     *
+     * @param levels List of levels to run.
+     */
     public void runLevels(List<LevelInformation> levels) {
 
         if (levels.size() != 0) {
@@ -36,8 +56,8 @@ public class GameFlow {
                 GameLevel level = new GameLevel(levelInfo, this.animationRunner,
                         this.keyboardSensor, this.livesCounter, this.scoreCounter);
 
-                level.initialize();
 
+                level.initialize();
                 while (level.getRemainingBlocksNumber() != 0 && this.livesCounter.getValue() != 0) {
                     level.playOneTurn();
                 }

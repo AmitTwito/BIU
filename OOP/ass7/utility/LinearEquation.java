@@ -1,10 +1,10 @@
-package utilities;
+package utility;
 
 import geometry.Line;
 import geometry.Point;
 
 /**
- * The utilities.LinearEquation class represents a linear equation object.
+ * The utility.LinearEquation class represents a linear equation object.
  * Linear equation is represented by a geometry.Line ,
  * a slope and an interception point with the Y axis.
  *
@@ -15,16 +15,16 @@ import geometry.Point;
 public class LinearEquation {
 
     //Members.
-    private Line line; // The geometry.Line that the utilities.LinearEquation is represented by.
-    private Double slope; // The slope of the utilities.LinearEquation.
-    private Double interceptWithY; // The intercept with y of the utilities.LinearEquation.
-    private boolean isVertical; // Determines if the utilities.LinearEquation is vertical.
+    private Line line; // The geometry.Line that the utility.LinearEquation is represented by.
+    private Double slope; // The slope of the utility.LinearEquation.
+    private Double interceptWithY; // The intercept with y of the utility.LinearEquation.
+    private boolean isVertical; // Determines if the utility.LinearEquation is vertical.
 
     //Constructors.
 
     /**
-     * Constructor for the utilities.LinearEquation class.
-     * Builds a utilities.LinearEquation with a geometry.Line.
+     * Constructor for the utility.LinearEquation class.
+     * Builds a utility.LinearEquation with a geometry.Line.
      *
      * @param line geometry.Line of the first edge of the line.
      */
@@ -68,9 +68,9 @@ public class LinearEquation {
     //Class Methods.
 
     /**
-     * Returns the intersection point of this utilities.LinearEquation with other utilities.LinearEquation.
+     * Returns the intersection point of this utility.LinearEquation with other utility.LinearEquation.
      *
-     * @param other The other utilities.LinearEquation that intersects with this utilities.LinearEquation.
+     * @param other The other utility.LinearEquation that intersects with this utility.LinearEquation.
      * @return Intersection point.
      */
     public Point intersectionPointWith(LinearEquation other) {

@@ -1,7 +1,7 @@
-package utilities;
+package utility;
 
 /**
- * The utilities.Counter class is a simple class that is used for counting things.
+ * The utility.Counter class is a simple class that is used for counting things.
  *
  * @author Amit Twito
  * @since 15.5.19
@@ -11,7 +11,7 @@ public class Counter {
     private int count;
 
     /**
-     * A constructor for the utilities.Counter class.
+     * A constructor for the utility.Counter class.
      */
     public Counter() {
         this.count = 0;
