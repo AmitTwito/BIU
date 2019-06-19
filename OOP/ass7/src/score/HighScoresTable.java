@@ -9,9 +9,13 @@ import java.io.FileNotFoundException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class HighScoresTable {
+    public static final String FILE_NAME = "highscores.ser";
+    public static final int SCORES_NUMBER = 8;
 
     private int size;
     private List<ScoreInfo> scores;
@@ -20,12 +24,13 @@ public class HighScoresTable {
     // The size means that the table holds up to size top scores.
     public HighScoresTable(int size) {
         this.size = size;
-        scores = new ArrayList<>();
+        this.scores = new ArrayList<>();
     }
 
     // Add a high-score.
     public void add(ScoreInfo score) {
         this.scores.add(score);
+        sortListByScore(this.scores);
     }
 
     // Return table size.
@@ -47,21 +52,19 @@ public class HighScoresTable {
     // Rank > `size` means the score is too low and will not
     //      be added to the list.
     public int getRank(int score) {
-        if (this.scores.size() == 0) {
-            return 1;
-        } else {
 
-        }
+    	if(this.scores.size() != 0) {
+			if (score > this.scores.get(0).getScore()) {
+				return 1;
+			}
 
-        for (int i = 0; i < this.scores.size(); i++) {
+			if (score < this.scores.get(Math.min(this.scores.size(), size()) - 1).getScore()) {
+				return size() + 1;
+			}
+			return size();
+		}
 
-            if (this.scores.get(i).getScore() == score) {
-
-                return i + 1;
-            }
-        }
-
-        return this.size + 1;
+    	return 1;
 
     }
 
@@ -73,25 +76,27 @@ public class HighScoresTable {
     // Load table data from file.
     // Current table data is cleared.
     public void load(File filename) throws IOException {
-        String fileName = "highscores.ser";
+        String fileName = FILE_NAME;
 
         ObjectInputStream objectInputStream = null;
+
         try {
+            ScoreInfo si = null;
             objectInputStream = new ObjectInputStream(
                     new FileInputStream(fileName));
-            this.scores = (List<ScoreInfo>) objectInputStream.readObject();
+            this.scores = (ArrayList<ScoreInfo>) objectInputStream.readObject();
         } catch (ClassNotFoundException e) { // The class in the stream is unknown to the JVM
             System.err.println("Unable to find class for object in file: " + fileName);
             return;
         } finally {
-			try {
-				if (objectInputStream != null) {
-					objectInputStream.close();
-				}
-			} catch (IOException e) {
-				System.err.println("Failed closing file: " + fileName);
-			}
-		}
+            try {
+                if (objectInputStream != null) {
+                    objectInputStream.close();
+                }
+            } catch (IOException e) {
+                System.err.println("Failed closing file: " + fileName);
+            }
+        }
     }
 
 
@@ -100,19 +105,19 @@ public class HighScoresTable {
 
 
         // use conventional 'ser' file extension for java serialized objects
-        String fileName = "highscores.ser";
+        String fileName = FILE_NAME;
 
-        ObjectOutputStream objectOutputStream = null;
-        objectOutputStream = new ObjectOutputStream(
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(
                 new FileOutputStream(fileName));
+
         objectOutputStream.writeObject(this.scores);
-		try {
-			if(objectOutputStream != null) {
-				objectOutputStream.close();
-			}
-		} catch (IOException e) {
-			System.err.println("Failed closing file: " + fileName);
-		}
+        try {
+            if (objectOutputStream != null) {
+                objectOutputStream.close();
+            }
+        } catch (IOException e) {
+            System.err.println("Failed closing file: " + fileName);
+        }
     }
 
     // Read a table from file and return it.
@@ -131,5 +136,14 @@ public class HighScoresTable {
             e.printStackTrace(System.err);
             return new HighScoresTable(8);
         }
+    }
+
+    private void sortListByScore(List<ScoreInfo> scores) {
+
+        Collections.sort(scores, new Comparator<ScoreInfo>() {
+            public int compare(ScoreInfo s1, ScoreInfo s2) {
+                return Math.max(s1.getScore(), s2.getScore());
+            }
+        });
     }
 }

@@ -1,5 +1,7 @@
 import animations.HighScoresAnimation;
 import animations.MenuAnimation;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+import gamespecification.LevelSpecificationReader;
 import interfaces.Animation;
 import interfaces.Menu;
 import interfaces.Task;
@@ -16,9 +18,7 @@ import level.FourthLevel;
 import level.SecondLevel;
 import level.ThirdLevel;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,23 +39,37 @@ public class Ass6Game {
     public static void main(String[] args) {
 
 
+        LevelSpecificationReader levelSpecificationReader = new LevelSpecificationReader();
+        InputStreamReader in = null;
+        try {
+            in = new InputStreamReader(
+                    new FileInputStream("level_definitions.txt"));
+            levelSpecificationReader.fromReader(in);
+        } catch (IOException e) {
+
+        }
+
+
         GUI gui = new GUI(AnimationRunner.GUI_TITLE, AnimationRunner.GUI_WIDTH, AnimationRunner.GUI_HEIGHT);
         AnimationRunner ar = new AnimationRunner(gui);
         HighScoresTable scoresTable = new HighScoresTable(8);
-        File file = new File("highscores.ser");
+        File file = new File(HighScoresTable.FILE_NAME);
+        System.out.println(file.getAbsolutePath());
         try {
-			scoresTable.load(file);
+            scoresTable.load(file);
         } catch (FileNotFoundException e) { // Can't find file to open
-            System.err.println("Unable to find file: " + file);
-            return;
+            try {
+                scoresTable.save(file);
+            } catch (IOException el) {
+                el.printStackTrace(System.err);
+            }
         } catch (IOException e) { // Some other problem
             System.err.println("Failed reading object");
             e.printStackTrace(System.err);
-            return;
         }
 
-		Animation scores = new HighScoresAnimation(scoresTable);
-        GameFlow gameFlow = new GameFlow(ar, gui.getKeyboardSensor(), gui, scoresTable);
+        Animation scores = new HighScoresAnimation(scoresTable);
+
 
         LevelInformation[] levelInformations = new LevelInformation[4];
         levelInformations[0] = new FirstLevel();
@@ -82,8 +96,9 @@ public class Ass6Game {
         }
 
         Menu<Task<Void>> menu = new MenuAnimation<>("Arkanoid", gui.getKeyboardSensor());
+        GameFlow gameFlow = new GameFlow(ar, gui.getKeyboardSensor(), gui, scoresTable, levelInformationList, scores);
         menu.addSelection("s", "Start Game", new StartGameTask(gameFlow, levelInformationList));
-        menu.addSelection("h", "Hi scores", new ShowHiScoresTask(ar, scores));
+        menu.addSelection("h", "High Scores", new ShowHiScoresTask(ar, scores, gui.getKeyboardSensor()));
         menu.addSelection("q", "Exit", new ExitTask());
 
         while (true) {

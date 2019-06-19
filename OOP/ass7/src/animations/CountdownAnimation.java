@@ -47,8 +47,6 @@ public class CountdownAnimation implements Animation {
     @Override
     public void doOneFrame(DrawSurface d) {
         gameScreen.drawAllOn(d);
-        d.setColor(Color.BLACK);
-		d.drawText(d.getWidth() / 2 - 20, AnimationRunner.GUI_HEIGHT / 2, "" + this.countFrom, 80);
 		d.setColor(Color.RED);
         d.drawText(d.getWidth() / 2 - 18, AnimationRunner.GUI_HEIGHT / 2 - 2, "" + this.countFrom, 70);
 

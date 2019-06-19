@@ -31,19 +31,23 @@ public class HighScoresAnimation implements Animation {
         d.drawText(SCORE_POSITION_X, PLAYER_NAME_POSITION_Y, "Score", 25);
 
         d.drawLine(PLAYER_NAME_POSITION_X, PLAYER_NAME_POSITION_Y + 15, PLAYER_NAME_POSITION_X + 500,
-                PLAYER_NAME_POSITION_Y);
+                PLAYER_NAME_POSITION_Y + 15);
 
         d.setColor(Color.orange);
 
         int scoreInfoLineY = PLAYER_NAME_POSITION_Y + 45;
+        if (scoreInfos.size() != 0) {
+            for (int i = 0; i < Math.min(this.highScoresTable.size(), scoreInfos.size()); i++) {
+                ScoreInfo scoreInfo = scoreInfos.get(i);
+                d.drawText(PLAYER_NAME_POSITION_X, scoreInfoLineY, scoreInfo.getName(), 25);
+                d.drawText(SCORE_POSITION_X, scoreInfoLineY, "" + scoreInfo.getScore(), 25);
+                scoreInfoLineY += 30;
+            }
+        }
 
-        for(int i = 0; i < this.highScoresTable.size(); i++) {
-        	ScoreInfo scoreInfo = scoreInfos.get(i);
-			d.drawText(PLAYER_NAME_POSITION_X, scoreInfoLineY, scoreInfo.getName(), 25);
-			d.drawText(SCORE_POSITION_X, scoreInfoLineY, "" + scoreInfo.getScore(), 25);
-			scoreInfoLineY += 30;
-		}
-
+        d.setColor(Color.BLUE);
+        d.drawText(AnimationRunner.GUI_WIDTH / 2 - 200, AnimationRunner.GUI_HEIGHT - 50,
+                "Press space to continue", 40);
     }
 
     @Override

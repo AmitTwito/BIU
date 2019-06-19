@@ -1,6 +1,8 @@
 package score;
 
-public class ScoreInfo {
+import java.io.Serializable;
+
+public class ScoreInfo implements Serializable, Comparable<Integer> {
 
     private String name;
     private int score;
@@ -17,5 +19,10 @@ public class ScoreInfo {
 
     public int getScore() {
         return this.score;
+    }
+
+    @Override
+    public int compareTo(Integer o) {
+        return Math.max(this.score, o.intValue());
     }
 }
