@@ -54,7 +54,6 @@ public class Ass6Game {
         AnimationRunner ar = new AnimationRunner(gui);
         HighScoresTable scoresTable = new HighScoresTable(8);
         File file = new File(HighScoresTable.FILE_NAME);
-        System.out.println(file.getAbsolutePath());
         try {
             scoresTable.load(file);
         } catch (FileNotFoundException e) { // Can't find file to open
@@ -95,13 +94,14 @@ public class Ass6Game {
             levelInformationList.add(new FourthLevel());
         }
 
-        Menu<Task<Void>> menu = new MenuAnimation<>("Arkanoid", gui.getKeyboardSensor());
-        GameFlow gameFlow = new GameFlow(ar, gui.getKeyboardSensor(), gui, scoresTable, levelInformationList, scores);
-        menu.addSelection("s", "Start Game", new StartGameTask(gameFlow, levelInformationList));
-        menu.addSelection("h", "High Scores", new ShowHiScoresTask(ar, scores, gui.getKeyboardSensor()));
-        menu.addSelection("q", "Exit", new ExitTask());
+
 
         while (true) {
+            Menu<Task<Void>> menu = new MenuAnimation<>("Arkanoid", gui.getKeyboardSensor());
+            GameFlow gameFlow = new GameFlow(ar, gui.getKeyboardSensor(), gui, scoresTable, levelInformationList, scores);
+            menu.addSelection("s", "Start Game", new StartGameTask(gameFlow, levelInformationList));
+            menu.addSelection("h", "High Scores", new ShowHiScoresTask(ar, scores, gui.getKeyboardSensor()));
+            menu.addSelection("q", "Exit", new ExitTask());
             ar.run(menu);
             // wait for user selection
             Task<Void> task = menu.getStatus();

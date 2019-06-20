@@ -15,7 +15,7 @@ public class CustomLevel implements LevelInformation {
     private String backgroundImage;
     private int paddleSpeed;
     private int paddleWidth;
-
+	private BlocksFromSymbolsFactory blocksFromSymbolsFactory;
     public CustomLevel(String levelName, List<Velocity> ballVelocities, String backgroundImage,
                        int paddleSpeed, int paddleWidth, BlocksFromSymbolsFactory blocksFromSymbolsFactory) {
         this.levelName = levelName;
@@ -23,6 +23,7 @@ public class CustomLevel implements LevelInformation {
         this.backgroundImage = backgroundImage;
         this.paddleSpeed = paddleSpeed;
         this.paddleWidth = paddleWidth;
+		this.blocksFromSymbolsFactory = blocksFromSymbolsFactory;
 
 
     }

@@ -1,13 +1,11 @@
 package gamespecification;
 
+import factory.BlocksFromSymbolsFactory;
 import interfaces.LevelInformation;
 import level.CustomLevel;
 import movement.Velocity;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,20 +17,19 @@ public class LevelSpecificationReader {
 
         List<LevelInformation> levelInformationList = new ArrayList<>();
 
-        //BufferedReader bufferedReader = new BufferedReader(reader);
-
-        String line;
+        String line = "";
         String mainString = "";
         BufferedReader bufferedReader = null;
         try {
             bufferedReader = new BufferedReader(reader);
             while ((line = bufferedReader.readLine()) != null) {
-                String newLine;
+                java.lang.String newLine;
                 if (!line.contains("level_name")) {
                     newLine = line.replaceAll("\\s+", "");
                 } else {
-                    newLine = line;
+
                 }
+                newLine = line;
                 if (!newLine.isEmpty()) {
                     if (!newLine.contains("#") && !newLine.equals("END_LEVEL")) {
                         mainString = mainString + newLine + "\n";
@@ -51,18 +48,17 @@ public class LevelSpecificationReader {
                 }
             }
         }
-
-        //String[] levelsString = mainString.split("START_LEVEL");
         String[] levelsString = Arrays.asList(mainString.split("START_LEVEL")).stream().
                 filter(str -> !str.isEmpty()).collect(Collectors.toList()).toArray(new String[0]);
         for (String levelString : levelsString) {
+            String[] allProperties = levelString.split("block_definitions:");
 
-            String[] properties = levelString.split("\n");
-			String levelName = "";
-			List<Velocity> ballVelocities = new ArrayList<>();
-			String background = "";
-			int paddleSpeed = 0;
-			int paddleWidth = 0;
+            String[] properties = allProperties[0].split("\n");
+            String levelName = "";
+            List<Velocity> ballVelocities = new ArrayList<>();
+            String background = "";
+            int paddleSpeed = 0;
+            int paddleWidth = 0;
             for (String property : properties) {
 
                 if (!property.isEmpty()) {
@@ -90,9 +86,32 @@ public class LevelSpecificationReader {
                     }
                 }
             }
-			CustomLevel customLevel = new CustomLevel(levelName, ballVelocities, background,
-					paddleSpeed, paddleWidth);
-			levelInformationList.add(customLevel);
+            String blocksDefinitionPath = allProperties[1].substring(0, allProperties[1]
+                    .indexOf("blocks_start_x"))
+                    .replace("\n", "").replace("\r", "");
+            String blockPropertiesString = allProperties[1].substring(blocksDefinitionPath.length(),
+                    allProperties[1].indexOf("START_BLOCKS"));
+            String blockSymbolsString =
+                    allProperties[1].substring((blocksDefinitionPath + blockPropertiesString).length()
+                            + ("START_BLOCKS").length(), allProperties[1].indexOf("END_BLOCKS"));
+            String[] blocksProperties = blockPropertiesString.split("\n");
+            InputStreamReader in = null;
+            BlockDefinitionReader blockDefinitionReader = new BlockDefinitionReader();
+            BlocksFromSymbolsFactory blocksFromSymbolsFactory = null;
+            try {
+                in = new InputStreamReader(
+                        new FileInputStream(blocksDefinitionPath));
+                blocksFromSymbolsFactory = blockDefinitionReader.fromReader(in);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            for (String property : blocksProperties) {
+
+
+            }
+            CustomLevel customLevel = new CustomLevel(levelName, ballVelocities, background,
+                    paddleSpeed, paddleWidth, blocksFromSymbolsFactory);
+            levelInformationList.add(customLevel);
         }
         return levelInformationList;
     }

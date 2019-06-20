@@ -70,4 +70,5 @@ public class MenuAnimation<T> implements Menu<T> {
         return this.stop;
     }
 
+
 }

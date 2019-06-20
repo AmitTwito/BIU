@@ -124,14 +124,16 @@ public class GameFlow {
         this.scoreCounter.decrease(this.scoreCounter.getValue());
         this.livesCounter.decrease(this.livesCounter.getValue());
         this.livesCounter.increase(MAX_LIVES_NUMBER);
-        Menu<Task<Void>> menu = new MenuAnimation<>("Arkanoid", gui.getKeyboardSensor());
 
-        menu.addSelection("s", "Start Game", new StartGameTask(this, this.levelInformations));
-        menu.addSelection("h", "High Scores", new ShowHiScoresTask(this.animationRunner,
-                this.highScores, gui.getKeyboardSensor()));
-        menu.addSelection("q", "Exit", new ExitTask());
 
         while (true) {
+            Menu<Task<Void>> menu = new MenuAnimation<>("Arkanoid", gui.getKeyboardSensor());
+
+            menu.addSelection("s", "Start Game", new StartGameTask(this, this.levelInformations));
+            menu.addSelection("h", "High Scores", new ShowHiScoresTask(this.animationRunner,
+                    this.highScores, gui.getKeyboardSensor()));
+            menu.addSelection("q", "Exit", new ExitTask());            this.animationRunner.run(menu);
+
             this.animationRunner.run(menu);
             // wait for user selection
             Task<Void> task = menu.getStatus();

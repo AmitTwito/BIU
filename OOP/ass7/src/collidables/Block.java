@@ -11,8 +11,13 @@ import interfaces.HitNotifier;
 import interfaces.Sprite;
 import movement.Velocity;
 import sprites.Ball;
+import utility.ColorParser;
 
+import javax.imageio.ImageIO;
 import java.awt.Color;
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +37,8 @@ public class Block extends Rectangle implements Collidable, Sprite, HitNotifier 
     private int hitPoints; // The base hit points of the block.
     private List<HitListener> hitListeners;
     private boolean isBlockWithoutHitPoints; // For a paddle or border blocks.
-
+    private String[] fillings;
+    private Color stroke;
     //Constructors.
 
     /**
@@ -48,6 +54,7 @@ public class Block extends Rectangle implements Collidable, Sprite, HitNotifier 
         this.hitPoints = hitPoints;
         this.hitListeners = new ArrayList<>();
         this.isBlockWithoutHitPoints = false;
+        this.stroke = Color.BLACK;
     }
 
     /**
@@ -61,6 +68,14 @@ public class Block extends Rectangle implements Collidable, Sprite, HitNotifier 
         this.color = color;
         this.hitListeners = new ArrayList<>();
         this.isBlockWithoutHitPoints = true;
+    }
+
+    public Block(Rectangle rectangle, int hitPoints, String[] fillings, Color stroke) {
+        super(rectangle);
+        this.fillings = fillings;
+        this.hitListeners = new ArrayList<>();
+        this.isBlockWithoutHitPoints = false;
+        this.stroke = stroke;
     }
 
     //Getters.
@@ -164,15 +179,46 @@ public class Block extends Rectangle implements Collidable, Sprite, HitNotifier 
      */
     @Override
     public void drawOn(DrawSurface surface) {
-        surface.setColor(this.color);
         int x1 = (int) getUpperLeft().getX();
         int y1 = (int) getUpperLeft().getY();
         int width = (int) getWidth();
         int height = (int) getHeight();
-        surface.fillRectangle(x1, y1, width, height);
+        ColorParser colorParser = new ColorParser();
+        String firstFill = this.fillings[this.fillings.length - 1];
+        String fillString = firstFill.substring(firstFill.indexOf("("), firstFill.indexOf(")"));
+
+        if (firstFill.contains("image")) {
+            Image img = null;
+            try {
+                img = ImageIO.read(new File(firstFill));
+            } catch (IOException e) {
+
+            }
+
+            surface.drawImage(x1, y1, img);
+        }
+        if (firstFill.contains("Color")) {
+
+            if (firstFill.contains("RGB")) {
+                String rgbString = fillString.substring(fillString.indexOf("("), fillString.indexOf(")"));
+
+                String[] rgb = rgbString.split(",");
+                int x = Integer.parseInt(rgb[0]);
+                int y = Integer.parseInt(rgb[1]);
+                int z = Integer.parseInt(rgb[2]);
+                this.color = new Color(x,y,z);
+
+            } else {
+                this.color = colorParser.colorFromString(fillString);
+            }
+
+            surface.setColor(this.color);
+            surface.fillRectangle(x1, y1, width, height);
+        }
+
 
         if (!this.isBlockWithoutHitPoints) {
-            surface.setColor(Color.BLACK);
+            surface.setColor(this.stroke);
             surface.drawRectangle(x1, y1, width, height);
         }
     }
