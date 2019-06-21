@@ -9,6 +9,11 @@ import utility.AnimationRunner;
 import java.awt.Color;
 import java.util.List;
 
+/**
+ * The HighScoresAnimation represents a high scores table animation object.
+ *
+ * @author Amit Twito
+ */
 public class HighScoresAnimation implements Animation {
     public static final int PLAYER_NAME_POSITION_X = AnimationRunner.GUI_WIDTH / 9;
     public static final int PLAYER_NAME_POSITION_Y = 150;
@@ -16,10 +21,20 @@ public class HighScoresAnimation implements Animation {
 
     private HighScoresTable highScoresTable;
 
+    /**
+     * A constructor for the GameOveAnimation.
+     *
+     * @param scores The scores table.
+     */
     public HighScoresAnimation(HighScoresTable scores) {
         this.highScoresTable = scores;
     }
 
+    /**
+     * Does one frame of the animation.
+     *
+     * @param d The drawsurface.
+     */
     @Override
     public void doOneFrame(DrawSurface d) {
         d.setColor(AnimationRunner.SCREEN_TITLE_COLOR);
@@ -50,6 +65,11 @@ public class HighScoresAnimation implements Animation {
                 "Press space to continue", 40);
     }
 
+    /**
+     * Returns whether the animation has stopped.
+     *
+     * @return If the animation has been stopped.
+     */
     @Override
     public boolean shouldStop() {
         return false;

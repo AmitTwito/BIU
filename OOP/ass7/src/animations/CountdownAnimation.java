@@ -47,7 +47,7 @@ public class CountdownAnimation implements Animation {
     @Override
     public void doOneFrame(DrawSurface d) {
         gameScreen.drawAllOn(d);
-		d.setColor(Color.RED);
+        d.setColor(Color.RED);
         d.drawText(d.getWidth() / 2 - 18, AnimationRunner.GUI_HEIGHT / 2 - 2, "" + this.countFrom, 70);
 
         Sleeper sleeper = new Sleeper();

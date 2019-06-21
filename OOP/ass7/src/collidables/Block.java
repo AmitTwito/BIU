@@ -39,6 +39,7 @@ public class Block extends Rectangle implements Collidable, Sprite, HitNotifier 
     private boolean isBlockWithoutHitPoints; // For a paddle or border blocks.
     private String[] fillings;
     private Color stroke;
+    private Image image;
     //Constructors.
 
     /**
@@ -55,6 +56,7 @@ public class Block extends Rectangle implements Collidable, Sprite, HitNotifier 
         this.hitListeners = new ArrayList<>();
         this.isBlockWithoutHitPoints = false;
         this.stroke = Color.BLACK;
+        this.fillings = null;
     }
 
     /**
@@ -68,14 +70,66 @@ public class Block extends Rectangle implements Collidable, Sprite, HitNotifier 
         this.color = color;
         this.hitListeners = new ArrayList<>();
         this.isBlockWithoutHitPoints = true;
+        this.fillings = null;
     }
 
+    /**
+     * Constructor for the collidables.Block class.
+     *
+     * @param rectangle The rectangle that represents the block.
+     * @param hitPoints The base hit points number of the block.
+     * @param fillings  Fillings for the hit points.
+     * @param stroke    Stroke of the block.
+     */
     public Block(Rectangle rectangle, int hitPoints, String[] fillings, Color stroke) {
         super(rectangle);
         this.fillings = fillings;
+        for (int i = 0; i < this.fillings.length; i++) {
+            if (this.fillings[i].indexOf("\n") != -1) {
+                this.fillings[i] = this.fillings[i].substring(0, this.fillings[i].indexOf("\n"));
+
+            }
+        }
+        this.image = null;
+
+        String firstFill = this.fillings[this.fillings.length - 1];
+
+        if (firstFill.contains("image")) {
+            String fillString = firstFill.substring(firstFill.indexOf("(") + 1, firstFill.indexOf(")"));
+
+            try {
+                this.image = ImageIO.read(new File(fillString));
+                this.color = null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+        ColorParser colorParser = new ColorParser();
+
+        if (firstFill.contains("color")) {
+
+
+            if (firstFill.contains("RGB")) {
+                String fillString = firstFill.substring(firstFill.indexOf("(") + 1, firstFill.indexOf(")") + 1);
+                String rgbString = fillString.substring(fillString.indexOf("(") + 1, fillString.indexOf(")"));
+
+                String[] rgb = rgbString.split(",");
+                int x = Integer.parseInt(rgb[0]);
+                int y = Integer.parseInt(rgb[1]);
+                int z = Integer.parseInt(rgb[2]);
+                this.color = new Color(x, y, z);
+
+            } else {
+                String fillString = firstFill.substring(firstFill.indexOf("(") + 1, firstFill.indexOf(")"));
+
+                this.color = colorParser.colorFromString(fillString);
+            }
+        }
         this.hitListeners = new ArrayList<>();
         this.isBlockWithoutHitPoints = false;
         this.stroke = stroke;
+        this.hitPoints = hitPoints;
     }
 
     //Getters.
@@ -183,43 +237,20 @@ public class Block extends Rectangle implements Collidable, Sprite, HitNotifier 
         int y1 = (int) getUpperLeft().getY();
         int width = (int) getWidth();
         int height = (int) getHeight();
-        ColorParser colorParser = new ColorParser();
-        String firstFill = this.fillings[this.fillings.length - 1];
-        String fillString = firstFill.substring(firstFill.indexOf("("), firstFill.indexOf(")"));
-
-        if (firstFill.contains("image")) {
-            Image img = null;
-            try {
-                img = ImageIO.read(new File(firstFill));
-            } catch (IOException e) {
-
-            }
-
-            surface.drawImage(x1, y1, img);
-        }
-        if (firstFill.contains("Color")) {
-
-            if (firstFill.contains("RGB")) {
-                String rgbString = fillString.substring(fillString.indexOf("("), fillString.indexOf(")"));
-
-                String[] rgb = rgbString.split(",");
-                int x = Integer.parseInt(rgb[0]);
-                int y = Integer.parseInt(rgb[1]);
-                int z = Integer.parseInt(rgb[2]);
-                this.color = new Color(x,y,z);
-
-            } else {
-                this.color = colorParser.colorFromString(fillString);
-            }
-
+        if (this.color != null) {
             surface.setColor(this.color);
             surface.fillRectangle(x1, y1, width, height);
+        } else {
+            if (this.image != null) {
+                surface.drawImage(x1, y1, this.image);
+            }
         }
 
-
         if (!this.isBlockWithoutHitPoints) {
-            surface.setColor(this.stroke);
-            surface.drawRectangle(x1, y1, width, height);
+            if (this.stroke != null) {
+                surface.setColor(this.stroke);
+                surface.drawRectangle(x1, y1, width, height);
+            }
         }
     }
 
@@ -248,8 +279,40 @@ public class Block extends Rectangle implements Collidable, Sprite, HitNotifier 
     public void reduceHitPoints() {
         int newHitPoints = this.hitPoints - 1;
         this.hitPoints = newHitPoints <= 0 ? 0 : newHitPoints;
-        if (!this.isBlockWithoutHitPoints) {
-            this.color = this.color.darker();
+        if (!this.isBlockWithoutHitPoints && this.hitPoints > 0) {
+            String currentFill = this.fillings[this.hitPoints - 1];
+
+            if (currentFill.contains("image")) {
+                String fillString = currentFill.substring(currentFill.indexOf("(") + 1, currentFill.indexOf(")"));
+
+                try {
+                    this.image = ImageIO.read(new File(fillString));
+                    this.color = null;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            ColorParser colorParser = new ColorParser();
+
+            if (currentFill.contains("color")) {
+
+                this.image = null;
+                if (currentFill.contains("RGB")) {
+                    String fillString = currentFill.substring(currentFill.indexOf("(") + 1, currentFill.indexOf(")") + 1);
+                    String rgbString = fillString.substring(fillString.indexOf("(") + 1, fillString.indexOf(")"));
+
+                    String[] rgb = rgbString.split(",");
+                    int x = Integer.parseInt(rgb[0]);
+                    int y = Integer.parseInt(rgb[1]);
+                    int z = Integer.parseInt(rgb[2]);
+                    this.color = new Color(x, y, z);
+
+                } else {
+                    String fillString = currentFill.substring(currentFill.indexOf("(") + 1, currentFill.indexOf(")"));
+
+                    this.color = colorParser.colorFromString(fillString);
+                }
+            }
         }
     }
 

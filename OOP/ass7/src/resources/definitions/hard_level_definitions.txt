@@ -4,9 +4,9 @@
 
 START_LEVEL
 level_name:Welcome to the Jungle
-ball_velocities:45,550 -45,550 -30,550 30,550
+ball_velocities:45,6 -45,6 -30,6 30,6
 background:image(background_images/jungle.jpg)
-paddle_speed:650
+paddle_speed:17
 paddle_width:160
 block_definitions:definitions/jungle_block_definitions.txt
 blocks_start_x:25
@@ -28,9 +28,9 @@ END_LEVEL
 
 START_LEVEL
 level_name: Retro Arrows
-ball_velocities:45,550 46,550 47,550
+ball_velocities:45,6 46,6 47,6
 background:color(RGB(142,0,0))
-paddle_speed:650
+paddle_speed:17
 paddle_width:250
 block_definitions:definitions/arrows_block_definitions.txt
 blocks_start_x:25
@@ -58,9 +58,9 @@ END_LEVEL
 
 START_LEVEL
 level_name: Final Four (V2)
-ball_velocities:45,550
+ball_velocities:45,6
 background:image(background_images/clouds.png)
-paddle_speed:650
+paddle_speed:17
 paddle_width:160
 block_definitions:definitions/standard_block_definitions.txt
 blocks_start_x:25

@@ -4,9 +4,9 @@
 
 START_LEVEL
 level_name:Square Moon
-ball_velocities:45,500
+ball_velocities:45,8
 background:image(background_images/night.jpg)
-paddle_speed:650
+paddle_speed:65
 paddle_width:160
 block_definitions:definitions/moon_block_definitions.txt
 blocks_start_x:25

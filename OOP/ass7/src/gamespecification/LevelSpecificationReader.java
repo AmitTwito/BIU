@@ -2,17 +2,34 @@ package gamespecification;
 
 import factory.BlocksFromSymbolsFactory;
 import interfaces.LevelInformation;
-import level.CustomLevel;
+import game.CustomLevel;
 import movement.Velocity;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.TreeMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * The LevelSpecificationReader reads a file with Level definitions and creates a List<LevelInformation> .
+ *
+ * @author Amit Twito
+ */
 public class LevelSpecificationReader {
 
+    /**
+     * Returns a List<LevelInformation> by a given level definitions file.
+     *
+     * @param reader Reader of files.
+     * @return List<LevelInformation>.
+     */
     public List<LevelInformation> fromReader(java.io.Reader reader) {
 
         List<LevelInformation> levelInformationList = new ArrayList<>();
@@ -76,7 +93,7 @@ public class LevelSpecificationReader {
                         }
                     }
                     if (property.contains("background:")) {
-                        background = property.substring(property.indexOf("(") + 1, property.indexOf(")"));
+                        background = property.substring(property.indexOf(":") + 1);
                     }
                     if (property.contains("paddle_speed:")) {
                         paddleSpeed = Integer.parseInt(property.substring(property.indexOf(":") + 1));
@@ -96,21 +113,28 @@ public class LevelSpecificationReader {
                             + ("START_BLOCKS").length(), allProperties[1].indexOf("END_BLOCKS"));
             String[] blocksProperties = blockPropertiesString.split("\n");
             InputStreamReader in = null;
-            BlockDefinitionReader blockDefinitionReader = new BlockDefinitionReader();
+
             BlocksFromSymbolsFactory blocksFromSymbolsFactory = null;
             try {
                 in = new InputStreamReader(
                         new FileInputStream(blocksDefinitionPath));
-                blocksFromSymbolsFactory = blockDefinitionReader.fromReader(in);
+                blocksFromSymbolsFactory = BlockDefinitionReader.fromReader(in);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
+
+            Map<String, Integer> blockPropertiesMap = new TreeMap<>();
+
             for (String property : blocksProperties) {
-
-
+                if (!property.isEmpty()) {
+                    String[] keyVal = property.split(":");
+                    blockPropertiesMap.put(keyVal[0], Integer.parseInt(keyVal[1]));
+                }
             }
             CustomLevel customLevel = new CustomLevel(levelName, ballVelocities, background,
-                    paddleSpeed, paddleWidth, blocksFromSymbolsFactory);
+                    paddleSpeed, paddleWidth, blocksFromSymbolsFactory
+                    , blockPropertiesMap.get("blocks_start_x"), blockPropertiesMap.get("blocks_start_y")
+                    , blockPropertiesMap.get("row_height"), blockPropertiesMap.get("num_blocks"), blockSymbolsString);
             levelInformationList.add(customLevel);
         }
         return levelInformationList;
