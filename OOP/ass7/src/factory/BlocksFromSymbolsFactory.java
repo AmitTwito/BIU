@@ -30,6 +30,7 @@ public class BlocksFromSymbolsFactory {
     /**
      * returns true if 's' is a valid space symbol.
      *
+     * @param s Symbol.
      * @return returns true if 's' is a valid space symbol.
      */
     public boolean isSpaceSymbol(String s) {
@@ -39,6 +40,7 @@ public class BlocksFromSymbolsFactory {
     /**
      * returns true if 's' is a valid block symbol.
      *
+     * @param s Symbol.
      * @return returns true if 's' is a valid block symbol.
      */
     public boolean isBlockSymbol(String s) {
@@ -63,7 +65,7 @@ public class BlocksFromSymbolsFactory {
      * @param s Symbol for block.
      * @param x x position.
      * @param y y position.
-     * @return
+     * @return Block.
      */
     public Block getBlock(String s, int x, int y) {
         return this.blockCreators.get(s).create(x, y);

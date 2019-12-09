@@ -15,11 +15,12 @@ import game.GameFlow;
 import interfaces.LevelInformation;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class Ass7Game {
         if (args.length == 1) {
             path = args[0];
         } else {
-            path = "resources\\level_sets.txt";
+            path = "level_sets.txt";
         }
         String line = "";
         String setOption = "";
@@ -56,9 +57,9 @@ public class Ass7Game {
 
         String[] pathStrings;
         try {
-            BufferedReader bufferedReader =
-                    new BufferedReader(
-                            new InputStreamReader(new FileInputStream(path)));
+
+            InputStream inputStream = ClassLoader.getSystemClassLoader().getResourceAsStream(path);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
             while ((line = bufferedReader.readLine()) != null) {
                 if (!line.isEmpty()) {
@@ -68,7 +69,6 @@ public class Ass7Game {
                         paths = paths + line + "\n";
 
                     }
-
                 }
             }
         } catch (IOException ie) {
@@ -113,14 +113,16 @@ public class Ass7Game {
         for (String key : subMenuKeys) {
             List<LevelInformation> levelInformationList = null;
             LevelSpecificationReader levelSpecificationReader = new LevelSpecificationReader();
-            InputStreamReader in = null;
-            try {
-                in = new InputStreamReader(
-                        new FileInputStream(optionPathesMap.get(key)));
-                levelInformationList = levelSpecificationReader.fromReader(in);
-            } catch (IOException e) {
-                e.printStackTrace();
+            InputStream is = ClassLoader.getSystemClassLoader()
+                    .getResourceAsStream(optionPathesMap.get(key));
+            if (is == null) {
+                throw new RuntimeException("There was a problem reading the file: " + optionPathesMap.get(key));
             }
+            InputStreamReader in = null;
+            in = new InputStreamReader(is);
+
+            levelInformationList = levelSpecificationReader.fromReader(in);
+
 
             subMenu.addSelection(key, optionMessagesMap.get(key), new StartLevelTask(gameFlow, levelInformationList));
         }

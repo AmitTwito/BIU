@@ -1,6 +1,9 @@
 package game;
 
-import animations.*;
+import animations.GameLevel;
+import animations.KeyPressStoppableAnimation;
+import animations.GameOverAnimation;
+import animations.YouWinAnimation;
 import biuoop.DialogManager;
 import biuoop.GUI;
 import biuoop.KeyboardSensor;
@@ -26,7 +29,7 @@ import java.util.List;
  */
 public class GameFlow {
 
-    public static final int MAX_LIVES_NUMBER = 2;
+    public static final int MAX_LIVES_NUMBER = 7;
 
     private GUI gui;
     private Menu<Task<Void>> menu;
@@ -84,9 +87,9 @@ public class GameFlow {
                         DialogManager dialog = gui.getDialogManager();
                         String name = dialog.showQuestionDialog("Enter Name", "What is your name?",
                                 "Anonymous");
-                        if (this.highScoresTable.getRank(this.scoreCounter.getValue()) == 1
-                                || this.highScoresTable.getRank(this.scoreCounter.getValue()) ==
-                                this.highScoresTable.size()) {
+                        if (this.highScoresTable.getRank(this.scoreCounter.getValue())
+                                == 1 || this.highScoresTable.getRank(this.scoreCounter.getValue())
+                                == this.highScoresTable.size()) {
                             this.highScoresTable.add(new ScoreInfo(name, this.scoreCounter.getValue()));
                             File file = new File(HighScoresTable.FILE_NAME);
                             try {

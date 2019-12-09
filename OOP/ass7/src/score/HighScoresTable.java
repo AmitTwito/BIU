@@ -10,7 +10,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 
@@ -46,7 +45,8 @@ public class HighScoresTable {
      */
     public void add(ScoreInfo score) {
         this.scores.add(score);
-        sortListByScore();
+        //Collections.sort(this.scores, (s1, s2) -> Integer.compare(s2.getScore(), s1.getScore()));
+        Collections.sort(this.scores, Collections.reverseOrder());
     }
 
     /**
@@ -67,7 +67,7 @@ public class HighScoresTable {
      * The list is sorted such that the highest
      * scores come first.
      *
-     * @return
+     * @return Scores.
      */
     public List<ScoreInfo> getHighScores() {
         return this.scores;
@@ -184,19 +184,12 @@ public class HighScoresTable {
             return highScoresTable;
         } catch (FileNotFoundException e) { // Can't find file to open
             System.err.println("Unable to find file: " + filename);
-            return new HighScoresTable(8);
+            return new HighScoresTable(SCORES_NUMBER);
         } catch (IOException e) { // Some other problem
             System.err.println("Failed reading object");
             e.printStackTrace(System.err);
-            return new HighScoresTable(8);
+            return new HighScoresTable(SCORES_NUMBER);
         }
     }
 
-    /**
-     * Sort the list of score descending.s
-     */
-    private void sortListByScore() {
-        Collections.sort(this.scores,
-                Comparator.comparingInt(ScoreInfo::getScore).reversed());
-    }
 }

@@ -16,8 +16,8 @@ import utility.ColorParser;
 import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Image;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -98,7 +98,8 @@ public class Block extends Rectangle implements Collidable, Sprite, HitNotifier 
             String fillString = firstFill.substring(firstFill.indexOf("(") + 1, firstFill.indexOf(")"));
 
             try {
-                this.image = ImageIO.read(new File(fillString));
+                InputStream inputStream = ClassLoader.getSystemClassLoader().getResourceAsStream(fillString);
+                this.image = ImageIO.read(inputStream);
                 this.color = null;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -286,7 +287,13 @@ public class Block extends Rectangle implements Collidable, Sprite, HitNotifier 
                 String fillString = currentFill.substring(currentFill.indexOf("(") + 1, currentFill.indexOf(")"));
 
                 try {
-                    this.image = ImageIO.read(new File(fillString));
+                    InputStream is = ClassLoader.getSystemClassLoader()
+                            .getResourceAsStream(fillString);
+                    if (is == null) {
+                        throw new RuntimeException("There was a problem reading the file: " + fillString);
+                    }
+
+                    this.image = ImageIO.read(is);
                     this.color = null;
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -298,7 +305,8 @@ public class Block extends Rectangle implements Collidable, Sprite, HitNotifier 
 
                 this.image = null;
                 if (currentFill.contains("RGB")) {
-                    String fillString = currentFill.substring(currentFill.indexOf("(") + 1, currentFill.indexOf(")") + 1);
+                    String fillString = currentFill.substring(currentFill.indexOf("(") + 1
+                            , currentFill.indexOf(")") + 1);
                     String rgbString = fillString.substring(fillString.indexOf("(") + 1, fillString.indexOf(")"));
 
                     String[] rgb = rgbString.split(",");

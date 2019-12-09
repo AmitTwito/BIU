@@ -6,7 +6,7 @@ import biuoop.KeyboardSensor;
 import biuoop.Sleeper;
 import interfaces.Animation;
 
-import java.awt.*;
+import java.awt.Color;
 
 /**
  * The AnimationRunner class represents a runner for animations.

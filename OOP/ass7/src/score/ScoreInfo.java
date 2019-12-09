@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * The ScoreInfo represents a info of score class.
  */
-public class ScoreInfo implements Serializable, Comparable<Integer> {
+public class ScoreInfo implements Serializable, Comparable<ScoreInfo> {
 
     private String name;
     private int score;
@@ -36,10 +36,9 @@ public class ScoreInfo implements Serializable, Comparable<Integer> {
      *
      * @return Score.
      */
-    public int getScore() {
+    public Integer getScore() {
         return this.score;
     }
-
     /**
      * Compares scores.
      *
@@ -47,7 +46,10 @@ public class ScoreInfo implements Serializable, Comparable<Integer> {
      * @return Max of scores.
      */
     @Override
-    public int compareTo(Integer o) {
-        return Math.max(this.score, o.intValue());
+    public int compareTo(ScoreInfo o) {
+        return this.getScore().compareTo(o.getScore());
     }
+
+
+
 }

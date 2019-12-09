@@ -36,27 +36,18 @@ public class CustomLevel implements LevelInformation {
      * @param background               Background of level.
      * @param paddleSpeed              Speed of paddle.
      * @param paddleWidth              Width of paddle.
-     * @param blocksFromSymbolsFactory Blocks factory.
-     * @param blockStartX              Blocks starting x position.
-     * @param blockStartY              Blocks starting y position.
      * @param rowHeight                Row height.
      * @param numBlocks                Number of blocks.
-     * @param blockSymbolsString       Block symbols string.
      */
     public CustomLevel(String levelName, List<Velocity> ballVelocities, String background,
-                       int paddleSpeed, int paddleWidth, BlocksFromSymbolsFactory blocksFromSymbolsFactory
-            , int blockStartX, int blockStartY, int rowHeight, int numBlocks, String blockSymbolsString) {
+                       int paddleSpeed, int paddleWidth, int rowHeight, int numBlocks) {
         this.levelName = levelName;
         this.velocities = ballVelocities;
         this.background = background;
         this.paddleSpeed = paddleSpeed;
         this.paddleWidth = paddleWidth;
-        this.blocksFromSymbolsFactory = blocksFromSymbolsFactory;
-        this.blockStartX = blockStartX;
-        this.blockStartY = blockStartY;
         this.rowHeight = rowHeight;
         this.numBlocks = numBlocks;
-        this.blockSymbolsString = blockSymbolsString;
     }
 
     /**
@@ -150,6 +141,7 @@ public class CustomLevel implements LevelInformation {
                 yPosition = yPosition + this.rowHeight;
             }
         }
+        this.numBlocks = blocks.size();
         return blocks;
     }
 
@@ -161,5 +153,41 @@ public class CustomLevel implements LevelInformation {
     @Override
     public int numberOfBlocksToRemove() {
         return this.numBlocks;
+    }
+
+    /**
+     * Sets blockstartsx.
+     *
+     * @param startX blockstartsx.
+     */
+    public void setBlockStartX(int startX) {
+        this.blockStartX = startX;
+    }
+
+    /**
+     * Sets blockStartY.
+     *
+     * @param startY blockStartY.
+     */
+    public void setBlockStartY(int startY) {
+        this.blockStartY = startY;
+    }
+
+    /**
+     * Sets blockSymbolsString.
+     *
+     * @param symbolsString blockSymbolsString.
+     */
+    public void setBlockSymbolsString(String symbolsString) {
+        this.blockSymbolsString = symbolsString;
+    }
+
+    /**
+     * Sets blocksFromSymbolsFactory.
+     *
+     * @param blocksFromSymbols blocksFromSymbolsFactory.
+     */
+    public void setBlocksFromSymbolsFactory(BlocksFromSymbolsFactory blocksFromSymbols) {
+        this.blocksFromSymbolsFactory = blocksFromSymbols;
     }
 }

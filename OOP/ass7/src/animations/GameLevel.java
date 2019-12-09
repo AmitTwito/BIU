@@ -29,7 +29,6 @@ import listeners.ScoreTrackingListener;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * The animations.Game class represents a gamelevel animation object.
@@ -299,21 +298,6 @@ public class GameLevel implements Animation {
             //this.remainingBlocks.increase(1);
         }
 
-    }
-
-
-    /**
-     * Generates a random Color.
-     *
-     * @return Random Color.
-     */
-    public static Color generateRandomColor() {
-        //Generate random numbers from 0 to 255 for a random color.
-        Random rand = new Random();
-        int r = rand.nextInt(255);
-        int g = rand.nextInt(255);
-        int b = rand.nextInt(255);
-        return new Color(r, g, b);
     }
 
     /**

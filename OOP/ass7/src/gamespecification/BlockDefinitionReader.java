@@ -58,6 +58,9 @@ public class BlockDefinitionReader {
             }
         }
 
+        if (!mainString.contains("bdef ") && !mainString.contains("default ")) {
+            System.exit(0);
+        }
         components = mainString.split("\n\\s*\n");
         Map<String, String> defaultPropsMap = new TreeMap<>();
         Map<String, Integer> spacerWidths = new TreeMap<>();
@@ -84,104 +87,15 @@ public class BlockDefinitionReader {
                         for (String prop : props) {
                             if (!prop.isEmpty()) {
                                 String[] keyVals = prop.split(":");
-                                properties.put(keyVals[0], keyVals[1]);
+                                if (keyVals[1].indexOf("\n") == -1) {
+                                    properties.put(keyVals[0], keyVals[1]);
+                                } else {
+                                    properties.put(keyVals[0], keyVals[1].substring(0, keyVals[1].indexOf("\n")));
+
+                                }
                             }
                         }
-                        BlockCreator blockCreator = new BlockCreator() {
-                            /**
-                             * Create a block at the specified location.
-                             *
-                             * @param xpos X position of the block.
-                             * @param ypos Y position of the block.
-                             * @return New Block.
-                             */
-                            @Override
-                            public Block create(int xpos, int ypos) {
-                                String width = properties.get("width");
-                                if (width == null) {
-                                    width = defaultPropsMap.get("width");
-                                }
-                                String height = properties.get("height");
-                                if (height == null) {
-                                    height = defaultPropsMap.get("height");
-                                }
-                                String hitPointsString = properties.get("hit_points");
-                                if (hitPointsString == null) {
-                                    hitPointsString = defaultPropsMap.get("hit_points");
-                                }
-                                int hitPoints = Integer.parseInt(hitPointsString);
-                                String stroke = properties.get("stroke");
-                                Color strokeColor = null;
-                                if (stroke != null) {
-                                    ColorParser colorParser = new ColorParser();
-                                    String fillString = stroke.substring(stroke.indexOf("("), stroke.indexOf(")"));
-                                    if (stroke.contains("RGB")) {
-                                        String rgbString = stroke.substring(fillString.indexOf("("), fillString.indexOf(")"));
-
-                                        String[] rgb = rgbString.split(",");
-                                        int x = Integer.parseInt(rgb[0]);
-                                        int y = Integer.parseInt(rgb[1]);
-                                        int z = Integer.parseInt(rgb[2]);
-                                        strokeColor = new Color(x, y, z);
-
-                                    } else {
-                                        strokeColor = colorParser.colorFromString(fillString);
-                                    }
-                                }
-                                if (stroke == null) {
-                                    stroke = defaultPropsMap.get("stroke");
-                                    if (stroke != null) {
-                                        ColorParser colorParser = new ColorParser();
-                                        String fillString = stroke.substring(stroke.indexOf("(") + 1, stroke.indexOf(
-                                                ")"));
-                                        if (stroke.contains("RGB")) {
-                                            String rgbString = stroke.substring(fillString.indexOf("("), fillString.indexOf(")"));
-
-                                            String[] rgb = rgbString.split(",");
-                                            int x = Integer.parseInt(rgb[0]);
-                                            int y = Integer.parseInt(rgb[1]);
-                                            int z = Integer.parseInt(rgb[2]);
-                                            strokeColor = new Color(x, y, z);
-
-                                        } else {
-                                            strokeColor = colorParser.colorFromString(fillString);
-                                        }
-                                    }
-                                }
-
-                                List<String> fillingsList = new ArrayList<>();
-                                String fill = properties.get("fill");
-                                if (fill == null) {
-                                    fill = defaultPropsMap.get("fill");
-                                    if (fill == null) {
-                                        fill = properties.get("fill-1");
-                                        if (fill == null) {
-                                            fill = defaultPropsMap.get("fill-1");
-                                        }
-                                    }
-                                }
-                                fillingsList.add(fill);
-                                if (hitPoints > 1) {
-                                    String fillKString = "fill-";
-                                    for (int i = 2; i <= hitPoints; i++) {
-                                        fill = properties.get(fillKString + i);
-                                        if (fill == null) {
-                                            fill = defaultPropsMap.get(fillKString + i);
-                                        }
-                                        fillingsList.add(fill);
-                                    }
-                                }
-                                if (fillingsList == null || fillingsList.size() == 0) {
-                                    throw new RuntimeException("fillinglist empty");
-                                }
-                                String[] fillings = fillingsList.toArray(new String[fillingsList.size()]);
-
-                                Rectangle rectangle = new Rectangle(new Point(xpos, ypos), Double.parseDouble(width),
-                                        Double.parseDouble(height));
-
-                                return new Block(rectangle, hitPoints, fillings, strokeColor);
-                            }
-                        };
+                        BlockCreator blockCreator = getBlockCreator(defaultPropsMap, properties);
                         blockCreators.put(properties.get("symbol"), blockCreator);
                     }
                 }
@@ -214,5 +128,130 @@ public class BlockDefinitionReader {
 
 
         return new BlocksFromSymbolsFactory(spacerWidths, blockCreators);
+    }
+
+    /**
+     * Creates a blcok creator.
+     *
+     * @param defaultPropsMap propsmap.
+     * @param properties      properties.
+     * @return blockcreator.
+     */
+    private static BlockCreator getBlockCreator(Map<String, String> defaultPropsMap, Map<String, String> properties) {
+        return new BlockCreator() {
+            /**
+             * Create a block at the specified location.
+             *
+             * @param xpos X position of the block.
+             * @param ypos Y position of the block.
+             * @return New Block.
+             */
+            @Override
+            public Block create(int xpos, int ypos) {
+                String width = properties.get("width");
+                if (width == null) {
+                    width = defaultPropsMap.get("width");
+                    if (width == null) {
+                        System.exit(0);
+                    }
+                }
+                String height = properties.get("height");
+                if (height == null) {
+                    height = defaultPropsMap.get("height");
+                    if (height == null) {
+                        System.exit(0);
+                    }
+                }
+                String hitPointsString = properties.get("hit_points");
+                if (hitPointsString == null) {
+                    hitPointsString = defaultPropsMap.get("hit_points");
+                    if (hitPointsString == null) {
+                        System.exit(0);
+                    }
+                }
+                int hitPoints = Integer.parseInt(hitPointsString);
+                String stroke = properties.get("stroke");
+                Color strokeColor = null;
+                if (stroke != null) {
+                    ColorParser colorParser = new ColorParser();
+                    if (stroke.contains("RGB")) {
+                        String fillString = stroke.substring(stroke.indexOf("(") + 1, stroke.indexOf(")") + 1);
+
+                        String rgbString = stroke.substring(fillString.indexOf("(")
+                                , fillString.indexOf(")"));
+
+                        String[] rgb = rgbString.split(",");
+                        int x = Integer.parseInt(rgb[0]);
+                        int y = Integer.parseInt(rgb[1]);
+                        int z = Integer.parseInt(rgb[2]);
+                        strokeColor = new Color(x, y, z);
+
+                    } else {
+                        String fillString = stroke.substring(stroke.indexOf("(") + 1, stroke.indexOf(")"));
+
+                        strokeColor = colorParser.colorFromString(fillString);
+                    }
+                }
+                if (stroke == null) {
+                    stroke = defaultPropsMap.get("stroke");
+                    if (stroke != null) {
+                        ColorParser colorParser = new ColorParser();
+
+                        if (stroke.contains("RGB")) {
+                            String fillString = stroke.substring(stroke.indexOf("(") + 1, stroke.indexOf(
+                                    ")" + 1));
+                            String rgbString = stroke.substring(fillString.indexOf("(")
+                                    , fillString.indexOf(")"));
+
+                            String[] rgb = rgbString.split(",");
+                            int x = Integer.parseInt(rgb[0]);
+                            int y = Integer.parseInt(rgb[1]);
+                            int z = Integer.parseInt(rgb[2]);
+                            strokeColor = new Color(x, y, z);
+
+                        } else {
+                            String fillString = stroke.substring(stroke.indexOf("(") + 1, stroke.indexOf(
+                                    ")"));
+                            strokeColor = colorParser.colorFromString(fillString);
+                        }
+                    }
+                }
+
+                List<String> fillingsList = new ArrayList<>();
+                String fill = properties.get("fill");
+                if (fill == null) {
+                    fill = defaultPropsMap.get("fill");
+                    if (fill == null) {
+                        fill = properties.get("fill-1");
+                        if (fill == null) {
+                            fill = defaultPropsMap.get("fill-1");
+                            if (fill == null) {
+                                System.exit(0);
+                            }
+                        }
+                    }
+                }
+                fillingsList.add(fill);
+                if (hitPoints > 1) {
+                    String fillKString = "fill-";
+                    for (int i = 2; i <= hitPoints; i++) {
+                        fill = properties.get(fillKString + i);
+                        if (fill == null) {
+                            fill = defaultPropsMap.get(fillKString + i);
+                        }
+                        fillingsList.add(fill);
+                    }
+                }
+                if (fillingsList == null || fillingsList.size() == 0) {
+                    throw new RuntimeException("fillinglist empty");
+                }
+                String[] fillings = fillingsList.toArray(new String[fillingsList.size()]);
+
+                Rectangle rectangle = new Rectangle(new Point(xpos, ypos), Double.parseDouble(width),
+                        Double.parseDouble(height));
+
+                return new Block(rectangle, hitPoints, fillings, strokeColor);
+            }
+        };
     }
 }

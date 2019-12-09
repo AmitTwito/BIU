@@ -7,9 +7,11 @@ import utility.AnimationRunner;
 import utility.ColorParser;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
-import java.io.File;
+import java.awt.Image;
+import java.awt.Color;
 import java.io.IOException;
+import java.io.InputStream;
+
 
 /**
  * The LevelBackground class represents the background of a level.
@@ -68,7 +70,13 @@ public class LevelBackground implements Sprite {
                         ")"));
                 Image image = null;
                 try {
-                    image = ImageIO.read(new File(background));
+                    InputStream is = ClassLoader.getSystemClassLoader()
+                            .getResourceAsStream(background);
+                    if (is == null) {
+                        throw new RuntimeException("There was a problem reading the file: " + background);
+                    }
+
+                    image = ImageIO.read(is);
 
                 } catch (IOException e) {
                     e.printStackTrace();

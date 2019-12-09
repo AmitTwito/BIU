@@ -1,10 +1,8 @@
 package tasks;
 
 import animations.KeyPressStoppableAnimation;
-import animations.MenuAnimation;
 import biuoop.KeyboardSensor;
 import interfaces.Animation;
-import interfaces.Menu;
 import interfaces.Task;
 import utility.AnimationRunner;
 
@@ -19,7 +17,7 @@ public class ShowHiScoresTask implements Task<Void> {
     private KeyboardSensor keyboardSensor;
 
     /**
-     * A constructor for the ShowHiScoresTask class;
+     * A constructor for the ShowHiScoresTask class.
      *
      * @param runner              AnimationRunner.
      * @param highScoresAnimation HighScoresAnimation.
