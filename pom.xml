@@ -1,0 +1,104 @@
+<project>
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.mycompany.app</groupId>
+	<artifactId>my-module</artifactId>
+	<version>1</version>
+	<build>
+	
+        <plugins>
+            <plugin>
+                <groupId>com.checkmarx.maven</groupId>
+                <artifactId>checkmarx-maven-plugin</artifactId>
+                <version>9.00.2</version>              
+                <configuration>
+                    <url>http://localhost</url>
+                    <username>cxadmin</username>
+                    <password>CxAdmin6991!</password>
+                    <fullTeamPath>CxServer</fullTeamPath>
+                    <preset>all</preset>
+                    <isIncrementalScan>false</isIncrementalScan>
+                    <highSeveritiesThreshold>1</highSeveritiesThreshold>
+                    <mediumSeveritiesThreshold>20</mediumSeveritiesThreshold>
+                    <lowSeveritiesThreshold>30</lowSeveritiesThreshold>               
+                    <fileExclusions>file1, file2</fileExclusions>
+                    <folderExclusions></folderExclusions>                                      
+                    <generatePDFReport>true</generatePDFReport>
+                    <isSynchronous>true</isSynchronous>
+                    <outputDirectory>c:\users\tmp</outputDirectory>
+                    <projectName>CxServer/scanwithmaven</projectName>
+                    <scanTimeoutInMinutes>10</scanTimeoutInMinutes>                     
+                    <disableCertificateVerification>false</disableCertificateVerification>
+                    <osaEnabled>false</osaEnabled>
+                    <osaHighSeveritiesThreshold>1</osaHighSeveritiesThreshold>
+                    <osaMediumSeveritiesThreshold>0</osaMediumSeveritiesThreshold>
+                    <osaLowSeveritiesThreshold>0</osaLowSeveritiesThreshold>
+                    <osaExclusions>file1, file2</osaExclusions>
+                    <osaIgnoreScopes>1</osaIgnoreScopes>
+                    <osaGenerateJsonReport>0</osaGenerateJsonReport>
+                    <enablePolicyViolations>true</enablePolicyViolations>
+                 </configuration>
+            </plugin>  
+		    <plugin>
+			  <!--For CxConsole (Checkmarx CLI) execution-->
+			  <!--mvn exec:exec -->
+			  <groupId>org.codehaus.mojo</groupId>
+			  <artifactId>exec-maven-plugin</artifactId>
+			  <version>1.2.1</version>
+			  <executions>
+				<execution>
+				  <goals>
+					<goal>exec</goal>
+				  </goals>
+				</execution>
+			  </executions>
+			  <configuration>
+				<executable>runCxConsole.bat</executable>
+				<!--runCxConsole.bat full path location-->
+				<workingDirectory>C:\CxConsolePlugin\</workingDirectory>
+				<arguments>
+				  <argument>Scan</argument>
+				  <argument>-ProjectName</argument>
+				  <argument>${ProjectName}</argument>
+				  <argument>-CxServer</argument>
+				  <argument>${CxServer}</argument>
+				  <argument>-CxUser</argument>
+				  <argument>${CxUser}</argument>
+				  <argument>-CxPassword</argument>
+				  <argument>${CxPassword}</argument>
+				  <argument>-Locationtype</argument>
+				  <argument>${Locationtype}</argument>
+				  <argument>-locationpath</argument>
+				  <argument>${locationpath}</argument>
+				  <argument>-preset</argument>
+				  <argument>${preset}</argument>
+				  <argument>-v</argument>
+				</arguments>
+			  </configuration>
+			</plugin>
+        </plugins>
+		
+		 
+
+	</build> 
+	<properties>
+		  <ProjectName>CxServer/scanwithmavenandcli</ProjectName>
+		  <CxServer>http://localhost</CxServer>
+		  <CxUser>cxadmin</CxUser>
+		  <CxPassword>CxAdmin6991!</CxPassword>
+		  <Locationtype>folder</Locationtype>
+		  <locationpath>.\</locationpath>
+		  <preset>All</preset>
+	</properties>
+	<dependencies> 
+		<dependency>
+		  <groupId>org.codehaus.mojo</groupId>
+		  <artifactId>exec-maven-plugin</artifactId>
+		  <version>1.1-beta-1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.restlet.lib/org.simpleframework.simple-xml -->
+	
+	</dependencies>
+	
+
+</project>
