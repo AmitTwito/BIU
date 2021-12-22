@@ -49,7 +49,34 @@ public class GameFlow {
      * @param levels List of levels to run.
      */
     public void runLevels(List<LevelInformation> levels) {
+        if (levels.size() != 0) {
+             if (this.keyboardSensor.isPressed(KeyboardSensor.SPACE_KEY)) {
+                this.gui.close();
+            }
+            this.animationRunner.run(new KeyPressStoppableAnimation(this.keyboardSensor, this.keyboardSensor.SPACE_KEY,
+                    new YouWinAnimation(this.scoreCounter.getValue())));
+             for (LevelInformation levelInfo : levels) {
 
+                GameLevel level = new GameLevel(levelInfo, this.animationRunner,
+                        this.keyboardSensor, this.livesCounter, this.scoreCounter);
+
+
+                level.initialize();
+                while (level.getRemainingBlocksNumber() != 0 && this.livesCounter.getValue() != 0) {
+                    level.playOneTurn();
+                }
+
+                if (this.livesCounter.getValue() == 0) {
+                    this.animationRunner.run(
+                            new KeyPressStoppableAnimation(this.keyboardSensor, this.keyboardSensor.SPACE_KEY,
+                                    new GameOverAnimation(this.scoreCounter.getValue())));
+                    if (this.keyboardSensor.isPressed(KeyboardSensor.SPACE_KEY)) {
+                        this.gui.close();
+                    }
+                }
+
+            }
+        }
         if (levels.size() != 0) {
             for (LevelInformation levelInfo : levels) {
 
