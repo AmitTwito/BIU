@@ -18,5 +18,33 @@ public class HelloWorld {
             //Print "Hi".
             System.out.println("Hi");
         }
+        for (int i = 0; i < 5; i++) {
+            //Print "Hi".
+            System.out.println("Hi");
+        }
+        for (int i = 0; i < 5; i++) {
+            //Print "Hi".
+            System.out.println("Hi");
+        }
+        for (int i = 0; i < 5; i++) {
+            //Print "Hi".
+            System.out.println("Hi");
+        }
+        for (int i = 0; i < 5; i++) {
+            //Print "Hi".
+            System.out.println("Hi");
+        }
+        for (int i = 0; i < 5; i++) {
+            //Print "Hi".
+            System.out.println("Hi");
+        }
+        for (int i = 0; i < 5; i++) {
+            //Print "Hi".
+            System.out.println("Hi");
+        }
+        for (int i = 0; i < 5; i++) {
+            //Print "Hi".
+            System.out.println("Hi");
+        }
     }
 }
